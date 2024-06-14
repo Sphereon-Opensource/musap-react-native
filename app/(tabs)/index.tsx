@@ -8,10 +8,9 @@ import {NativeModules} from 'react-native'
 import MusapModule from "@/app/(tabs)/musap-module";
 
 export default function HomeScreen() {
-    const listEnabledSscds = JSON.parse(MusapModule?.listEnabledSscdsAsJson()) as Record<string, any>[]
+    const listEnabledSscds = MusapModule?.listEnabledSscdsAsJson()
     try {
         console.log(listEnabledSscds)
-
     } catch(e) {
         console.log(JSON.stringify(e))
     }
