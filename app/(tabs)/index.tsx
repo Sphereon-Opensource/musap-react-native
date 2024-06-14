@@ -5,12 +5,13 @@ import ParallaxScrollView from '@/components/ParallaxScrollView';
 import { ThemedText } from '@/components/ThemedText';
 import { ThemedView } from '@/components/ThemedView';
 import {NativeModules} from 'react-native'
+import MusapModule from "@/app/(tabs)/musap-module";
 
 export default function HomeScreen() {
-    const {MusapModule} = NativeModules
+    const listEnabledSscds = JSON.parse(MusapModule?.listEnabledSscdsAsJson()) as Record<string, any>[]
     try {
-        console.log(MusapModule ? MusapModule : 'MusapModule is undefined')
-        console.log(`MusapModule.listActiveSscds(): ${JSON.stringify(MusapModule?.listActiveSscds() ?? 'listActiveSscds() is returning undefined')}`)
+        console.log(listEnabledSscds)
+
     } catch(e) {
         console.log(JSON.stringify(e))
     }
@@ -24,7 +25,7 @@ export default function HomeScreen() {
         />
       }>
       <ThemedView style={styles.titleContainer}>
-        <ThemedText type="title">{MusapModule?.listActiveSscds()}</ThemedText>
+        <ThemedText type="title">Title</ThemedText>
         <HelloWave />
       </ThemedView>
       <ThemedView style={styles.stepContainer}>
