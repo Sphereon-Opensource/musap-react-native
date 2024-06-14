@@ -7,9 +7,13 @@ import { ThemedView } from '@/components/ThemedView';
 import {NativeModules} from 'react-native'
 
 export default function HomeScreen() {
-  const {MusapModule} = NativeModules
-    console.log(MusapModule)
-    console.log(`MusapModule.listActiveSscds(): ${JSON.stringify(MusapModule.listActiveSscds())}`)
+    const {MusapModule} = NativeModules
+    try {
+        console.log(MusapModule ? MusapModule : 'MusapModule is undefined')
+        console.log(`MusapModule.listActiveSscds(): ${JSON.stringify(MusapModule?.listActiveSscds() ?? 'listActiveSscds() is returning undefined')}`)
+    } catch(e) {
+        console.log(JSON.stringify(e))
+    }
   return (
     <ParallaxScrollView
       headerBackgroundColor={{ light: '#A1CEDC', dark: '#1D3D47' }}
@@ -20,7 +24,7 @@ export default function HomeScreen() {
         />
       }>
       <ThemedView style={styles.titleContainer}>
-        <ThemedText type="title">{MusapModule.listActiveSscds()}</ThemedText>
+        <ThemedText type="title">{MusapModule?.listActiveSscds()}</ThemedText>
         <HelloWave />
       </ThemedView>
       <ThemedView style={styles.stepContainer}>
