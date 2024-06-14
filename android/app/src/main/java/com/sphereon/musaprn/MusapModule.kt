@@ -3,35 +3,29 @@ package com.sphereon.musaprn;
 import android.os.Build;
 import android.util.Log;
 
-import androidx.annotation.NonNull;
-
 import com.facebook.react.bridge.ReactApplicationContext;
 import com.facebook.react.bridge.ReactContextBaseJavaModule;
 import com.facebook.react.bridge.ReactMethod;
 
-import java.util.List;
-import java.util.stream.Collectors;
+import kotlin.collections.MutableList;
 
 import fi.methics.musap.sdk.api.MusapClient;
-import fi.methics.musap.sdk.internal.util.MusapSscd;
+import fi.methics.musap.sdk.internal.util.MusapSscd
+import fi.methics.musap.sdk.sscd.android.AndroidKeystoreSscd
 
-public class MusapModule extends ReactContextBaseJavaModule {
+class MusapModule(val context: ReactApplicationContext): ReactContextBaseJavaModule(context) {
 
-    public MusapModule(ReactApplicationContext context) {
-        super(context);
+    init {
+        MusapClient.init(context)
+        MusapClient.enableSscd(AndroidKeystoreSscd(context), "ANDROID")
     }
-    @NonNull
-    @Override
-    public String getName() {
-        return "MusapModule";
-    }
+
+    override fun getName(): String = "MusapModule"
 
     @ReactMethod
-    public List<MusapSscd> listSscds() {
+    fun listActiveSscds(): MutableList<MusapSscd>? {
         var sscds = MusapClient.listActiveSscds();
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
-            Log.d("MusapModule", sscds.stream().map(MusapSscd::getSscdId).collect(Collectors.joining(", ")));
-        }
+        Log.d("MusapModule", sscds.map{it.getSscdId()}.joinToString(", "));
         return sscds;
     }
 }

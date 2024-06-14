@@ -1,5 +1,6 @@
 package com.sphereon.musaprn
 
+import android.util.Log
 import android.app.Application
 import android.content.res.Configuration
 
@@ -27,6 +28,7 @@ class MainApplication : Application(), ReactApplication {
             // packages.add(new MyReactNativePackage());
             var packages = PackageList(this).packages
             packages.add(MusapPackage())
+            Log.d("The provided packages are: ", "$packages");
             return packages
           }
 
@@ -44,18 +46,20 @@ class MainApplication : Application(), ReactApplication {
 
   override fun onCreate() {
     super.onCreate();
-    MusapClient.init(this)
-    MusapClient.enableSscd(AndroidKeystoreSscd(this), "1")
     SoLoader.init(this, false)
     if (BuildConfig.IS_NEW_ARCHITECTURE_ENABLED) {
       // If you opted-in for the New Architecture, we load the native entry point for this app.
       load()
     }
+    MusapClient.init(this)
+    MusapClient.enableSscd(AndroidKeystoreSscd(this), "ANDROID")
     ApplicationLifecycleDispatcher.onApplicationCreate(this)
   }
 
   override fun onConfigurationChanged(newConfig: Configuration) {
     super.onConfigurationChanged(newConfig)
+    MusapClient.init(this)
+    MusapClient.enableSscd(AndroidKeystoreSscd(this), "ANDROID")
     ApplicationLifecycleDispatcher.onConfigurationChanged(this, newConfig)
   }
 }

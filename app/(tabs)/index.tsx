@@ -8,6 +8,8 @@ import {NativeModules} from 'react-native'
 
 export default function HomeScreen() {
   const {MusapModule} = NativeModules
+    console.log(MusapModule)
+    console.log(`MusapModule.listActiveSscds(): ${JSON.stringify(MusapModule.listActiveSscds())}`)
   return (
     <ParallaxScrollView
       headerBackgroundColor={{ light: '#A1CEDC', dark: '#1D3D47' }}
@@ -18,7 +20,7 @@ export default function HomeScreen() {
         />
       }>
       <ThemedView style={styles.titleContainer}>
-        <ThemedText type="title">{MusapModule.listSscds()}</ThemedText>
+        <ThemedText type="title">{MusapModule.listActiveSscds()}</ThemedText>
         <HelloWave />
       </ThemedView>
       <ThemedView style={styles.stepContainer}>
