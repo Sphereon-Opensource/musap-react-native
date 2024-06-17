@@ -4,12 +4,31 @@ import { HelloWave } from '@/components/HelloWave';
 import ParallaxScrollView from '@/components/ParallaxScrollView';
 import { ThemedText } from '@/components/ThemedText';
 import { ThemedView } from '@/components/ThemedView';
-import MusapModule from "@/app/(tabs)/musap-module";
+import {MusapClient} from "@/services/MusapClient";
+import {KeyGenReq} from "@/types/musap-types";
 
 export default function HomeScreen() {
-    const listEnabledSscds = MusapModule?.listEnabledSscds()
+    const listEnabledSscdInfos = MusapClient.listEnabledSscdsInfos()
     try {
-        console.log(listEnabledSscds)
+        console.log(JSON.stringify(listEnabledSscdInfos))
+
+        const sscdInfo = listEnabledSscdInfos[0];
+
+        const keyGenRequest: KeyGenReq = {
+            attributes: [
+                { name: 'purpose', value: 'encrypt' },
+                { name: 'purpose', value: 'decrypt' }
+            ],
+            did: 'did:example:123456789abcdefghi',
+            keyAlgorithm: {primitive: 'secp256r1', bits: 2048, curve: 'P-256'},
+            keyAlias: "testKey",
+            keyUsage: "sign",
+            role: "admin",
+
+        }
+        console.log(`Generating key for sscdId ${sscdInfo.sscdId}`)
+        const musapKey = MusapClient.generateKey(sscdInfo.sscdId, keyGenRequest)
+        console.log(JSON.stringify(musapKey))
     } catch(e) {
         console.log(JSON.stringify(e))
     }
