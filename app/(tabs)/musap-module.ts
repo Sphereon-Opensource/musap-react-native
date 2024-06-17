@@ -1,8 +1,7 @@
 import {NativeModules} from "react-native";
 
 interface MusapModuleType {
-    listEnabledSscdsAsJson(): string;
-    listActiveSscdsAsJson(): string;
+    listEnabledSscds(): string;
 }
 
 const { MusapModule } = NativeModules;

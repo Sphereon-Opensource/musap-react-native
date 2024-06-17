@@ -11,7 +11,7 @@ import kotlin.collections.MutableList;
 
 class MusapPackage: ReactPackage {
 
-    override public fun createNativeModules(reactApplicationContext: ReactApplicationContext): MutableList<NativeModule> = mutableListOf(MusapModule(reactApplicationContext))
+    override fun createNativeModules(reactApplicationContext: ReactApplicationContext): MutableList<NativeModule> = mutableListOf(MusapModule(reactApplicationContext))
 
-    override public fun createViewManagers(reactApplicationContext: ReactApplicationContext): MutableList<ViewManager<View, ReactShadowNode<*>>> = mutableListOf()
+    override fun createViewManagers(reactApplicationContext: ReactApplicationContext): MutableList<ViewManager<View, ReactShadowNode<*>>> = mutableListOf()
 }

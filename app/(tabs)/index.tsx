@@ -4,11 +4,10 @@ import { HelloWave } from '@/components/HelloWave';
 import ParallaxScrollView from '@/components/ParallaxScrollView';
 import { ThemedText } from '@/components/ThemedText';
 import { ThemedView } from '@/components/ThemedView';
-import {NativeModules} from 'react-native'
 import MusapModule from "@/app/(tabs)/musap-module";
 
 export default function HomeScreen() {
-    const listEnabledSscds = MusapModule?.listEnabledSscdsAsJson()
+    const listEnabledSscds = MusapModule?.listEnabledSscds()
     try {
         console.log(listEnabledSscds)
     } catch(e) {
