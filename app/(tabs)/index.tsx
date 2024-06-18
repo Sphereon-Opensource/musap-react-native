@@ -10,6 +10,8 @@ export default function HomeScreen() {
     const listEnabledSscds = MusapModule?.listEnabledSscds()
     try {
         console.log(listEnabledSscds)
+        console.log(`enableSscd: ${MusapModule.enableSscd}`)
+        console.log(`generateKey: ${MusapModule.generateKey}`)
     } catch(e) {
         console.log(JSON.stringify(e))
     }
