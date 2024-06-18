@@ -12,6 +12,25 @@ export default function HomeScreen() {
         console.log(listEnabledSscds)
         console.log(`enableSscd: ${MusapModule.enableSscd}`)
         console.log(`generateKey: ${MusapModule.generateKey}`)
+        console.log(JSON.stringify(listEnabledSscdInfos))
+
+        const sscdInfo = listEnabledSscdInfos[0];
+
+        const keyGenRequest: KeyGenReq = {
+            attributes: [
+                { name: 'purpose', value: 'encrypt' },
+                { name: 'purpose', value: 'decrypt' }
+            ],
+            did: 'did:example:123456789abcdefghi',
+            keyAlgorithm: {primitive: 'secp256r1', bits: 2048, curve: 'P-256'},
+            keyAlias: "testKey",
+            keyUsage: "sign",
+            role: "admin",
+
+        }
+        console.log(`Generating key for sscdId ${sscdInfo.sscdId}`)
+        const musapKey = MusapClient.generateKey(sscdInfo.sscdId, keyGenRequest)
+        console.log(JSON.stringify(musapKey))
     } catch(e) {
         console.log(JSON.stringify(e))
     }
