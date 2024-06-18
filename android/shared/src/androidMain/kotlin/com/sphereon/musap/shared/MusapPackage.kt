@@ -1,4 +1,4 @@
-package com.sphereon.musaprn;
+package com.sphereon.musap.shared;
 
 import android.view.View
 import com.facebook.react.ReactPackage;
@@ -11,7 +11,7 @@ import kotlin.collections.MutableList;
 
 class MusapPackage: ReactPackage {
 
-    override fun createNativeModules(reactApplicationContext: ReactApplicationContext): MutableList<NativeModule> = mutableListOf(MusapModule(reactApplicationContext))
+    override fun createNativeModules(reactApplicationContext: ReactApplicationContext): MutableList<NativeModule> = mutableListOf(MusapModuleAndroid(reactApplicationContext))
 
     override fun createViewManagers(reactApplicationContext: ReactApplicationContext): MutableList<ViewManager<View, ReactShadowNode<*>>> = mutableListOf()
 }

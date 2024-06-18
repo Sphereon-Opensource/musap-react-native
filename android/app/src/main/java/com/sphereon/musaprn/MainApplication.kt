@@ -1,22 +1,20 @@
 package com.sphereon.musaprn
 
-import android.util.Log
 import android.app.Application
 import android.content.res.Configuration
-
 import com.facebook.react.PackageList
 import com.facebook.react.ReactApplication
+import com.facebook.react.ReactHost
 import com.facebook.react.ReactNativeHost
 import com.facebook.react.ReactPackage
-import com.facebook.react.ReactHost
 import com.facebook.react.defaults.DefaultNewArchitectureEntryPoint.load
 import com.facebook.react.defaults.DefaultReactNativeHost
 import com.facebook.soloader.SoLoader
-
+import com.sphereon.musap.shared.MusapModuleAndroid
+import com.sphereon.musap.shared.MusapPackage
+import com.sphereon.musap.shared.SscdType.AKS
 import expo.modules.ApplicationLifecycleDispatcher
 import expo.modules.ReactNativeHostWrapper
-import fi.methics.musap.sdk.api.MusapClient
-import fi.methics.musap.sdk.sscd.android.AndroidKeystoreSscd
 
 class MainApplication : Application(), ReactApplication {
 
@@ -47,8 +45,8 @@ class MainApplication : Application(), ReactApplication {
       // If you opted-in for the New Architecture, we load the native entry point for this app.
       load()
     }
-    MusapClient.init(this)
-    MusapClient.enableSscd(AndroidKeystoreSscd(this), "ANDROID")
+    MusapModuleAndroid.init(this)
+    MusapModuleAndroid.enableSscd(AKS, "ANDROID", this)
     ApplicationLifecycleDispatcher.onApplicationCreate(this)
   }
 
