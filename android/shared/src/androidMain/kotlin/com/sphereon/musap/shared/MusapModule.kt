@@ -2,6 +2,7 @@ package com.sphereon.musap.shared;
 
 import android.content.Context
 import com.facebook.react.bridge.Arguments
+import com.facebook.react.bridge.Callback
 import com.facebook.react.bridge.ReactApplicationContext
 import com.facebook.react.bridge.ReactContextBaseJavaModule
 import com.facebook.react.bridge.ReactMethod
@@ -12,7 +13,9 @@ import fi.methics.musap.sdk.api.MusapCallback
 import fi.methics.musap.sdk.api.MusapClient
 import fi.methics.musap.sdk.extension.MusapSscdInterface
 import fi.methics.musap.sdk.internal.datatype.MusapKey
+import fi.methics.musap.sdk.internal.datatype.MusapSignature
 import fi.methics.musap.sdk.internal.keygeneration.KeyGenReq
+import fi.methics.musap.sdk.internal.sign.SignatureReq
 import fi.methics.musap.sdk.internal.util.MusapSscd
 import fi.methics.musap.sdk.sscd.android.AndroidKeystoreSscd
 import org.json.JSONObject
@@ -42,9 +45,33 @@ class MusapModuleAndroid(context: ReactApplicationContext) : ReactContextBaseJav
         MusapClient.generateKey(sscdObj, reqObj, callbackObj as MusapCallback<MusapKey>)
     }
 
+    @Suppress("UNCHECKED_CAST")
+    @ReactMethod
+    override fun sign(req: ReadableMap, callback: Callback) {
+        val reqObj = jacksonObjectMapper().readValue(
+            convertToJSONObject(req).toString(),
+            SignatureReq::class.java
+        )
+        MusapClient.sign(reqObj, callback as MusapCallback<MusapSignature>)
+    }
+
+    // enabled = supported by MUSAP
     @ReactMethod(isBlockingSynchronousMethod = true)
     override fun listEnabledSscds(): WritableArray {
         val sscds = MusapClient.listEnabledSscds()
+        val writableArray = Arguments.createArray()
+        for (sscd in sscds) {
+            val sscdMap =
+                convertToWritabaleMap(JSONObject(objectMapper.writeValueAsString(sscd)))
+            writableArray.pushMap(sscdMap)
+        }
+        return writableArray
+    }
+
+    // active = that can generate or bind keys
+    @ReactMethod(isBlockingSynchronousMethod = true)
+    override fun listActiveSscds(): WritableArray {
+        val sscds = MusapClient.listActiveSscds()
         val writableArray = Arguments.createArray()
         for (sscd in sscds) {
             val sscdMap =

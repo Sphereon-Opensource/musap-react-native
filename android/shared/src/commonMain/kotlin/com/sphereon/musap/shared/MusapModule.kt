@@ -1,6 +1,7 @@
 package com.sphereon.musap.shared;
 
 import com.facebook.react.bridge.Arguments
+import com.facebook.react.bridge.Callback
 import com.facebook.react.bridge.ReadableArray
 import com.facebook.react.bridge.ReadableMap
 import com.facebook.react.bridge.ReadableType
@@ -15,7 +16,9 @@ import org.json.JSONObject
 
 interface MusapModule {
     fun generateKey (sscd: ReadableMap, req: ReadableMap, callBack: ReadableMap)
+    fun sign(req: ReadableMap, callback: Callback)
     fun listEnabledSscds(): WritableArray
+    fun listActiveSscds(): WritableArray
 }
 
 enum class SscdType {
