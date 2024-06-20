@@ -10,11 +10,11 @@ export default function HomeScreen() {
     const listEnabledSscds = MusapModule?.listEnabledSscds()
     try {
         console.log(listEnabledSscds)
-        console.log(`enableSscd: ${MusapModule.enableSscd}`)
+        console.log(`sign: ${MusapModule.sign}`)
         console.log(`generateKey: ${MusapModule.generateKey}`)
-        console.log(JSON.stringify(listEnabledSscdInfos))
 
-        const sscdInfo = listEnabledSscdInfos[0];
+        const sscdInfo = listEnabledSscds[0].sscdInfo
+        console.log(`SscdInfo: ${JSON.stringify(sscdInfo)}`)
 
         const keyGenRequest: KeyGenReq = {
             attributes: [
@@ -26,10 +26,13 @@ export default function HomeScreen() {
             keyAlias: "testKey",
             keyUsage: "sign",
             role: "admin",
-
         }
+
         console.log(`Generating key for sscdId ${sscdInfo.sscdId}`)
-        const musapKey = MusapClient.generateKey(sscdInfo.sscdId, keyGenRequest)
+        const musapKey = MusapModule.generateKey(sscdInfo, keyGenRequest, {
+              onSuccess: (data) => console.log(data),
+            onException: (e) => new Error(`Cannot create key: ${JSON.stringify(e)}`)
+        })
         console.log(JSON.stringify(musapKey))
     } catch(e) {
         console.log(JSON.stringify(e))

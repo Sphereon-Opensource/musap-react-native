@@ -1,10 +1,15 @@
 import {NativeModules} from "react-native";
 
+interface MusapCallback<T> {
+    onSuccess: (var1: T) => void
+    onException: (var1: Error) => void
+}
+
 interface MusapModuleType {
-    listEnabledSscds(): string;
+    listEnabledSscds(): any;
     // FIXME must be fixed when the typescript code is generated
-    generateKey (sscd: unknown, req: unknown, callBack: unknown): Promise<void>
-    enableSscd(sscd: unknown, sscdId: String): void
+    generateKey (sscd: unknown, req: unknown, callBack: MusapCallback<any>): Promise<void>
+    sign(req: unknown, calback: Function): void
 }
 
 const { MusapModule } = NativeModules;
