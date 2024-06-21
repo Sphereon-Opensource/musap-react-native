@@ -8,9 +8,12 @@ import com.facebook.react.bridge.ReactContextBaseJavaModule
 import com.facebook.react.bridge.ReactMethod
 import com.facebook.react.bridge.ReadableMap
 import com.facebook.react.bridge.WritableArray
-import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
+import com.facebook.react.util.RNLog
+import com.google.gson.GsonBuilder
+import com.sphereon.musap.serializer.MusapSscdSerializer
 import fi.methics.musap.sdk.api.MusapCallback
 import fi.methics.musap.sdk.api.MusapClient
+import fi.methics.musap.sdk.api.MusapException
 import fi.methics.musap.sdk.extension.MusapSscdInterface
 import fi.methics.musap.sdk.internal.datatype.MusapKey
 import fi.methics.musap.sdk.internal.datatype.MusapSignature
@@ -24,35 +27,42 @@ class MusapModuleAndroid(context: ReactApplicationContext) : ReactContextBaseJav
 
     override fun getName(): String = "MusapModule"
 
-    private val objectMapper = jacksonObjectMapper()
-
-    @ReactMethod
-    override fun generateKey(sscd: ReadableMap, req: ReadableMap, callBack: ReadableMap) {
-        val sscdObj = jacksonObjectMapper().readValue(
-            convertToJSONObject(sscd).toString(),
-            MusapSscd::class.java
-        )
-        val reqObj = jacksonObjectMapper().readValue(
-            convertToJSONObject(req).toString(),
-            KeyGenReq::class.java
-        )
-        val callbackObj = jacksonObjectMapper().readValue(
-            convertToJSONObject(callBack).toString(),
-            MusapCallback::class.java
-        )
-
-        @Suppress("UNCHECKED_CAST")
-        MusapClient.generateKey(sscdObj, reqObj, callbackObj as MusapCallback<MusapKey>)
+    private val gson = GsonBuilder().registerTypeAdapter(MusapSscd::class.java, MusapSscdSerializer()).create()
+    init {
+        MusapClient.setDebugLog(true)
     }
 
-    @Suppress("UNCHECKED_CAST")
+    @ReactMethod
+    override fun generateKey(sscd: ReadableMap, req: ReadableMap, callback: Callback) {
+        val sscdObj = gson.fromJson(sscd.toString(), MusapSscd::class.java)
+        val reqObj = gson.fromJson(req.toString(), KeyGenReq::class.java)
+        val musapCallback = object: MusapCallback<MusapKey> {
+            override fun onSuccess(p0: MusapKey?) {
+                callback.invoke("Key successfully created: ${p0?.keyId}")
+            }
+            override fun onException(p0: MusapException?) {
+                callback.invoke("Error creating key: ${p0?.message}")
+            }
+        }
+        reqObj.activity = reactApplicationContext.currentActivity
+        RNLog.w(reactApplicationContext, "MUSAP client: ${MusapClient.getMusapId()}")
+        RNLog.w(reactApplicationContext, "${reqObj}")
+        MusapClient.generateKey(sscdObj, reqObj, musapCallback)
+    }
+
     @ReactMethod
     override fun sign(req: ReadableMap, callback: Callback) {
-        val reqObj = jacksonObjectMapper().readValue(
-            convertToJSONObject(req).toString(),
-            SignatureReq::class.java
-        )
-        MusapClient.sign(reqObj, callback as MusapCallback<MusapSignature>)
+        val reqObj = gson.fromJson(req.toString(), SignatureReq::class.java)
+        val callbackTmp = object: MusapCallback<MusapSignature>{
+            override fun onSuccess(p0: MusapSignature?) {
+                callback.invoke("Data successfully signed: ${p0?.b64Signature}")
+            }
+            override fun onException(p0: MusapException?) {
+               callback.invoke("Error signing the data: ${p0?.message}")
+            }
+
+        }
+        MusapClient.sign(reqObj, callbackTmp)
     }
 
     // enabled = supported by MUSAP
@@ -62,7 +72,7 @@ class MusapModuleAndroid(context: ReactApplicationContext) : ReactContextBaseJav
         val writableArray = Arguments.createArray()
         for (sscd in sscds) {
             val sscdMap =
-                convertToWritabaleMap(JSONObject(objectMapper.writeValueAsString(sscd)))
+                convertToWritabaleMap(JSONObject(gson.toJson(sscd)))
             writableArray.pushMap(sscdMap)
         }
         return writableArray
@@ -75,7 +85,7 @@ class MusapModuleAndroid(context: ReactApplicationContext) : ReactContextBaseJav
         val writableArray = Arguments.createArray()
         for (sscd in sscds) {
             val sscdMap =
-                convertToWritabaleMap(JSONObject(objectMapper.writeValueAsString(sscd)))
+                convertToWritabaleMap(JSONObject(gson.toJson(sscd)))
             writableArray.pushMap(sscdMap)
         }
         return writableArray

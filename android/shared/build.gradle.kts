@@ -41,8 +41,6 @@ kotlin {
             implementation(files("libs/app-release.aar"))
             implementation(platform("com.google.firebase:firebase-bom:32.7.0"))
             implementation("com.google.firebase:firebase-messaging")
-            implementation("com.fasterxml.jackson.core:jackson-databind:2.13.1")
-            implementation("com.fasterxml.jackson.module:jackson-module-kotlin:2.13.1")
         }
     }
 }
