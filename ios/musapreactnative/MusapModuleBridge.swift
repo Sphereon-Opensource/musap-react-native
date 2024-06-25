@@ -28,18 +28,24 @@ class MusapModule: NSObject {
   }
 
   @objc
-  func generateKey(_ sscdID: String, req: NSDictionary, callback: @escaping RCTResponseSenderBlock) {
-      guard let sscd = MusapClient.listEnabledSscds()?.first(where: { $0.getSscdId() == sscdID }) else {
-        callback(["Error: SSCD not found"])
+  func generateKey(_ sscdId: String, req: NSDictionary, completion: @escaping RCTResponseSenderBlock) {
+      guard let sscd = MusapClient.listEnabledSscds()?.first(where: { $0.getSscdId() == sscdId }) else {
+        completion(["Error: SSCD not found"])
         return
       }
 
+      var completed = false
       let musapCallback: (Result<MusapKey, MusapError>) -> Void = { result in
+        if(completed) {
+          return
+        }
         switch result {
         case .success(let musapKey):
-          callback(["Key successfully created: \(musapKey.getKeyId())"])
+          completed = true
+          completion(["Key successfully created: \(musapKey.getKeyId()!)"]) // FIXME remove !
         case .failure(let error):
-          callback(["Error creating key: \(error.localizedDescription)"])
+          completed = true
+          completion(["Error creating key: \(error.localizedDescription)"])
         }
       }
 
@@ -50,16 +56,16 @@ class MusapModule: NSObject {
     }
 
   @objc
-  func sign(_ req: NSDictionary, callback: @escaping RCTResponseSenderBlock) {
+  func sign(_ req: NSDictionary, completion: @escaping RCTResponseSenderBlock) {
     do {
       let reqObj = try req.toSignatureReq()
       
       let musapCallback: (Result<MusapSignature, MusapError>) -> Void = { result in
         switch result {
         case .success(let musapSignature):
-          callback(["Data successfully signed: \(musapSignature.getB64Signature())"])
+          completion(["Data successfully signed: \(musapSignature.getB64Signature())"])
         case .failure(let error):
-          callback(["Error signing the data: \(error.localizedDescription)"])
+          completion(["Error signing the data: \(error.localizedDescription)"])
         }
       }
       
@@ -67,25 +73,41 @@ class MusapModule: NSObject {
         await MusapClient.sign(req: reqObj, completion: musapCallback)
       }
     } catch let error {
-      callback(["Error signing the data: \(error.localizedDescription)"])
+      completion(["Error signing the data: \(error.localizedDescription)"])
     }
   }
 
+  
   @objc
-  func listEnabledSscds(_ resolver: RCTPromiseResolveBlock, rejecter reject: RCTPromiseRejectBlock) {
+  func enableSscd(_ sscdType: String) -> Any? { // -> Void crashes the app
+      let sscd: any MusapSscdProtocol
+      switch sscdType {
+      case "HSM":
+          sscd = SecureEnclaveSscd()
+      case "YUBI_KEY":
+          sscd = YubikeySscd()
+      default:
+          NSException(name: NSExceptionName.invalidArgumentException, reason: "Unsupported SSCD type", userInfo: nil).raise()
+          return nil
+      }
+      MusapClient.enableSscd(sscd: sscd, sscdId: sscdType)
+    return nil
+  }
+
+  @objc
+  func listEnabledSscds() -> NSArray {
     guard let sscds = MusapClient.listEnabledSscds() else {
-      reject("Error", "Unable to list enabled SSCDs", nil)
-      return
-    }
-    let sscdList = sscds.map { $0.toWritableMap() }
-    resolver(sscdList)
+         return NSArray()
+     }
+    let sscdList = sscds.map{ $0.toNSDictionary() }
+    return sscdList as NSArray
   }
-
+  
   @objc
-  func listActiveSscds(_ resolver: RCTPromiseResolveBlock, rejecter reject: RCTPromiseRejectBlock) {
+  func listActiveSscds() -> NSArray {
     let sscds = MusapClient.listActiveSscds()
-    let sscdList = sscds.map { $0.toWritableMap() }
-    resolver(sscdList)
+    let sscdList = sscds.map { $0.toNSDictionary() }
+    return sscdList as NSArray
   }
 }
 
@@ -283,7 +305,7 @@ extension NSDictionary {
 }
 
 extension MusapSscd {
-  func toWritableMap() -> NSDictionary {
+  func toNSDictionary() -> NSDictionary {
     let writableMap = NSMutableDictionary()
 
     guard let sscdInfo = self.getSscdInfo() else {

@@ -9,17 +9,15 @@
 
 @interface RCT_EXTERN_MODULE(MusapModule, NSObject)
 
-RCT_EXTERN_METHOD(listActiveSscds:(RCTPromiseResolveBlock)resolver rejecter:(RCTPromiseRejectBlock)reject)
+RCT_EXTERN__BLOCKING_SYNCHRONOUS_METHOD(listActiveSscds)
 
+RCT_EXTERN__BLOCKING_SYNCHRONOUS_METHOD(listEnabledSscds)
 
-RCT_EXTERN_METHOD(listEnabledSscds:(RCTPromiseResolveBlock)resolver rejecter:(RCTPromiseRejectBlock)reject)
+RCT_EXTERN__BLOCKING_SYNCHRONOUS_METHOD(enableSscd: (NSString) sscdType)
 
-
-RCT_EXTERN_METHOD(generateKeys: sscd: (NSDictionary *) sscd req: (NSDictionary *) req completion: (RCTResponseSenderBlock *) completion)
+RCT_EXTERN_METHOD(generateKey: (NSString) sscdId req: (NSDictionary *) req completion: (RCTResponseSenderBlock *) completion)
 
 RCT_EXTERN_METHOD(sign: req: (NSDictionary *) req completion: (RCTResponseSenderBlock *) completion)
-
-RCT_EXTERN_METHOD(enableSscd: sscd: (NSDictionary *) sscd sscdId: (NSString) sscdId)
 
 RCT_EXTERN_METHOD(getSscdInstance: type: (NSString) type)
 

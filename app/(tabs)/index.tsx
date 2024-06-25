@@ -4,19 +4,19 @@ import { HelloWave } from '@/components/HelloWave';
 import ParallaxScrollView from '@/components/ParallaxScrollView';
 import { ThemedText } from '@/components/ThemedText';
 import { ThemedView } from '@/components/ThemedView';
-import MusapModule from "@/app/(tabs)/musap-module";
-import { KeyGenReq } from '@/types/musap-types';
+import {KeyGenReq, MusapModule} from '@/types/musap-types';
 
 export default function HomeScreen() {
+
+    MusapModule?.enableSscd('HSM')
     const listEnabledSscds = MusapModule?.listEnabledSscds()
     const listActiveSscds = MusapModule?.listActiveSscds()
     try {
         console.log(`active SSCDs: ${JSON.stringify(listActiveSscds)}\n`)
         console.log(`enabled SSCDs: ${JSON.stringify(listEnabledSscds)}\n`)
-        console.log(`sign: ${MusapModule.sign}\n`)
         console.log(`generateKey: ${MusapModule.generateKey}\n`)
 
-        const sscdInfo = listEnabledSscds[0].sscdInfo
+        const sscdInfo = listEnabledSscds[0]
 
         const keyGenRequest: KeyGenReq = {
             attributes: [

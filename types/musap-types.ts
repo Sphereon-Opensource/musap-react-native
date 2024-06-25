@@ -1,3 +1,5 @@
+import {NativeModules} from "react-native";
+
 export type KeyAlgorithmPrimitive = 'RSA' | 'EC';
 
 export type KeyAlgorithmType =
@@ -120,3 +122,14 @@ interface Comparable<T> {
 type MusapLoAScheme = 'EIDAS-2014' | 'ISO-29115';
 const LOA_SCHEME_EIDAS: MusapLoAScheme = 'EIDAS-2014';
 const LOA_SCHEME_ISO: MusapLoAScheme = 'ISO-29115';
+
+type SscdType = 'HSM' | 'YUBI_KEY'
+export interface MusapModuleType {
+    listEnabledSscds(): Array<SscdInfo>;
+    listActiveSscds(): Array<SscdInfo>;
+    enableSscd(sscdType: SscdType): void;
+    generateKey (sscdType: string | SscdType, req: unknown, callBack: Function): Promise<void>
+}
+
+export const MusapModule: MusapModuleType = NativeModules.MusapModule as MusapModuleType;
+
