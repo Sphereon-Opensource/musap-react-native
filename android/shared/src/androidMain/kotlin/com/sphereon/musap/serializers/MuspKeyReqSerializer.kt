@@ -1,4 +1,4 @@
-package com.sphereon.musap.rnserializer
+package com.sphereon.musap.serializers
 
 
 import android.app.Activity
@@ -10,7 +10,7 @@ import fi.methics.musap.sdk.internal.datatype.StepUpPolicy
 import fi.methics.musap.sdk.internal.keygeneration.KeyGenReq
 
 
-fun ReadableMap.toKeyGenReq(view: View?, activity: Activity?): KeyGenReq {
+fun ReadableMap.toKeyGenReq(activity: Activity?, view: View? = null): KeyGenReq {
     val builder = KeyGenReq.Builder()
 
     if (hasKey("keyAlias")) {

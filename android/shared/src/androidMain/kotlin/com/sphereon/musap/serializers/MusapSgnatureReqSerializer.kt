@@ -1,4 +1,4 @@
-package com.sphereon.musap.rnserializer
+package com.sphereon.musap.serializers
 
 import android.app.Activity
 import com.facebook.react.bridge.ReadableMap

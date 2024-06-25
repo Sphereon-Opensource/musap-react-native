@@ -1,4 +1,4 @@
-package com.sphereon.musap.shared;
+package com.sphereon.musap;
 
 import android.view.View
 import com.facebook.react.ReactPackage;

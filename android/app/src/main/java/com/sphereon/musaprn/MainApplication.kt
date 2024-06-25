@@ -10,9 +10,8 @@ import com.facebook.react.ReactPackage
 import com.facebook.react.defaults.DefaultNewArchitectureEntryPoint.load
 import com.facebook.react.defaults.DefaultReactNativeHost
 import com.facebook.soloader.SoLoader
-import com.sphereon.musap.shared.MusapModuleAndroid
-import com.sphereon.musap.shared.MusapPackage
-import com.sphereon.musap.shared.SscdType.AKS
+import com.sphereon.musap.MusapModuleAndroid
+import com.sphereon.musap.MusapPackage
 import expo.modules.ApplicationLifecycleDispatcher
 import expo.modules.ReactNativeHostWrapper
 
@@ -46,7 +45,6 @@ class MainApplication : Application(), ReactApplication {
       load()
     }
     MusapModuleAndroid.init(this)
-    MusapModuleAndroid.enableSscd(AKS, "ANDROID", this)
     ApplicationLifecycleDispatcher.onApplicationCreate(this)
   }
 

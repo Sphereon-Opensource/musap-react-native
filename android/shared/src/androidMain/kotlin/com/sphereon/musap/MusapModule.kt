@@ -1,4 +1,4 @@
-package com.sphereon.musap.shared;
+package com.sphereon.musap;
 
 import android.content.Context
 import com.facebook.react.bridge.Arguments
@@ -9,9 +9,10 @@ import com.facebook.react.bridge.ReactMethod
 import com.facebook.react.bridge.ReadableMap
 import com.facebook.react.bridge.WritableArray
 import com.facebook.react.util.RNLog
-import com.sphereon.musap.rnserializer.toKeyGenReq
-import com.sphereon.musap.rnserializer.toSignatureReq
-import com.sphereon.musap.rnserializer.toWritableMap
+import com.sphereon.musap.models.SscdType
+import com.sphereon.musap.serializers.toKeyGenReq
+import com.sphereon.musap.serializers.toSignatureReq
+import com.sphereon.musap.serializers.toWritableMap
 import fi.methics.musap.sdk.api.MusapCallback
 import fi.methics.musap.sdk.api.MusapClient
 import fi.methics.musap.sdk.api.MusapException
@@ -19,9 +20,10 @@ import fi.methics.musap.sdk.extension.MusapSscdInterface
 import fi.methics.musap.sdk.internal.datatype.MusapKey
 import fi.methics.musap.sdk.internal.datatype.MusapSignature
 import fi.methics.musap.sdk.sscd.android.AndroidKeystoreSscd
+import fi.methics.musap.sdk.sscd.yubikey.YubiKeySscd
 
 
-class MusapModuleAndroid(context: ReactApplicationContext) : ReactContextBaseJavaModule(context), MusapModule {
+class MusapModuleAndroid(private val context: ReactApplicationContext) : ReactContextBaseJavaModule(context) {
 
     override fun getName(): String = "MusapModule"
 
@@ -30,9 +32,8 @@ class MusapModuleAndroid(context: ReactApplicationContext) : ReactContextBaseJav
     }
 
     @ReactMethod
-    override fun generateKey(sscdID: String, req: ReadableMap, callback: Callback) {
-
-        val sscd = MusapClient.listEnabledSscds().first { it.sscdId == sscdID }
+    fun generateKey(sscdType: String, req: ReadableMap, callback: Callback) {
+        val sscd = MusapClient.listEnabledSscds().first { it.sscdId == sscdType }
         val musapCallback = object : MusapCallback<MusapKey> {
             override fun onSuccess(p0: MusapKey?) {
                 callback.invoke("Key successfully created: ${p0?.keyId}")
@@ -42,14 +43,14 @@ class MusapModuleAndroid(context: ReactApplicationContext) : ReactContextBaseJav
                 callback.invoke("Error creating key: ${p0?.message}")
             }
         }
-        val reqObj = req.toKeyGenReq(null, reactApplicationContext.currentActivity)
+        val reqObj = req.toKeyGenReq(reactApplicationContext.currentActivity)
         RNLog.w(reactApplicationContext, "MUSAP client: ${MusapClient.getMusapId()}")
         RNLog.w(reactApplicationContext, "${reqObj}")
         MusapClient.generateKey(sscd, reqObj, musapCallback)
     }
 
     @ReactMethod
-    override fun sign(req: ReadableMap, callback: Callback) {
+    fun sign(req: ReadableMap, callback: Callback) {
         val reqObj = req.toSignatureReq(reactApplicationContext.currentActivity)
         val callbackTmp = object : MusapCallback<MusapSignature> {
             override fun onSuccess(p0: MusapSignature?) {
@@ -57,7 +58,7 @@ class MusapModuleAndroid(context: ReactApplicationContext) : ReactContextBaseJav
             }
 
             override fun onException(p0: MusapException?) {
-               callback.invoke("Error signing the data: ${p0?.message}")
+                callback.invoke("Error signing the data: ${p0?.message}")
             }
 
         }
@@ -66,41 +67,44 @@ class MusapModuleAndroid(context: ReactApplicationContext) : ReactContextBaseJav
 
     // enabled = supported by MUSAP
     @ReactMethod(isBlockingSynchronousMethod = true)
-    override fun listEnabledSscds(): WritableArray {
-        val sscds = MusapClient.listEnabledSscds()
+    fun listEnabledSscds(): WritableArray {
         val writableArray = Arguments.createArray()
-        for (sscd in sscds) {
-            writableArray.pushMap(sscd.toWritableMap())
+         MusapClient.listEnabledSscds().forEach{ sscd->
+            writableArray.pushMap(sscd.sscdInfo.toWritableMap())
         }
         return writableArray
     }
 
     // active = that can generate or bind keys
     @ReactMethod(isBlockingSynchronousMethod = true)
-    override fun listActiveSscds(): WritableArray {
-        val sscds = MusapClient.listActiveSscds()
+    fun listActiveSscds(): WritableArray {
         val writableArray = Arguments.createArray()
-        for (sscd in sscds) {
-            writableArray.pushMap(sscd.toWritableMap())
+        MusapClient.listActiveSscds().forEach { sscd ->
+            writableArray.pushMap(sscd.sscdInfo.toWritableMap())
         }
         return writableArray
     }
 
-    // For Android Native use, wont work otherwise because of the context
+    @ReactMethod(isBlockingSynchronousMethod = true)
+    fun enableSscd(sscdType: String)  {
+        MusapClient.enableSscd(getSscdInstance(SscdType.valueOf(sscdType)), sscdType)
+    }
+
+    fun getSscdInstance(type: SscdType): MusapSscdInterface<*> {
+        return when (type) {
+            SscdType.HSM -> AndroidKeystoreSscd(initialContext)
+            SscdType.YUBI_KEY -> YubiKeySscd(initialContext)
+            else -> throw IllegalArgumentException("$type is not a supported SSCD")
+        }
+    }
+
+    // For Android Native use, won't work otherwise because of the context
     companion object {
+        var initialContext:Context? = null
+
         fun init(context: Context) {
             MusapClient.init(context)
-        }
-
-        fun enableSscd(type: SscdType, sscdId: String, context: Context) {
-            MusapClient.enableSscd(getSscdInstance(type, context), sscdId)
-        }
-
-        fun getSscdInstance(type: SscdType, context: Context): MusapSscdInterface<*> {
-            return when (type) {
-                SscdType.AKS -> AndroidKeystoreSscd(context)
-                else -> throw IllegalArgumentException("$type is not a valid SSCD")
-            }
+            initialContext = context
         }
     }
 }
