@@ -9,9 +9,11 @@
 
 @interface RCT_EXTERN_MODULE(MusapModule, NSObject)
 
-RCT_EXTERN_METHOD(listActiveSscds)
+RCT_EXTERN_METHOD(listActiveSscds:(RCTPromiseResolveBlock)resolver rejecter:(RCTPromiseRejectBlock)reject)
 
-RCT_EXTERN_METHOD(listEnabledSscds)
+
+RCT_EXTERN_METHOD(listEnabledSscds:(RCTPromiseResolveBlock)resolver rejecter:(RCTPromiseRejectBlock)reject)
+
 
 RCT_EXTERN_METHOD(generateKeys: sscd: (NSDictionary *) sscd req: (NSDictionary *) req completion: (RCTResponseSenderBlock *) completion)
 

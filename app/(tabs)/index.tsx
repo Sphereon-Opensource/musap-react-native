@@ -9,7 +9,9 @@ import { KeyGenReq } from '@/types/musap-types';
 
 export default function HomeScreen() {
     const listEnabledSscds = MusapModule?.listEnabledSscds()
+    const listActiveSscds = MusapModule?.listActiveSscds()
     try {
+        console.log(`active SSCDs: ${JSON.stringify(listActiveSscds)}\n`)
         console.log(`enabled SSCDs: ${JSON.stringify(listEnabledSscds)}\n`)
         console.log(`sign: ${MusapModule.sign}\n`)
         console.log(`generateKey: ${MusapModule.generateKey}\n`)
