@@ -124,6 +124,7 @@ const LOA_SCHEME_EIDAS: MusapLoAScheme = 'EIDAS-2014';
 const LOA_SCHEME_ISO: MusapLoAScheme = 'ISO-29115';
 
 type SscdType = 'HSM' | 'YUBI_KEY'
+
 export interface MusapModuleType {
     listEnabledSscds(): Array<SscdInfo>;
     listActiveSscds(): Array<SscdInfo>;
