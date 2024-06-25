@@ -15,7 +15,7 @@ import org.json.JSONArray
 import org.json.JSONObject
 
 interface MusapModule {
-    fun generateKey (sscd: ReadableMap, req: ReadableMap, callback: Callback)
+    fun generateKey (sscdId: String, req: ReadableMap, callback: Callback)
     fun sign(req: ReadableMap, callback: Callback)
     fun listEnabledSscds(): WritableArray
     fun listActiveSscds(): WritableArray

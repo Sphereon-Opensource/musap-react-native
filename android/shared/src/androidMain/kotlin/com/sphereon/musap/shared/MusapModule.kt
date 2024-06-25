@@ -17,6 +17,7 @@ import fi.methics.musap.sdk.api.MusapException
 import fi.methics.musap.sdk.extension.MusapSscdInterface
 import fi.methics.musap.sdk.internal.datatype.MusapKey
 import fi.methics.musap.sdk.internal.datatype.MusapSignature
+import fi.methics.musap.sdk.internal.discovery.SscdSearchReq
 import fi.methics.musap.sdk.internal.keygeneration.KeyGenReq
 import fi.methics.musap.sdk.internal.sign.SignatureReq
 import fi.methics.musap.sdk.internal.util.MusapSscd
@@ -33,21 +34,18 @@ class MusapModuleAndroid(context: ReactApplicationContext) : ReactContextBaseJav
     }
 
     @ReactMethod
-    override fun generateKey(sscd: ReadableMap, req: ReadableMap, callback: Callback) {
-        val sscdObj = gson.fromJson(sscd.toString(), MusapSscd::class.java)
+    override fun generateKey(sscdId: String, req: ReadableMap, callback: Callback) {
         val reqObj = gson.fromJson(req.toString(), KeyGenReq::class.java)
         val musapCallback = object: MusapCallback<MusapKey> {
             override fun onSuccess(p0: MusapKey?) {
-                callback.invoke("Key successfully created: ${p0?.keyId}")
+                callback.invoke("Key successfully created: ${gson.toJson(p0)}")
             }
             override fun onException(p0: MusapException?) {
-                callback.invoke("Error creating key: ${p0?.message}")
+                callback.invoke("Error creating key: ${gson.toJson(p0)}")
             }
         }
-        reqObj.activity = reactApplicationContext.currentActivity
-        RNLog.w(reactApplicationContext, "MUSAP client: ${MusapClient.getMusapId()}")
-        RNLog.w(reactApplicationContext, "${reqObj}")
-        MusapClient.generateKey(sscdObj, reqObj, musapCallback)
+        val sscd = MusapClient.listEnabledSscds().first{ it.sscdId == sscdId }
+        MusapClient.generateKey(sscd, reqObj, musapCallback)
     }
 
     @ReactMethod
@@ -55,10 +53,10 @@ class MusapModuleAndroid(context: ReactApplicationContext) : ReactContextBaseJav
         val reqObj = gson.fromJson(req.toString(), SignatureReq::class.java)
         val callbackTmp = object: MusapCallback<MusapSignature>{
             override fun onSuccess(p0: MusapSignature?) {
-                callback.invoke("Data successfully signed: ${p0?.b64Signature}")
+                callback.invoke("Data successfully signed: ${gson.toJson(p0)}")
             }
             override fun onException(p0: MusapException?) {
-               callback.invoke("Error signing the data: ${p0?.message}")
+               callback.invoke("Error signing the data: ${gson.toJson(p0)}")
             }
 
         }
