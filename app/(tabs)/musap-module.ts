@@ -9,8 +9,7 @@ interface MusapModuleType {
     listEnabledSscds(): any;
     listActiveSscds(): any;
     // FIXME must be fixed when the typescript code is generated
-    generateKey (sscd: unknown, req: unknown, callBack: MusapCallback<any>): Promise<void>
-    sign(req: unknown, calback: Function): void
+    generateKey (sscdId: String, req: unknown, callBack: Function): Promise<void>
 }
 
 const { MusapModule } = NativeModules;

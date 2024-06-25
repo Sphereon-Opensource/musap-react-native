@@ -24,14 +24,14 @@ export default function HomeScreen() {
                 { name: 'purpose', value: 'decrypt' }
             ],
             did: 'did:example:123456789abcdefghi',
-            keyAlgorithm: { isEc: true, isRsa: false, bits: 256, primitive: "EC", curve: "secp256r1" },
+            keyAlgorithm: { bits: 256, primitive: "EC", curve: "secp256r1" },
             keyAlias: "testKey",
             keyUsage: "sign",
             role: "admin",
         }
 
-        console.log(`Generating key for sscdId ${sscdInfo.sscdId}`)
-        MusapModule.generateKey(listEnabledSscds[0], keyGenRequest, console.log)
+        console.log(`Generating key for sscdId ${sscdInfo.sscdId}...\n`)
+        MusapModule.generateKey(sscdInfo.sscdId, keyGenRequest, console.log)
 
      } catch(e) {
         console.log(JSON.stringify(e))
