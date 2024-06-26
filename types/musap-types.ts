@@ -28,8 +28,13 @@ export interface SscdInfo {
     country: string;
     provider: string;
     keygenSupported: boolean;
-    algorithms: KeyAlgorithm[];
+    supportedAlgorithms: KeyAlgorithm[];
     formats: SignatureFormat[];
+}
+
+export interface MusapSscd {
+    sscdid: String
+    sscdInfo: SscdInfo
 }
 
 export interface KeyAlgorithm {
@@ -123,11 +128,11 @@ type MusapLoAScheme = 'EIDAS-2014' | 'ISO-29115';
 const LOA_SCHEME_EIDAS: MusapLoAScheme = 'EIDAS-2014';
 const LOA_SCHEME_ISO: MusapLoAScheme = 'ISO-29115';
 
-type SscdType = 'HSM' | 'YUBI_KEY'
+type SscdType = 'SECURITY_ENCLAVE' | 'YUBI_KEY'
 
 export interface MusapModuleType {
-    listEnabledSscds(): Array<SscdInfo>;
-    listActiveSscds(): Array<SscdInfo>;
+    listEnabledSscds(): Array<MusapSscd>;
+    listActiveSscds(): Array<MusapSscd>;
     enableSscd(sscdType: SscdType): void;
     generateKey (sscdType: string | SscdType, req: unknown, callBack: Function): Promise<void>
 }

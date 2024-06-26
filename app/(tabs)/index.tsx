@@ -8,7 +8,7 @@ import {KeyGenReq, MusapModule} from '@/types/musap-types';
 
 export default function HomeScreen() {
 
-    MusapModule?.enableSscd('HSM')
+    MusapModule?.enableSscd('SECURITY_ENCLAVE')
     const listEnabledSscds = MusapModule?.listEnabledSscds()
     const listActiveSscds = MusapModule?.listActiveSscds()
     try {
@@ -16,7 +16,8 @@ export default function HomeScreen() {
         console.log(`enabled SSCDs: ${JSON.stringify(listEnabledSscds)}\n`)
         console.log(`generateKey: ${MusapModule.generateKey}\n`)
 
-        const sscdInfo = listEnabledSscds[0]
+        const musapSscd = listEnabledSscds[0]
+        console.log(JSON.stringify(Object.keys((musapSscd))))
 
         const keyGenRequest: KeyGenReq = {
             attributes: [
@@ -24,17 +25,19 @@ export default function HomeScreen() {
                 { name: 'purpose', value: 'decrypt' }
             ],
             did: 'did:example:123456789abcdefghi',
-            keyAlgorithm: { bits: 256, primitive: "EC", curve: "secp256r1" },
+            keyAlgorithm: { bits: 256, primitive: "EC", curve: "secp245r1" },
             keyAlias: "testKey",
             keyUsage: "sign",
             role: "admin",
         }
 
-        console.log(`Generating key for sscdId ${sscdInfo.sscdId}...\n`)
-        MusapModule.generateKey(sscdInfo.sscdId, keyGenRequest, console.log)
+        console.log(`Generating key for sscdId ${musapSscd.sscdInfo.sscdId}...\n`)
+        MusapModule.generateKey(musapSscd.sscdInfo.sscdId, keyGenRequest, console.log)
 
      } catch(e) {
-        console.log(JSON.stringify(e))
+        console.log("Catch clause entered")
+        console.log(e)
+        console.log((e as Error).message)
     }
   return (
     <ParallaxScrollView

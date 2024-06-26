@@ -45,13 +45,17 @@ class MusapModule: NSObject {
           completion(["Key successfully created: \(musapKey.getKeyId()!)"]) // FIXME remove !
         case .failure(let error):
           completed = true
-          completion(["Error creating key: \(error.localizedDescription)"])
+          completion(["Error creating key: \(error.localizedDescription): Error code: \(error.errorCode)"])
         }
       }
 
-      let reqObj = req.toKeyGenReq()
-      Task {
-        await MusapClient.generateKey(sscd: sscd, req: reqObj, completion: musapCallback)
+      do {
+        let reqObj = try req.toKeyGenReq()
+        Task {
+          await MusapClient.generateKey(sscd: sscd, req: reqObj, completion: musapCallback)
+        }
+      } catch let error {
+        completion(["Error creating key: \(error.localizedDescription)"])
       }
     }
 
@@ -82,7 +86,7 @@ class MusapModule: NSObject {
   func enableSscd(_ sscdType: String) -> Any? { // -> Void crashes the app
       let sscd: any MusapSscdProtocol
       switch sscdType {
-      case "HSM":
+      case "SECURITY_ENCLAVE":
           sscd = SecureEnclaveSscd()
       case "YUBI_KEY":
           sscd = YubikeySscd()
@@ -113,7 +117,7 @@ class MusapModule: NSObject {
 
 
 extension NSDictionary {
-  func toKeyGenReq() -> KeyGenReq {
+  func toKeyGenReq() throws -> KeyGenReq {
     let keyAlias = self["keyAlias"] as? String ?? ""
     let did = self["did"] as? String
     let role = self["role"] as? String ?? ""
@@ -132,12 +136,19 @@ extension NSDictionary {
       }
     }
   
+    // FIXME Need to find a proper way to unwrap the vaues from the optional
     var keyAlgorithm: KeyAlgorithm?
-    if let keyAlgorithmMap = self["keyAlgorithm"] as? [String: Any],
-       let primitive = keyAlgorithmMap["primitive"] as? String,
-       let bits = keyAlgorithmMap["bits"] as? Int {
-      let curve = keyAlgorithmMap["curve"] as? String
-      keyAlgorithm = curve != nil ? KeyAlgorithm(primitive: primitive, curve: curve!, bits: bits) : KeyAlgorithm(primitive: primitive, bits: bits)
+    do {
+      if let keyAlgorithmMap = self["keyAlgorithm"] as? [String: Any],
+         let primitive = keyAlgorithmMap["primitive"] as? String,
+         let bits = keyAlgorithmMap["bits"] as? Int {
+        let curve = keyAlgorithmMap["curve"] as? String
+        // The enum must be used
+        let primitiveValue = try KeyAlgorithm.stringToPrimitive(string: primitive)
+        // The value must be unwrapped from the optional
+        let bitsValue = try KeyAlgorithm.unwrapBitsFromOptional(bits: bits)
+        keyAlgorithm = curve != nil ? KeyAlgorithm(primitive: primitiveValue, curve: curve!, bits: bitsValue) : KeyAlgorithm(primitive: primitiveValue, bits: bitsValue)
+      }
     }
 
     return KeyGenReq(
@@ -369,6 +380,32 @@ extension KeyAlgorithm {
             return nil
         }
     }
+
+  
+  enum InvalidKeyAlgorithm: Error {
+    case invalidPrimitiveArg(message: String)
+    case invalidBitsArg(message: String)
+  }
+  
+  public static func stringToPrimitive(string: String?) throws -> String {
+    switch string?.uppercased() {
+    case "EC":
+      return KeyAlgorithm.PRIMITIVE_EC
+    case "RSA":
+      return KeyAlgorithm.PRIMITIVE_RSA
+    default:
+      throw InvalidKeyAlgorithm.invalidPrimitiveArg(message: "Primitive must be EC or RSA")
+    }
+  }
+  
+  public static func unwrapBitsFromOptional(bits: Int) throws -> Int {
+    let validNumBits: Set<Int> = [256, 384, 1024, 2048, 4096]
+    //FIXME it's not unwrapping the value from the optional
+    if !validNumBits.contains(bits) {
+      throw InvalidKeyAlgorithm.invalidBitsArg(message: "Bits must be the one of: \(validNumBits)")
+    }
+    return bits
+  }
 }
 
 
