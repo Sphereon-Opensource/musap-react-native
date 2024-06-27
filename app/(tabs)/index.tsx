@@ -8,7 +8,7 @@ import {KeyGenReq, MusapModule} from '@/types/musap-types';
 
 export default function HomeScreen() {
 
-    MusapModule?.enableSscd('SECURITY_ENCLAVE')
+    MusapModule?.enableSscd('TEE')
     const listEnabledSscds = MusapModule?.listEnabledSscds()
     const listActiveSscds = MusapModule?.listActiveSscds()
     try {
@@ -24,8 +24,7 @@ export default function HomeScreen() {
                 { name: 'purpose', value: 'decrypt' }
             ],
             did: 'did:example:123456789abcdefghi',
-            // we cannot just use the values from the SSCD, MUSAP may be expecting something different
-            keyAlgorithm: { primitive: "EC", curve: "ecc_p256_k1", bits: 256 },
+            keyAlgorithm: { primitive: "EC", curve: "secp256r1", bits: 256 },
             keyAlias: "testKey6", // Alias must be unique, at least for iOS otherwise error code 900 is thrown
             keyUsage: "sign",
             role: "administrator",

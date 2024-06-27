@@ -44,7 +44,6 @@ class MusapModuleAndroid(private val context: ReactApplicationContext) : ReactCo
             }
         }
         val reqObj = req.toKeyGenReq(reactApplicationContext.currentActivity)
-        RNLog.w(reactApplicationContext, "MUSAP client: ${MusapClient.getMusapId()}")
         RNLog.w(reactApplicationContext, "${reqObj}")
         MusapClient.generateKey(sscd, reqObj, musapCallback)
     }
@@ -92,7 +91,7 @@ class MusapModuleAndroid(private val context: ReactApplicationContext) : ReactCo
 
     fun getSscdInstance(type: SscdType): MusapSscdInterface<*> {
         return when (type) {
-            SscdType.HSM -> AndroidKeystoreSscd(initialContext)
+            SscdType.TEE -> AndroidKeystoreSscd(initialContext)
             SscdType.YUBI_KEY -> YubiKeySscd(initialContext)
             else -> throw IllegalArgumentException("$type is not a supported SSCD")
         }

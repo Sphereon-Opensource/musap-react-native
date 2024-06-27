@@ -128,7 +128,7 @@ type MusapLoAScheme = 'EIDAS-2014' | 'ISO-29115';
 const LOA_SCHEME_EIDAS: MusapLoAScheme = 'EIDAS-2014';
 const LOA_SCHEME_ISO: MusapLoAScheme = 'ISO-29115';
 
-type SscdType = 'SECURITY_ENCLAVE' | 'YUBI_KEY'
+type SscdType = 'TEE' | 'YUBI_KEY'
 
 export interface MusapModuleType {
     listEnabledSscds(): Array<MusapSscd>;
