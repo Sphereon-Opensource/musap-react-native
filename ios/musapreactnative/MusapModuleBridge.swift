@@ -73,7 +73,7 @@ class MusapModule: NSObject {
   func sign(_ req: NSDictionary, completion: @escaping RCTResponseSenderBlock) {
     do {
       let reqObj = try req.toSignatureReq()
-      
+
       let musapCallback: (Result<MusapSignature, MusapError>) -> Void = { result in
         switch result {
         case .success(let musapSignature):
@@ -82,7 +82,7 @@ class MusapModule: NSObject {
           completion(["Error signing the data: \(error.localizedDescription)"])
         }
       }
-      
+
       Task {
         await MusapClient.sign(req: reqObj, completion: musapCallback)
       }
@@ -91,12 +91,12 @@ class MusapModule: NSObject {
     }
   }
 
-  
+
   @objc
   func enableSscd(_ sscdType: String) -> Any? { // -> Void crashes the app
       let sscd: any MusapSscdProtocol
       switch sscdType {
-      case "SECURITY_ENCLAVE":
+      case "TEE":
           sscd = SecureEnclaveSscd()
       case "YUBI_KEY":
           sscd = YubikeySscd()
@@ -116,7 +116,7 @@ class MusapModule: NSObject {
     let sscdList = sscds.map{ $0.toNSDictionary() }
     return sscdList as NSArray
   }
-  
+
   @objc
   func listActiveSscds() -> NSArray {
     let sscds = MusapClient.listActiveSscds()
@@ -132,7 +132,7 @@ extension NSDictionary {
     let did = self["did"] as? String
     let role = self["role"] as? String ?? ""
     let stepUpPolicy = self["stepUpPolicy"] != nil ? StepUpPolicy() : nil
-    
+
     var attributes: [KeyAttribute]?
     if let attributesArray = self["attributes"] as? [[String: Any]] {
       attributes = attributesArray.compactMap { attributeMap in
@@ -145,18 +145,18 @@ extension NSDictionary {
         return nil
       }
     }
-  
+
     var keyAlgorithm: KeyAlgorithm?
-    do {
-      if let keyAlgorithmMap = self["keyAlgorithm"] as? [String: Any],
-         let primitive = keyAlgorithmMap["primitive"] as? String,
-         let bits = keyAlgorithmMap["bits"] as? Int {
-        let curve = keyAlgorithmMap["curve"] as? String
-        // The enum must be used
-        let primitiveValue = try KeyAlgorithm.stringToPrimitive(string: primitive)
-        let bitsValue = try KeyAlgorithm.validateNumBits(bits: bits)
-        keyAlgorithm = curve != nil ? KeyAlgorithm(primitive: primitiveValue, curve: curve!, bits: bitsValue) : KeyAlgorithm(primitive: primitiveValue, bits: bitsValue)
-      }
+    
+    if let keyAlgorithmMap = self["keyAlgorithm"] as? [String: Any],
+       let primitive = keyAlgorithmMap["primitive"] as? String,
+       let bits = keyAlgorithmMap["bits"] as? Int {
+      let curve = keyAlgorithmMap["curve"] as? String
+      // The enum must be used
+      let primitiveValue = try KeyAlgorithm.stringToPrimitive(string: primitive)
+      let bitsValue = try KeyAlgorithm.validateNumBits(bits: bits)
+      let curveValue = try KeyAlgorithm.curveMapper(curve: curve)
+      keyAlgorithm = curveValue != nil ? KeyAlgorithm(primitive: primitiveValue, curve: curveValue!, bits: bitsValue) : KeyAlgorithm(primitive: primitiveValue, bits: bitsValue)
     }
 
     return KeyGenReq(
@@ -207,11 +207,11 @@ extension NSDictionary {
         let publicKeyData = Data(publicKeyBytes)
         publicKey = PublicKey(publicKey: publicKeyData)
       }
-      
+
       if(publicKey == nil) {
         throw SignatureReqError.invalidPublicKey
       }
-      
+
       let certificate: MusapCertificate? = (keyMap["certificate"] as? String).flatMap { certBase64 in
           if let certData = Data(base64Encoded: certBase64),
              let cert = SecCertificateCreateWithData(nil, certData as CFData) {
@@ -227,7 +227,7 @@ extension NSDictionary {
           }
           return nil
       }
-   
+
       var attributes: [KeyAttribute]?
       if let attributesArray = self["attributes"] as? [[String: Any]] {
         attributes = attributesArray.compactMap { attributeMap in
@@ -268,7 +268,7 @@ extension NSDictionary {
 
       let isBiometricRequired = keyMap["isBiometricRequired"] as? Bool ?? false
 
-      
+
       key = MusapKey(
         keyAlias: keyMap["keyAlias"] as? String ?? "",
         keyType: keyMap["keyType"] as? String,
@@ -288,7 +288,7 @@ extension NSDictionary {
         did: keyMap["did"] as? String,
         state: keyMap["state"] as? String)
     }
-    
+
 
     var data: Data? = nil
     if let dataArray = self["data"] as? [Int] {
@@ -387,12 +387,13 @@ extension KeyAlgorithm {
         }
     }
 
-  
+
   enum InvalidKeyAlgorithm: Error {
     case invalidPrimitiveArg(message: String)
     case invalidBitsArg(message: String)
+    case invalidCurveArg(message: String)
   }
-  
+
   public static func stringToPrimitive(string: String?) throws -> String {
     switch string?.uppercased() {
     case "EC":
@@ -403,13 +404,31 @@ extension KeyAlgorithm {
       throw InvalidKeyAlgorithm.invalidPrimitiveArg(message: "Primitive must be EC or RSA")
     }
   }
-  
+
   public static func validateNumBits(bits: Int) throws -> Int {
     let validNumBits: Set<Int> = [256, 384, 1024, 2048, 4096]
     if !validNumBits.contains(bits) {
       throw InvalidKeyAlgorithm.invalidBitsArg(message: "Bits must be the one of: \(validNumBits)")
     }
     return bits
+  }
+  
+  public static func curveMapper(curve: String?) throws -> String? {
+    if (curve != nil) {
+      switch(curve) {
+        case "secp256r1":
+          return "ecc_p256_r1"
+        case "secp384r1":
+          return "ecc_p384_r1"
+        case "secp256k1":
+          return "ecc_p256_k1"
+        case "secp384k1":
+          return "ecc_p384_k1"
+      default:
+        throw InvalidKeyAlgorithm.invalidCurveArg(message: "Elliptic curve not supported.")
+      }
+    }
+    return curve
   }
 }
 
