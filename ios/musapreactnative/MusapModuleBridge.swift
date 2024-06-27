@@ -5,13 +5,6 @@
 //  Created by Zoë Maas on 20/06/2024.
 //
 import Foundation
-//
-//  MusapModuleBridge.swift
-//  musapreactnative
-//
-//  Created by Zoë Maas on 20/06/2024.
-//
-import Foundation
 import React
 import musap_ios
 
@@ -45,6 +38,23 @@ class MusapModule: NSObject {
           completion(["Key successfully created: \(musapKey.getKeyId()!)"]) // FIXME remove !
         case .failure(let error):
           completed = true
+          /*
+           Error codes:
+             wrongParam: 101
+             missingParam: 102
+             invalidAlgorithm:  103
+             unknownKey:        105
+             unsupportedData:   107
+             keygenUnsupported: 108
+             bindUnsupported:   109
+             timedOut:          208
+             userCancel:        401
+             keyBlocked:        402
+             sscdBlocked:       403
+             internalError:     900
+             illegalArgument:   900
+             * Duplicated unique value returns 900 too
+           */
           completion(["Error creating key: \(error.localizedDescription): Error code: \(error.errorCode)"])
         }
       }
@@ -136,7 +146,6 @@ extension NSDictionary {
       }
     }
   
-    // FIXME Need to find a proper way to unwrap the vaues from the optional
     var keyAlgorithm: KeyAlgorithm?
     do {
       if let keyAlgorithmMap = self["keyAlgorithm"] as? [String: Any],
@@ -145,8 +154,7 @@ extension NSDictionary {
         let curve = keyAlgorithmMap["curve"] as? String
         // The enum must be used
         let primitiveValue = try KeyAlgorithm.stringToPrimitive(string: primitive)
-        // The value must be unwrapped from the optional
-        let bitsValue = try KeyAlgorithm.unwrapBitsFromOptional(bits: bits)
+        let bitsValue = try KeyAlgorithm.validateNumBits(bits: bits)
         keyAlgorithm = curve != nil ? KeyAlgorithm(primitive: primitiveValue, curve: curve!, bits: bitsValue) : KeyAlgorithm(primitive: primitiveValue, bits: bitsValue)
       }
     }
@@ -357,8 +365,6 @@ extension MusapSscd {
   }
 }
 
-import Foundation
-
 extension KeyAlgorithm {
     public static func fromString(_ string: String) -> KeyAlgorithm? {
         switch string.lowercased() {
@@ -398,9 +404,8 @@ extension KeyAlgorithm {
     }
   }
   
-  public static func unwrapBitsFromOptional(bits: Int) throws -> Int {
+  public static func validateNumBits(bits: Int) throws -> Int {
     let validNumBits: Set<Int> = [256, 384, 1024, 2048, 4096]
-    //FIXME it's not unwrapping the value from the optional
     if !validNumBits.contains(bits) {
       throw InvalidKeyAlgorithm.invalidBitsArg(message: "Bits must be the one of: \(validNumBits)")
     }

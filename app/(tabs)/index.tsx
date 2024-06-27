@@ -12,9 +12,8 @@ export default function HomeScreen() {
     const listEnabledSscds = MusapModule?.listEnabledSscds()
     const listActiveSscds = MusapModule?.listActiveSscds()
     try {
-        console.log(`active SSCDs: ${JSON.stringify(listActiveSscds)}\n`)
-        console.log(`enabled SSCDs: ${JSON.stringify(listEnabledSscds)}\n`)
-        console.log(`generateKey: ${MusapModule.generateKey}\n`)
+        console.log(`active SSCDs: ${JSON.stringify(listActiveSscds)}\n\n`)
+        console.log(`enabled SSCDs: ${JSON.stringify(listEnabledSscds)}\n\n`)
 
         const musapSscd = listEnabledSscds[0]
         console.log(JSON.stringify(Object.keys((musapSscd))))
@@ -25,14 +24,15 @@ export default function HomeScreen() {
                 { name: 'purpose', value: 'decrypt' }
             ],
             did: 'did:example:123456789abcdefghi',
-            keyAlgorithm: { bits: 256, primitive: "EC", curve: "secp245r1" },
-            keyAlias: "testKey",
+            // we cannot just use the values from the SSCD, MUSAP may be expecting something different
+            keyAlgorithm: { primitive: "EC", curve: "ecc_p256_k1", bits: 256 },
+            keyAlias: "testKey6", // Alias must be unique, at least for iOS otherwise error code 900 is thrown
             keyUsage: "sign",
-            role: "admin",
+            role: "administrator",
         }
 
-        console.log(`Generating key for sscdId ${musapSscd.sscdInfo.sscdId}...\n`)
-        MusapModule.generateKey(musapSscd.sscdInfo.sscdId, keyGenRequest, console.log)
+        console.log(`Generating key for sscdId ${musapSscd.sscdId}...\n`)
+        MusapModule.generateKey(musapSscd.sscdId, keyGenRequest, console.log)
 
      } catch(e) {
         console.log("Catch clause entered")

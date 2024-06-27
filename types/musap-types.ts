@@ -33,7 +33,7 @@ export interface SscdInfo {
 }
 
 export interface MusapSscd {
-    sscdid: String
+    sscdId: string
     sscdInfo: SscdInfo
 }
 
