@@ -2,31 +2,55 @@ package com.sphereon.musap.serializers
 
 import com.facebook.react.bridge.Arguments
 import com.facebook.react.bridge.WritableMap
+import fi.methics.musap.sdk.extension.SscdSettings
+import fi.methics.musap.sdk.internal.datatype.KeyAlgorithm
 import fi.methics.musap.sdk.internal.datatype.SscdInfo
 import fi.methics.musap.sdk.internal.util.MusapSscd
 
+
+fun KeyAlgorithm.toWritableMap(): WritableMap {
+
+    return Arguments.createMap().apply {
+        putString("curve", curve)
+        putString("primitive", primitive)
+        putInt("bits", bits)
+        putBoolean("isRsa", isRsa)
+        putBoolean("isEc", isEc)
+    }
+}
 
 fun SscdInfo.toWritableMap(): WritableMap {
 
     val supportedAlgorithms = Arguments.createArray()
     this.supportedAlgorithms?.forEach {
-        val algorithm = Arguments.createMap()
-        algorithm.putString("curve", it.curve)
-        algorithm.putString("primitive", it.primitive)
-        algorithm.putInt("bits", it.bits)
-        algorithm.putBoolean("isRsa", it.isRsa)
-        algorithm.putBoolean("isEc", it.isEc)
-        supportedAlgorithms.pushMap(algorithm)
+        supportedAlgorithms.pushMap(it.toWritableMap())
     }
 
-    val sscdInfo = Arguments.createMap()
-    sscdInfo.putString("sscdId", this.sscdId)
-    sscdInfo.putString("sscdType", this.sscdType)
-    sscdInfo.putString("sscdName", this.sscdName)
-    sscdInfo.putString("country", this.country)
-    sscdInfo.putString("provider", this.provider)
-    sscdInfo.putBoolean("isKeyGenSupported", this.isKeygenSupported ?: false)
-    sscdInfo.putArray("supportedAlgorithms", supportedAlgorithms)
+    return Arguments.createMap().apply {
+        putString("sscdId", sscdId)
+        putString("sscdType", sscdType)
+        putString("sscdName", sscdName)
+        putString("country", country)
+        putString("provider", provider)
+        putBoolean("isKeyGenSupported", isKeygenSupported ?: false)
+        putArray("supportedAlgorithms", supportedAlgorithms)
+    }
+}
 
-    return sscdInfo
+fun SscdSettings.toWritableMap(): WritableMap {
+
+    val settings = Arguments.createMap()
+    this.settings.entries.forEach {
+        settings.putString(it.key, it.value)
+    }
+    return settings
+}
+
+fun MusapSscd.toWritableMap(): WritableMap {
+
+    return Arguments.createMap().apply {
+        putString("sscdId", sscdId)
+        putMap("sscdInfo", sscdInfo.toWritableMap())
+        putMap("settings", settings.toWritableMap())
+    }
 }

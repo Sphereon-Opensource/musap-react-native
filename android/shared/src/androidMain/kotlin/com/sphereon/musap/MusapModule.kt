@@ -1,13 +1,7 @@
 package com.sphereon.musap;
 
 import android.content.Context
-import com.facebook.react.bridge.Arguments
-import com.facebook.react.bridge.Callback
-import com.facebook.react.bridge.ReactApplicationContext
-import com.facebook.react.bridge.ReactContextBaseJavaModule
-import com.facebook.react.bridge.ReactMethod
-import com.facebook.react.bridge.ReadableMap
-import com.facebook.react.bridge.WritableArray
+import com.facebook.react.bridge.*
 import com.facebook.react.util.RNLog
 import com.sphereon.musap.models.SscdType
 import com.sphereon.musap.serializers.toKeyGenReq
@@ -87,6 +81,30 @@ class MusapModuleAndroid(private val context: ReactApplicationContext) : ReactCo
     @ReactMethod(isBlockingSynchronousMethod = true)
     fun enableSscd(sscdType: String)  {
         MusapClient.enableSscd(getSscdInstance(SscdType.valueOf(sscdType)), sscdType)
+    }
+
+    @ReactMethod(isBlockingSynchronousMethod = true)
+    fun getKeyByUri(keyURI: String): MusapKey {
+        return MusapClient.getKeyByUri(keyURI)
+    }
+
+    @ReactMethod(isBlockingSynchronousMethod = true)
+    fun getSscdInfo(sscdId: String): WritableMap {
+        return MusapClient.listEnabledSscds().first{ it.sscdId == sscdId}.sscdInfo.toWritableMap()
+    }
+
+    @ReactMethod(isBlockingSynchronousMethod = true)
+    fun getSettings(sscdId: String): WritableMap {
+        return MusapClient.listEnabledSscds().first{ it.sscdId == sscdId }.settings.toWritableMap()
+    }
+
+    @ReactMethod(isBlockingSynchronousMethod = true)
+    fun listKeys(): WritableArray {
+        val writableArray = Arguments.createArray()
+        MusapClient.listKeys().forEach{
+            writableArray.pushMap(it.toWritableMap())
+        }
+        return writableArray
     }
 
     fun getSscdInstance(type: SscdType): MusapSscdInterface<*> {
