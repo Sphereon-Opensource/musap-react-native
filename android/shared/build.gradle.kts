@@ -15,6 +15,7 @@ kotlin {
     sourceSets {
         androidMain.dependencies {
             implementation("com.facebook.react:react-android")
+            implementation("com.google.code.gson:gson:2.11.0")
             implementation("fi.methics.musap:musap-android:1.0.0") {
                 exclude(group = "com.yubico.yubikit", module = "core") // These are already jetified into musap-android.aar
                 exclude(group = "com.yubico.yubikit", module = "android")

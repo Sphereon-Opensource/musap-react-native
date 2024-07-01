@@ -67,12 +67,13 @@ export interface KeyGenReq {
 }
 
 export interface MusapKey {
+    keyUri: any
     keyAlias: string;
     keyType: string;
     keyId: string;
     sscdId: string;
     sscdType: string;
-    createdDate: string; // ISO date string
+    createdDate: number;
     publicKey: PublicKey;
     certificate: MusapCertificate;
     certificateChain: MusapCertificate[];
@@ -120,6 +121,21 @@ interface KeyAttestation {
     aaguid: string;
 }
 
+interface SignatureAttribute {
+    name: string
+    value: string
+}
+
+export interface SignatureReq {
+    key: MusapKey
+    data: any
+    displayText?: string
+    algorithm?: string
+    format?: string
+    attributes?: SignatureAttribute
+    transId?: string
+}
+
 interface Comparable<T> {
     compareTo(other: T): number;
 }
@@ -133,8 +149,13 @@ type SscdType = 'TEE' | 'YUBI_KEY'
 export interface MusapModuleType {
     listEnabledSscds(): Array<MusapSscd>;
     listActiveSscds(): Array<MusapSscd>;
+    listKeys(): string //Array<MusapKey>;
+    getKeyByUri(keyUri: string): string //MusapKey;
+    getSscdInfo(sscdId: string): SscdInfo;
+    getSettings(sscdId: string): Map<string, string>;
     enableSscd(sscdType: SscdType): void;
     generateKey (sscdType: string | SscdType, req: unknown, callBack: Function): Promise<void>
+    sign(req: String, callBack: Function): Promise<void>
 }
 
 export const MusapModule: MusapModuleType = NativeModules.MusapModule as MusapModuleType;
