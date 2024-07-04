@@ -136,6 +136,7 @@ export interface MusapModuleType {
     listActiveSscds(): Array<MusapSscd>;
     enableSscd(sscdType: SscdType): void;
     generateKey (sscdType: string | SscdType, req: unknown, callBack: Function): Promise<void>
+    sign(req: unknown, callback: Function): Promise<void>
     listKeys(): MusapKey[]
     getKeyByUri(keyUri: string): MusapKey
     getSscdInfo(sscdId: string): SscdInfo

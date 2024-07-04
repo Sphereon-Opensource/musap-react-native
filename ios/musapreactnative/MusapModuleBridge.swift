@@ -73,11 +73,18 @@ class MusapModule: NSObject {
   func sign(_ req: NSDictionary, completion: @escaping RCTResponseSenderBlock) {
     do {
       let reqObj = try req.toSignatureReq()
-
+      let key = reqObj.getKey()
+      let keyAlgo = key.getAlgorithm()
+      let signatureAlgorithm = keyAlgo?.isEc() ?? false ? SignatureAlgorithm.SHA256withECDSA : SignatureAlgorithm.SHA256withRSA
+      
       let musapCallback: (Result<MusapSignature, MusapError>) -> Void = { result in
         switch result {
         case .success(let musapSignature):
-          completion(["Data successfully signed: \(musapSignature.getB64Signature())"])
+          
+          let header = "{\"typ\":\"JWT\",\"kid\":\"\(key.getKeyId() ?? "")\",\"alg\":\"\(signatureAlgorithm)\"}".data(using: .utf8)?.encodeToBase64URL()
+          let payload = reqObj.data.encodeToBase64URL()
+          let signature = musapSignature.getRawSignature().encodeToBase64URL()
+          completion(["\(header ?? "").\(payload).\(signature)"])
         case .failure(let error):
           completion(["Error signing the data: \(error.localizedDescription)"])
         }
@@ -144,6 +151,26 @@ class MusapModule: NSObject {
     let keys = MusapClient.listKeys()
     let keysList = keys.map { $0.toNSDictionary() }
     return keysList as NSArray
+  }
+}
+
+extension Data {
+  func encodeToBase64URL() -> String {
+    return self.base64EncodedString()
+      .replacingOccurrences(of: "+", with: "-")
+      .replacingOccurrences(of: "/", with: "_")
+      .replacingOccurrences(of: "=", with: "")
+  }
+}
+
+extension String {
+  func decodeBase64URLString() -> Data? {
+    var base64String = self
+      .replacingOccurrences(of: "-", with: "+")
+      .replacingOccurrences(of: "_", with: "/")
+    let padLength = Int(4 - base64String.count % 4) % 4
+    base64String = base64String.padding(toLength: base64String.count + padLength, withPad: "=", startingAt: 0)
+    return Data(base64Encoded: base64String)
   }
 }
 
