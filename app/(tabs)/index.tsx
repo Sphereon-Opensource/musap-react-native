@@ -27,7 +27,7 @@ export default function HomeScreen() {
         ],
         did: 'did:example:123456789abcdefghi',
         keyAlgorithm: { primitive: "EC", curve: "secp256r1", bits: 256 },
-        keyAlias: uuid.v4(), // Alias must be unique, at least for iOS otherwise error code 900 is thrown
+        keyAlias: uuid.v4().toString(), // Alias must be unique, at least for iOS otherwise error code 900 is thrown
         keyUsage: "sign",
         role: "administrator",
       }
@@ -130,7 +130,7 @@ export default function HomeScreen() {
       })
       console.log(`List keys: ${JSON.stringify(JSON.parse(MusapModule.listKeys()))}\n\n`)
       console.log(`Get SSCD info: ${JSON.stringify(MusapModule.getSscdInfo("TEE"))}\n\n`)
-      console.log(`Get SSCD Settings: ${JSON.stringify(MusapModule.getSscdSettings("TEE"))}\n\n`)
+      console.log(`Get SSCD Settings: ${JSON.stringify(MusapModule.getSettings("TEE"))}\n\n`)
 
     } catch(e) {
       console.log("Catch clause entered")

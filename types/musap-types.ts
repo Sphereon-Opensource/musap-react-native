@@ -68,12 +68,13 @@ export interface KeyGenReq {
 }
 
 export interface MusapKey {
+    keyUri: string
     keyAlias: string;
     keyType: string;
     keyId: string;
     sscdId: string;
     sscdType: string;
-    createdDate: string; // ISO date string
+    createdDate: string | number; // ISO date string
     publicKey: PublicKey;
     certificate: MusapCertificate;
     certificateChain: MusapCertificate[];
@@ -121,6 +122,21 @@ interface KeyAttestation {
     aaguid: string;
 }
 
+interface SignatureAttribute {
+    name: string
+    value: string
+}
+
+export interface SignatureReq {
+    key: MusapKey
+    data: any
+    displayText?: string
+    algorithm?: string
+    format?: string
+    attributes?: SignatureAttribute
+    transId?: string
+}
+
 interface Comparable<T> {
     compareTo(other: T): number;
 }
@@ -135,12 +151,12 @@ export interface MusapModuleType {
     listEnabledSscds(): Array<MusapSscd>;
     listActiveSscds(): Array<MusapSscd>;
     enableSscd(sscdType: SscdType): void;
-    generateKey (sscdType: string | SscdType, req: unknown, callBack: Function): Promise<void>
-    sign(req: unknown, callback: Function): Promise<void>
-    listKeys(): MusapKey[]
-    getKeyByUri(keyUri: string): MusapKey
+    generateKey (sscdType: string | SscdType, req: unknown, callback: Function): Promise<void>
+    sign(req: string, callback: Function): Promise<void>
+    listKeys(): MusapKey[] | string
+    getKeyByUri(keyUri: string): MusapKey | string
     getSscdInfo(sscdId: string): SscdInfo
-    getSscdSettings(sscdId: string): Map<String, String>
+    getSettings(sscdId: string): Map<string, string>
 }
 
 export const MusapModule: MusapModuleType = NativeModules.MusapModule as MusapModuleType;

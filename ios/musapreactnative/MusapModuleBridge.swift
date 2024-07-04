@@ -137,7 +137,7 @@ class MusapModule: NSObject {
   }
   
   @objc
-  func getSscdSettings(_ sscdId: String) -> NSDictionary? {
+  func getSettings(_ sscdId: String) -> NSDictionary? {
     return MusapClient.listEnabledSscds()?.first { $0.getSscdId() == sscdId }?.getSettingsAsNSDisctionary()
   }
   
