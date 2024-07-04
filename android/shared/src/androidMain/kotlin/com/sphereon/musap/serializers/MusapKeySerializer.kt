@@ -5,8 +5,7 @@ import com.facebook.react.bridge.WritableMap
 import fi.methics.musap.sdk.internal.datatype.*
 import java.security.Principal
 import java.security.cert.X509Certificate
-import java.time.LocalDateTime
-import java.time.ZoneId
+import java.time.Instant
 import javax.security.auth.x500.X500Principal
 
 fun KeyAttribute.toWritableMap(): WritableMap {
@@ -150,6 +149,12 @@ fun MusapLoA.toWritableMap(): WritableMap {
     }
 }
 
+fun Instant.toWritableMap(): WritableMap {
+    return Arguments.createMap().apply {
+        putInt("nano", nano)
+        putString("epochSecond", epochSecond.toString())
+    }
+}
 
 fun MusapKey.toWritableMap(): WritableMap {
 
@@ -184,9 +189,9 @@ fun MusapKey.toWritableMap(): WritableMap {
         putArray("attributes", keyAttributes)
         putMap("certificate", certificate.toWritableMap())
         putArray("certificateChain", certificateChain)
-        putString("createdDate", LocalDateTime.ofInstant(createdDate, ZoneId.systemDefault()).toString())
+        putMap("createdDate", createdDate.toWritableMap())
         putMap("defaultsignatureAlgorithm", defaultsignatureAlgorithm.toWritableMap())
-        putMap("", keyUri.toWritableMap())
+        putMap("keyUri", keyUri.toWritableMap())
         putArray("keyUsages", keyUsages)
         putArray("loa", loa)
         putMap("publicKey", publicKey.toWritableMap())
