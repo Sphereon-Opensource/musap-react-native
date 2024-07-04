@@ -335,10 +335,10 @@ extension MusapSscd {
     sscdInfo.getSupportedAlgorithms().forEach {
       let algorithm = NSMutableDictionary()
       algorithm["curve"] = $0.curve
-      algorithm["primitive"] = $0.primitive
+      algorithm["primitive"] = ($0.primitive == "73" ? "EC" : "RSA")
       algorithm["bits"] = $0.bits
-      algorithm["isRsa"] = $0.isRsa
-      algorithm["isEc"] = $0.isEc
+      algorithm["isRsa"] = $0.isRsa()
+      algorithm["isEc"] = $0.isEc()
       supportedAlgorithms.add(algorithm)
     }
 
@@ -350,16 +350,30 @@ extension MusapSscd {
     sscdInfoMap["provider"] = sscdInfo.getProvider()
     sscdInfoMap["isKeyGenSupported"] = sscdInfo.isKeygenSupported()
     sscdInfoMap["supportedAlgorithms"] = supportedAlgorithms
-
-    writableMap["sscdId"] = self.getSscdId()
-    writableMap["sscdInfo"] = sscdInfoMap
-
-    // Uncomment and adjust this block if you have settings to include
-    // let settings = NSMutableDictionary()
-    // self.getSettings()?.settings?.forEach {
-    //   settings[$0.key] = $0.value
-    // }
-    // writableMap["settings"] = settings
+    
+    let settings = NSMutableDictionary()
+    
+    // The settings are only accessible from the child class
+    switch(self.impl) {
+      case is SecureEnclaveSscd:
+        (self.impl as! SecureEnclaveSscd).getSettings()?.forEach {
+          settings[$0.key] = $0.value
+        }
+      case is KeychainSscd:
+        (self.impl as! KeychainSscd).getSettings()?.forEach {
+          settings[$0.key] = $0.value
+        }
+      case is ExternalSscd:
+        (self.impl as! ExternalSscd).getSettings()?.forEach {
+          settings[$0.key] = $0.value
+        }
+      default:
+        NSLog("There is no such SSCD type")
+    }
+    
+     writableMap["sscdId"] = self.getSscdId()
+     writableMap["sscdInfo"] = sscdInfoMap
+     writableMap["settings"] = settings
 
     return writableMap
   }
@@ -396,9 +410,9 @@ extension KeyAlgorithm {
 
   public static func stringToPrimitive(string: String?) throws -> String {
     switch string?.uppercased() {
-    case "EC":
+    case "EC": // 73
       return KeyAlgorithm.PRIMITIVE_EC
-    case "RSA":
+    case "RSA": // 42
       return KeyAlgorithm.PRIMITIVE_RSA
     default:
       throw InvalidKeyAlgorithm.invalidPrimitiveArg(message: "Primitive must be EC or RSA")
