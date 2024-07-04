@@ -1,4 +1,5 @@
 import { Image, StyleSheet, Platform } from 'react-native';
+import uuid from 'react-native-uuid'
 
 import { HelloWave } from '@/components/HelloWave';
 import ParallaxScrollView from '@/components/ParallaxScrollView';
@@ -11,12 +12,12 @@ export default function HomeScreen() {
     MusapModule?.enableSscd('TEE')
     const listEnabledSscds = MusapModule?.listEnabledSscds()
     const listActiveSscds = MusapModule?.listActiveSscds()
+    const listKeys = MusapModule?.listKeys()
     try {
         console.log(`active SSCDs: ${JSON.stringify(listActiveSscds)}\n\n`)
         console.log(`enabled SSCDs: ${JSON.stringify(listEnabledSscds)}\n\n`)
-
+        console.log(`List keys: ${JSON.stringify(listKeys)}`)
         const musapSscd = listEnabledSscds[0]
-        console.log(JSON.stringify(Object.keys((musapSscd))))
 
         const keyGenRequest: KeyGenReq = {
             attributes: [
@@ -25,13 +26,17 @@ export default function HomeScreen() {
             ],
             did: 'did:example:123456789abcdefghi',
             keyAlgorithm: { primitive: "EC", curve: "secp256r1", bits: 256 },
-            keyAlias: "testKey6", // Alias must be unique, at least for iOS otherwise error code 900 is thrown
+            keyAlias: uuid.v4(), // Alias must be unique, at least for iOS otherwise error code 900 is thrown
             keyUsage: "sign",
             role: "administrator",
         }
 
-        console.log(`Generating key for sscdId ${musapSscd.sscdId}...\n`)
-        MusapModule.generateKey(musapSscd.sscdId, keyGenRequest, console.log)
+       console.log(`Generating key for sscdId ${musapSscd.sscdId}...\n`)
+       //MusapModule.generateKey(musapSscd.sscdId, keyGenRequest, console.log)
+       console.log(`KeyUri: ${listKeys[0].keyUri}`)
+       console.log(`GetKeyByUri: ${JSON.stringify(MusapModule.getKeyByUri(listKeys[0].keyUri))}`)
+       console.log(`GetSscdInfo: ${JSON.stringify(MusapModule.getSscdInfo("TEE"))}`)
+       console.log(`GetSscdSettings: ${JSON.stringify(MusapModule.getSscdSettings("TEE"))}`)
 
      } catch(e) {
         console.log("Catch clause entered")

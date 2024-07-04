@@ -15,6 +15,14 @@ RCT_EXTERN__BLOCKING_SYNCHRONOUS_METHOD(listEnabledSscds)
 
 RCT_EXTERN__BLOCKING_SYNCHRONOUS_METHOD(enableSscd: (NSString) sscdType)
 
+RCT_EXTERN__BLOCKING_SYNCHRONOUS_METHOD(listKeys)
+
+RCT_EXTERN__BLOCKING_SYNCHRONOUS_METHOD(getSscdInfo: (NSString) sscdId)
+
+RCT_EXTERN__BLOCKING_SYNCHRONOUS_METHOD(getSscdSettings: (NSString) sscdId)
+
+RCT_EXTERN__BLOCKING_SYNCHRONOUS_METHOD(getKeyByUri: (NSString) keyUri)
+
 RCT_EXTERN_METHOD(generateKey: (NSString) sscdId req: (NSDictionary *) req completion: (RCTResponseSenderBlock *) completion)
 
 RCT_EXTERN_METHOD(sign: req: (NSDictionary *) req completion: (RCTResponseSenderBlock *) completion)

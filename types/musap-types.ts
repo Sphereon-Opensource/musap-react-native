@@ -35,6 +35,7 @@ export interface SscdInfo {
 export interface MusapSscd {
     sscdId: string
     sscdInfo: SscdInfo
+    settings: Map<String, String>
 }
 
 export interface KeyAlgorithm {
@@ -135,6 +136,10 @@ export interface MusapModuleType {
     listActiveSscds(): Array<MusapSscd>;
     enableSscd(sscdType: SscdType): void;
     generateKey (sscdType: string | SscdType, req: unknown, callBack: Function): Promise<void>
+    listKeys(): MusapKey[]
+    getKeyByUri(keyUri: string): MusapKey
+    getSscdInfo(sscdId: string): SscdInfo
+    getSscdSettings(sscdId: string): Map<String, String>
 }
 
 export const MusapModule: MusapModuleType = NativeModules.MusapModule as MusapModuleType;

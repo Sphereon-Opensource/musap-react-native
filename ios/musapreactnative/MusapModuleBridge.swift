@@ -35,7 +35,7 @@ class MusapModule: NSObject {
         switch result {
         case .success(let musapKey):
           completed = true
-          completion(["Key successfully created: \(musapKey.getKeyId()!)"]) // FIXME remove !
+          completion([musapKey.getKeyUri()?.getUri() ?? "Non-existent keyUri"])
         case .failure(let error):
           completed = true
           /*
@@ -123,8 +123,147 @@ class MusapModule: NSObject {
     let sscdList = sscds.map { $0.toNSDictionary() }
     return sscdList as NSArray
   }
+  
+  @objc
+  func getSscdInfo(_ sscdId: String) -> NSDictionary? {
+    return MusapClient.listEnabledSscds()?.first { $0.getSscdId() == sscdId }?.getSscdInfo()?.toNSDictionary()
+  }
+  
+  @objc
+  func getSscdSettings(_ sscdId: String) -> NSDictionary? {
+    return MusapClient.listEnabledSscds()?.first { $0.getSscdId() == sscdId }?.getSettingsAsNSDisctionary()
+  }
+  
+  @objc
+  func getKeyByUri(_ keyUri: String) -> NSDictionary? {
+    return MusapClient.getKeyByUri(keyUri: keyUri)?.toNSDictionary()
+  }
+  
+  @objc
+  func listKeys() -> NSArray {
+    let keys = MusapClient.listKeys()
+    let keysList = keys.map { $0.toNSDictionary() }
+    return keysList as NSArray
+  }
 }
 
+extension SscdInfo {
+  func toNSDictionary() -> NSDictionary {
+    
+    let supportedAlgorithms = NSMutableArray()
+    self.getSupportedAlgorithms().forEach {
+      supportedAlgorithms.add($0.toNSDictionary())
+    }
+    
+    let writableMap = NSMutableDictionary()
+    writableMap["sscdId"] = self.getSscdId()
+    writableMap["sscdType"] = self.getSscdType()
+    writableMap["sscdName"] = self.getSscdName()
+    writableMap["country"] = self.getCountry()
+    writableMap["provider"] = self.getProvider()
+    writableMap["isKeyGenSupported"] = self.isKeygenSupported()
+    writableMap["supportedAlgorithms"] = supportedAlgorithms
+    return writableMap
+  }
+}
+
+extension PublicKey {
+  func toNSDictionary() -> NSDictionary {
+    let writableMap = NSMutableDictionary()
+    writableMap["der"] = self.getDER().base64EncodedString()
+    writableMap["pem"] = self.getPEM()
+    return writableMap
+  }
+}
+
+extension MusapCertificate {
+  func toNSDictionary() -> NSDictionary {
+    let writableMap = NSMutableDictionary()
+    writableMap["subject"] = self.getSubject()
+    writableMap["publicKey"] = self.getPublicKey().toNSDictionary()
+    writableMap["certificate"] = self.getCertificate().base64EncodedString()
+    return writableMap
+  }
+}
+
+extension KeyAttribute {
+  func toNSDictionary() -> NSDictionary {
+    let writableMap = NSMutableDictionary()
+    writableMap["name"] = self.name
+    writableMap["value"] = self.value
+    return writableMap
+  }
+}
+
+extension MusapLoa {
+  func toNSDictionary() -> NSDictionary {
+    let writableMap = NSMutableDictionary()
+    writableMap["loa"] = self.getLoa()
+    writableMap["scheme"] = self.getScheme()
+    writableMap["number"] = getNumber(self.getLoa())
+    return writableMap
+  }
+  
+  private func getNumber(_ loa: String) -> Int {
+    switch (loa) {
+    case "low", "loa1", "ial1", "aal1":
+      return 1
+    case "loa2", "ial2", "aal2":
+      return 2
+    case "substantial", "loa3", "ial3", "aal3":
+      return 3
+    case "high", "loa4":
+      return 4
+    default:
+      print("Invalid loa: \(loa)")
+      return 0
+    }
+  }
+}
+
+extension KeyAlgorithm {
+  func toNSDictionary() -> NSDictionary {
+    let writableDictionary = NSMutableDictionary()
+    writableDictionary["primitive"] = (self.primitive == "73" ? "EC" : "RSA")
+    writableDictionary["curve"] = self.curve
+    writableDictionary["bits"] = self.bits
+    writableDictionary["isEc"] = self.isEc()
+    writableDictionary["isRsa"] = self.isRsa()
+    return writableDictionary
+  }
+}
+
+extension MusapKey {
+  func toNSDictionary() -> NSDictionary {
+    let writableMap = NSMutableDictionary()
+    writableMap["keyId"] = self.getKeyId()
+    writableMap["keyAlias"] = self.getKeyAlias()
+    writableMap["keyType"] = self.getKeyType()
+    writableMap["sscdId"] = self.getSscdId()
+    writableMap["sscdType"] = self.getSscdType()
+    writableMap["createdDate"] = self.getCreatedDate()?.ISO8601Format()
+    writableMap["publicKey"] = self.getPublicKey()?.toNSDictionary()
+    writableMap["certificate"] = self.getCertificate()?.toNSDictionary()
+    let certificateChain = NSMutableArray()
+    self.getCertificateChain()?.forEach { certificateChain.add($0.toNSDictionary()) }
+    writableMap["certificateChain"] = certificateChain
+    let attributes = NSMutableArray()
+    self.getAttributes()?.forEach { attributes.add($0.toNSDictionary()) }
+    writableMap["attributes"] = attributes
+    let keyUsages = NSMutableArray()
+    self.getKeyUsages()?.forEach { keyUsages.add($0) }
+    writableMap["keyUsages"] = keyUsages
+    let loa = NSMutableArray()
+    self.getLoa()?.forEach { loa.add($0.toNSDictionary()) }
+    writableMap["loa"] = loa
+    writableMap["algorithm"] = self.getAlgorithm()?.toNSDictionary()
+    writableMap["keyUri"] = self.getKeyUri()?.getUri()
+    writableMap["isBiometricRequired"] = self.getIsBiometricRequired()
+    writableMap["did"] = self.getDid()
+    writableMap["state"] = self.getState()
+    return writableMap
+  }
+}
 
 extension NSDictionary {
   func toKeyGenReq() throws -> KeyGenReq {
@@ -333,13 +472,7 @@ extension MusapSscd {
 
     let supportedAlgorithms = NSMutableArray()
     sscdInfo.getSupportedAlgorithms().forEach {
-      let algorithm = NSMutableDictionary()
-      algorithm["curve"] = $0.curve
-      algorithm["primitive"] = ($0.primitive == "73" ? "EC" : "RSA")
-      algorithm["bits"] = $0.bits
-      algorithm["isRsa"] = $0.isRsa()
-      algorithm["isEc"] = $0.isEc()
-      supportedAlgorithms.add(algorithm)
+      supportedAlgorithms.add($0.toNSDictionary())
     }
 
     let sscdInfoMap = NSMutableDictionary()
@@ -351,8 +484,15 @@ extension MusapSscd {
     sscdInfoMap["isKeyGenSupported"] = sscdInfo.isKeygenSupported()
     sscdInfoMap["supportedAlgorithms"] = supportedAlgorithms
     
+    writableMap["sscdId"] = self.getSscdId()
+    writableMap["sscdInfo"] = sscdInfoMap
+    writableMap["settings"] = self.getSettingsAsNSDisctionary()
+
+    return writableMap
+  }
+  
+  func getSettingsAsNSDisctionary() -> NSDictionary {
     let settings = NSMutableDictionary()
-    
     // The settings are only accessible from the child class
     switch(self.impl) {
       case is SecureEnclaveSscd:
@@ -370,12 +510,7 @@ extension MusapSscd {
       default:
         NSLog("There is no such SSCD type")
     }
-    
-     writableMap["sscdId"] = self.getSscdId()
-     writableMap["sscdInfo"] = sscdInfoMap
-     writableMap["settings"] = settings
-
-    return writableMap
+    return settings
   }
 }
 
