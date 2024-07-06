@@ -133,7 +133,7 @@ export interface SignatureReq {
     displayText?: string
     algorithm?: string
     format?: string
-    attributes?: SignatureAttribute
+    attributes?: SignatureAttribute[]
     transId?: string
 }
 
@@ -152,7 +152,7 @@ export interface MusapModuleType {
     listActiveSscds(): Array<MusapSscd>;
     enableSscd(sscdType: SscdType): void;
     generateKey (sscdType: string | SscdType, req: unknown, callback: Function): Promise<void>
-    sign(req: string, callback: Function): Promise<void>
+    sign(req: string | SignatureReq, callback: Function): Promise<void>
     listKeys(): MusapKey[] | string
     getKeyByUri(keyUri: string): MusapKey | string
     getSscdInfo(sscdId: string): SscdInfo

@@ -86,7 +86,7 @@ class MusapModule: NSObject {
           let signature = musapSignature.getRawSignature().encodeToBase64URL()
           completion(["\(header ?? "").\(payload).\(signature)"])
         case .failure(let error):
-          completion(["Error signing the data: \(error.localizedDescription)"])
+          completion(["Error signing the data: \(error.localizedDescription): Error code: \(error.errorCode)"])
         }
       }
 
@@ -94,7 +94,7 @@ class MusapModule: NSObject {
         await MusapClient.sign(req: reqObj, completion: musapCallback)
       }
     } catch let error {
-      completion(["Error signing the data: \(error.localizedDescription)"])
+      completion(["Error signing the data: \(error.localizedDescription): Error code: \(error)"])
     }
   }
 
@@ -334,6 +334,106 @@ extension NSDictionary {
       keyAlgorithm: keyAlgorithm
     )
   }
+  
+  /**
+   {
+     "keyUri":"keyuri:key?loa=loa3&name=b2fcc689-b51c-40dd-90df-335bb2ea3a0c&sscd=SE",
+     "publicKey":{
+        "pem":"-----BEGIN PUBLIC KEY-----\nBHFzY99xWTEN1JWa3r9RtaKtdXsnwDgr9cMsghjaF7Dsq1a8KDaDemajvTZaWyII\nhKZPCWsHCSEj7TTFTJ6uBAo=\n-----END PUBLIC KEY-----\n",
+        "der":"BHFzY99xWTEN1JWa3r9RtaKtdXsnwDgr9cMsghjaF7Dsq1a8KDaDemajvTZaWyIIhKZPCWsHCSEj7TTFTJ6uBAo="
+     },
+     "loa":[
+        {
+          "number":3,
+          "scheme":"EIDAS-2014",
+          "loa":"substantial"
+        },
+        {
+          "number":3,
+          "scheme":"ISO-29115",
+          "loa":"loa3"
+        }
+      ],
+     "createdDate":"2024-07-05T10:00:19Z",
+     "certificateChain":[],
+     "sscdType":"SE",
+     "keyUsages":[],
+     "isBiometricRequired":false,
+     "keyId":"F56BE4DC-A06C-4B38-B65A-FD74533B6088",
+     "keyAlias":"b2fcc689-b51c-40dd-90df-335bb2ea3a0c",
+     "attributes":[],
+     "algorithm":{
+        "isRsa":false,
+        "bits":256,
+        "primitive":"EC",
+        "curve":"ecc_p256_r1",
+        "isEc":true
+     },
+     "sscdId":"TEE"
+   }
+   */
+  
+  func toPublicKey() throws -> PublicKey {
+  
+    guard let publicKey = self["publicKey"] as? [String: Any] else {
+      throw PublicKeyError.invalidDER
+    }
+      
+      guard let der = self["der"] as? String else {
+        throw PublicKeyError.invalidDER
+      }
+      
+      guard let data = der.data(using: .utf8) else {
+        throw PublicKeyError.invalidDER
+      }
+      
+      return PublicKey(publicKey: data)
+  }
+  
+  func toMusapCertificate() throws -> MusapCertificate {
+    
+      guard let subject = self["subject"] as? String else {
+        throw MusapCertificateError.invalidSubject
+      }
+      
+      guard let cert = self["certificate"] as? String else {
+        throw MusapCertificateError.invalidCertificate
+      }
+    
+      guard let certificate = cert.data(using: .utf8) else {
+        throw MusapCertificateError.invalidCertificate
+      }
+      
+      guard let pk = self["publicKey"] as? [String: Any] else {
+        throw PublicKeyError.invalidDER
+      }
+    
+      guard let der = pk["der"] as? String else {
+        throw PublicKeyError.invalidDER
+      }
+    
+      guard let publicKeyData = der.data(using: .utf8) else {
+        throw PublicKeyError.invalidDER
+      }
+      return MusapCertificate(subject: subject, certificate: certificate, publicKey: PublicKey(publicKey: publicKeyData))
+    }
+  
+  func toKeyAttribute() throws -> KeyAttribute? {
+    if let name = self["name"] as? String, let certDataBase64 = self["value"] as? String {
+      if let certData = Data(base64Encoded: certDataBase64),
+         let cert = SecCertificateCreateWithData(nil, certData as CFData) {
+        return KeyAttribute(name: name, cert: cert)
+      }
+    }
+    return nil
+  }
+  
+  func toSignatureAttribute() -> SignatureAttribute? {
+    if let name = self["name"] as? String, let value = self["value"] as? String {
+        return SignatureAttribute(name: name, value: value)
+    }
+    return nil
+  }
 
   func toSignatureReq() throws -> SignatureReq {
     let algorithmString = self["algorithm"] as? String ?? "SHA256withECDSA"
@@ -364,36 +464,30 @@ extension NSDictionary {
 
     var key: MusapKey? = nil
 
-    if let keyMap = self["key"] as? [String: Any] {
-      var publicKey: PublicKey? = nil
-      if let publicKeyBase64 = keyMap["publicKey"] as? String,
-         let publicKeyData = Data(base64Encoded: publicKeyBase64) {
-        publicKey = PublicKey(publicKey: publicKeyData)
-      } else if let publicKeyBytes = keyMap["publicKey"] as? [UInt8] {
-        let publicKeyData = Data(publicKeyBytes)
-        publicKey = PublicKey(publicKey: publicKeyData)
+    if let keyMap = self["key"] as? NSDictionary {
+      
+      var certificate: MusapCertificate?
+      
+      guard let pk = (keyMap["publicKey"] as? NSDictionary) else {
+        throw PublicKeyError.invalidDER
       }
-
-      if(publicKey == nil) {
-        throw SignatureReqError.invalidPublicKey
+      
+      let publicKey = try pk.toPublicKey()
+      
+      guard let cert = keyMap["certificate"] as? NSDictionary else {
+        throw MusapCertificateError.invalidCertificate
       }
-
-      let certificate: MusapCertificate? = (keyMap["certificate"] as? String).flatMap { certBase64 in
-          if let certData = Data(base64Encoded: certBase64),
-             let cert = SecCertificateCreateWithData(nil, certData as CFData) {
-              return MusapCertificate(cert: cert)
-          }
-          return nil
+      
+      certificate = try cert.toMusapCertificate()
+      
+      guard let certChain = keyMap["certificateChain"] as? NSArray else {
+        throw MusapCertificateError.invalidCertificate
       }
-
-      let certificateChain: [MusapCertificate]? = (keyMap["certificateChain"] as? [String])?.compactMap { certBase64 in
-          if let certData = Data(base64Encoded: certBase64),
-             let cert = SecCertificateCreateWithData(nil, certData as CFData) {
-              return MusapCertificate(cert: cert)
-          }
-          return nil
-      }
-
+      
+      let dictArray = certChain.compactMap { $0 as? NSDictionary }
+      let certificateChain = try dictArray.compactMap { try $0.toMusapCertificate() }
+      
+      
       var attributes: [KeyAttribute]?
       if let attributesArray = self["attributes"] as? [[String: Any]] {
         attributes = attributesArray.compactMap { attributeMap in
@@ -442,7 +536,7 @@ extension NSDictionary {
         sscdId: keyMap["sscdId"] as? String,
         sscdType: keyMap["sscdType"] as? String ?? "",
         createdDate: createdDate,
-        publicKey: publicKey!,
+        publicKey: publicKey,
         certificate: certificate,
         certificateChain: certificateChain,
         attributes: attributes,
@@ -455,36 +549,33 @@ extension NSDictionary {
         state: keyMap["state"] as? String)
     }
 
-
-    var data: Data? = nil
-    if let dataArray = self["data"] as? [Int] {
-      data = Data(dataArray.map { UInt8($0) })
+    guard let dataString = self["data"] as? String else {
+      throw SignatureReqError.missingRequiredField("data")
+    }
+    
+    guard let data = dataString.data(using: .utf8) else {
+      throw SignatureReqError.missingRequiredField("data")
     }
 
-    let displayText = self["displayText"] as? String ?? self["display"] as? String
-    guard let format = self["format"] as? String else {
-        throw SignatureReqError.invalidFormat
+    guard let displayText = self["displayText"] as? String else {
+      throw SignatureReqError.missingRequiredField("displayText")
     }
-    var attributes: [SignatureAttribute]?
-    if let attributesArray = self["attributes"] as? [[String: Any]] {
-      attributes = attributesArray.compactMap { attributeMap in
-        if let name = attributeMap["name"] as? String, let value = attributeMap["value"] as? String {
-          return SignatureAttribute(name: name, value: value)
-        }
-        return nil
-      }
+    
+    let format = self["format"] as? String ?? "RAW"
+    
+    guard let attributesNSArray = self["attributes"] as? NSArray else {
+      throw SignatureReqError.missingRequiredField("attributes:1")
     }
+    
+    let attributes = attributesNSArray.compactMap { ($0 as? NSDictionary)?.toSignatureAttribute() }
 
-    guard let format = self["format"] as? String else {
-        throw SignatureReqError.invalidFormat
-    }
     return SignatureReq(
         key: key!,
-        data: data!,
+        data: data,
         algorithm: SignatureAlgorithm(algorithm: algorithm),
-        format: SignatureFormat.fromString(format: format),
-        displayText: displayText!,
-        attributes: attributes!
+        format: SignatureFormat(format),
+        displayText: displayText,
+        attributes: attributes
     )
   }
 }
@@ -613,4 +704,14 @@ enum SignatureReqError: Error {
     case invalidPublicKey
     case invalidFormat
     case missingRequiredField(String)
+}
+
+enum MusapCertificateError: Error {
+  case invalidSubject
+  case invalidCertificate
+  case invalidKey
+}
+
+enum PublicKeyError: Error {
+  case invalidDER
 }

@@ -29,12 +29,4 @@ RCT_EXTERN_METHOD(sign: (NSDictionary *) req completion: (RCTResponseSenderBlock
 
 RCT_EXTERN_METHOD(getSscdInstance: type: (NSString) type)
 
-RCT_EXTERN__BLOCKING_SYNCHRONOUS_METHOD(listKeys)
-
-RCT_EXTERN__BLOCKING_SYNCHRONOUS_METHOD(getKeyByUri: keyUri: (NSString) keyUri)
-
-RCT_EXTERN__BLOCKING_SYNCHRONOUS_METHOD(getSscdInfo: sscdId: (NSString) sscdid)
-
-RCT_EXTERN__BLOCKING_SYNCHRONOUS_METHOD(getSettings: sscdId: (NSString) sscdId)
-
 @end

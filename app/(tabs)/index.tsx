@@ -5,7 +5,7 @@ import { HelloWave } from '@/components/HelloWave';
 import ParallaxScrollView from '@/components/ParallaxScrollView';
 import { ThemedText } from '@/components/ThemedText';
 import { ThemedView } from '@/components/ThemedView';
-import {KeyGenReq, MusapModule, SignatureReq } from '@/types/musap-types';
+import {KeyGenReq, MusapKey, MusapModule, SignatureReq} from '@/types/musap-types';
 
 export default function HomeScreen() {
 
@@ -15,9 +15,9 @@ export default function HomeScreen() {
     const listActiveSscds = MusapModule?.listActiveSscds()
     const listKeys = MusapModule?.listKeys()
     try {
-      //console.log(`active SSCDs: ${JSON.stringify(listActiveSscds)}\n\n`)
-      //console.log(`enabled SSCDs: ${JSON.stringify(listEnabledSscds)}\n\n`)
-      //console.log(`list keys: ${JSON.stringify(listKeys)}\n\n`)
+      console.log(`active SSCDs: ${JSON.stringify(listActiveSscds)}\n\n`)
+      console.log(`enabled SSCDs: ${JSON.stringify(listEnabledSscds)}\n\n`)
+      console.log(`list keys: ${JSON.stringify(listKeys)}\n\n`)
       const musapSscd = listEnabledSscds[0]
 
       const keyGenRequest: KeyGenReq = {
@@ -103,34 +103,41 @@ export default function HomeScreen() {
       console.log(`Generating key for sscdId ${musapSscd.sscdId}...\n\n`)
       // iOS uses the error as result
       await MusapModule.generateKey(musapSscd.sscdId, keyGenRequest, (error: any, result: any) => {
-//           if (error) {
-//             console.log(error)
-//           }
-            result = error as String
-          if (result) {
-            console.log("Key successfully generated.\n\n")
-            const key = MusapModule.getKeyByUri(result)
-            console.log(`Get key by URI: ${JSON.stringify(key)}\n\n`)
-            const req: SignatureReq = {
-              key,
-              data: jwt
+          if (listEnabledSscds[0].sscdInfo.sscdName === "SE" && error) {
+            // Security Enclave handles both error and result in error
+            console.log(error)
+            console.log(`GetKeyByUri(): ${MusapModule.getKeyByUri(error)}`)
+          } else {
+            if (error) {
+              console.log(error)
             }
-
-            MusapModule.sign(JSON.stringify(req), (error: any, result: any) => {
-              if (error) {
-                console.log("An error occurred.\n")
-                console.log(error)
-              }
-              if (result) {
-                console.log("Data successfully signed:")
-                console.log(result)
-              }
-            })
+            if (result) {
+              console.log(`Key successfully generated: ${result}`)
+              // Works on Android
+              console.log(`GetKeyByUri(): ${MusapModule.getKeyByUri(result)}`)
+            }
           }
       })
-      console.log(`List keys: ${JSON.stringify(JSON.parse(MusapModule.listKeys()))}\n\n`)
-      console.log(`Get SSCD info: ${JSON.stringify(MusapModule.getSscdInfo("TEE"))}\n\n`)
-      console.log(`Get SSCD Settings: ${JSON.stringify(MusapModule.getSettings("TEE"))}\n\n`)
+
+      const key: MusapKey = typeof listKeys === 'string' ? JSON.parse(listKeys)[0] : listKeys[0]
+
+      const req: SignatureReq = {
+        key,
+        data: jwt,
+        displayText: "test",
+        attributes: [{ name: "key", value: "value"}]
+      }
+      const reqData = listEnabledSscds[0].sscdInfo.sscdName === "SE" ? req : JSON.stringify(req)
+      MusapModule.sign(reqData, (error: any, result: any) => {
+        if (error) {
+          console.log("An error occurred.\n")
+          console.log(error)
+        }
+        if (result) {
+          console.log("Data successfully signed:")
+          console.log(result)
+        }
+      })
 
     } catch(e) {
       console.log("Catch clause entered")
