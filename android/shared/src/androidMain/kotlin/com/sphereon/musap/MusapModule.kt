@@ -1,6 +1,7 @@
 package com.sphereon.musap;
 
 import android.content.Context
+import android.util.Log
 import com.facebook.react.bridge.Arguments
 import com.facebook.react.bridge.Callback
 import com.facebook.react.bridge.ReactApplicationContext
@@ -10,7 +11,6 @@ import com.facebook.react.bridge.ReadableMap
 import com.facebook.react.bridge.WritableArray
 import com.facebook.react.bridge.WritableMap
 import com.facebook.react.util.RNLog
-import com.google.gson.GsonBuilder
 import com.nimbusds.jose.JWSAlgorithm
 import com.nimbusds.jose.JWSHeader
 import com.nimbusds.jose.JWSObject
@@ -18,11 +18,8 @@ import com.nimbusds.jose.crypto.impl.ECDSA
 import com.nimbusds.jose.util.Base64URL
 import com.nimbusds.jwt.JWTClaimsSet
 import com.sphereon.musap.models.SscdType
-import com.sphereon.musap.serializers.ByteArrayDeserializer
-import com.sphereon.musap.serializers.ByteArraySerializer
-import com.sphereon.musap.serializers.InstantDeserializer
-import com.sphereon.musap.serializers.InstantSerializer
 import com.sphereon.musap.serializers.toKeyGenReq
+import com.sphereon.musap.serializers.toSignatureReq
 import com.sphereon.musap.serializers.toWritableMap
 import fi.methics.musap.sdk.api.MusapCallback
 import fi.methics.musap.sdk.api.MusapClient
@@ -31,35 +28,27 @@ import fi.methics.musap.sdk.extension.MusapSscdInterface
 import fi.methics.musap.sdk.internal.datatype.MusapKey
 import fi.methics.musap.sdk.internal.datatype.MusapSignature
 import fi.methics.musap.sdk.internal.datatype.SignatureAlgorithm
-import fi.methics.musap.sdk.internal.sign.SignatureReq
 import fi.methics.musap.sdk.sscd.android.AndroidKeystoreSscd
 import fi.methics.musap.sdk.sscd.yubikey.YubiKeySscd
-import java.time.Instant
 
 
 class MusapModuleAndroid(private val context: ReactApplicationContext) : ReactContextBaseJavaModule(context) {
 
     override fun getName(): String = "MusapModule"
 
-    private val gson = GsonBuilder()
-        .registerTypeAdapter(Instant::class.java, InstantSerializer())
-        .registerTypeAdapter(Instant::class.java, InstantDeserializer())
-        .registerTypeAdapter(ByteArray::class.java, ByteArraySerializer())
-        .registerTypeAdapter(ByteArray::class.java, ByteArrayDeserializer())
-        .create()
-
     @ReactMethod
     fun generateKey(sscdType: String, req: ReadableMap, callback: Callback) {
         val sscd = MusapClient.listEnabledSscds().first { it.sscdId == sscdType }
         val musapCallback = object : MusapCallback<MusapKey> {
-            override fun onSuccess(p0: MusapKey?) {
-                if (p0 != null) {
-                    callback.invoke(null, p0.keyUri.uri)
+            override fun onSuccess(musapKey: MusapKey?) {
+                if (musapKey != null) {
+                    callback.invoke(null, musapKey.keyUri.uri)
                 }
             }
 
-            override fun onException(p0: MusapException?) {
-                callback.invoke(p0?.message, null)
+            override fun onException(e: MusapException?) {
+                Log.e("MUSAP", "generateKey failed",e)
+                callback.invoke(e?.message, null)
             }
         }
         val reqObj = req.toKeyGenReq(reactApplicationContext.currentActivity)
@@ -67,31 +56,34 @@ class MusapModuleAndroid(private val context: ReactApplicationContext) : ReactCo
     }
 
     @ReactMethod
-    fun sign(req: String, callback: Callback) {
-        // FIXME find a better solution using the RN Bridge or use Turbo Modules to completely avoid using JSON: https://sphereon.atlassian.net/browse/SPRIND-24
-        val reqObj = gson.fromJson(req, SignatureReq::class.java)
+    fun sign(req: ReadableMap, callback: Callback) {
+        try {
+            val signatureReq = req.toSignatureReq(this.currentActivity)
 
-        val key = reqObj.key
-        val keyAlgo = key.algorithm
-        val signatureAlgorithm = if (keyAlgo.isEc) SignatureAlgorithm.EDDSA else SignatureAlgorithm.SHA256_WITH_ECDSA
+            val key = signatureReq.key
+            val keyAlgo = key.algorithm
+            val signatureAlgorithm = if (keyAlgo.isEc) SignatureAlgorithm.EDDSA else SignatureAlgorithm.SHA256_WITH_ECDSA
 
-        val header = JWSHeader.Builder(JWSAlgorithm.parse(signatureAlgorithm.jwsAlgorithm))
-            .keyID(key.keyId)
-            .build()
+            val header = JWSHeader.Builder(JWSAlgorithm.parse(signatureAlgorithm.jwsAlgorithm))
+                .keyID(key.keyId)
+                .build()
+            val claims = JWTClaimsSet.parse(signatureReq.data.decodeToString())
 
-        val claims = JWTClaimsSet.parse(reqObj.data.decodeToString())
+            val callbackTmp = object : MusapCallback<MusapSignature> {
+                override fun onSuccess(p0: MusapSignature) {
+                    val signed = attachSignature(JWSObject(header, claims.toPayload()), p0)
+                    callback.invoke(null, signed.serialize())
+                }
 
-        val callbackTmp = object : MusapCallback<MusapSignature> {
-            override fun onSuccess(p0: MusapSignature) {
-                val signed = attachSignature(JWSObject(header, claims.toPayload()), p0)
-                callback.invoke(null, signed.serialize())
+                override fun onException(p0: MusapException?) {
+                    callback.invoke(p0?.message, null)
+                }
             }
-
-            override fun onException(p0: MusapException?) {
-                callback.invoke(p0?.message, null)
-            }
+            MusapClient.sign(signatureReq, callbackTmp)
+        } catch (e: Exception) {
+            Log.e("MUSAP", "sign failed", e)  // This will log a nice Java style exception to logcat with full stack trace
+            throw e
         }
-        MusapClient.sign(reqObj, callbackTmp)
     }
 
     private fun attachSignature(orig: JWSObject, sig: MusapSignature): JWSObject {
@@ -111,7 +103,7 @@ class MusapModuleAndroid(private val context: ReactApplicationContext) : ReactCo
         return ECDSA.transcodeSignatureToConcat(rawSignature, length)
     }
 
-    // enabled = supported by MUSAP
+    // enabled = supported by device running MUSAP
     @ReactMethod(isBlockingSynchronousMethod = true)
     fun listEnabledSscds(): WritableArray {
         return Arguments.createArray().apply {
@@ -137,7 +129,9 @@ class MusapModuleAndroid(private val context: ReactApplicationContext) : ReactCo
     }
 
     @ReactMethod(isBlockingSynchronousMethod = true)
-    fun getKeyByUri(keyUri: String): String {
+    fun getKeyByUri(keyUri: String): WritableMap {
+        return MusapClient.getKeyByUri(keyUri).toWritableMap()
+
         /** Fails because a deserialization of java.time.Instant - I cannot override the Gson configurations
          * [Error: Exception in HostFunction: com.google.gson.JsonSyntaxException: java.lang.IllegalStateException: Expected a string but was BEGIN_OBJECT at line 1 column 95 path $.createdDate
          * See https://github.com/google/gson/blob/main/Troubleshooting.md#unexpected-json-structure]
@@ -146,7 +140,7 @@ class MusapModuleAndroid(private val context: ReactApplicationContext) : ReactCo
          */
 
         // FIXME find a better solution using the RN Bridge or use Turbo Modules to completely avoid using JSON: https://sphereon.atlassian.net/browse/SPRIND-24
-        return gson.toJson(MusapClient.getKeyByUri(keyUri))
+        //return gson.toJson(MusapClient.getKeyByUri(keyUri))
     }
 
     @ReactMethod(isBlockingSynchronousMethod = true)

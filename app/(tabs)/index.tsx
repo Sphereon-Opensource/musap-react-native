@@ -5,19 +5,43 @@ import { HelloWave } from '@/components/HelloWave';
 import ParallaxScrollView from '@/components/ParallaxScrollView';
 import { ThemedText } from '@/components/ThemedText';
 import { ThemedView } from '@/components/ThemedView';
-import {KeyGenReq, MusapKey, MusapModule, SignatureReq} from '@/types/musap-types';
+import {KeyGenReq, MusapKey, MusapModule, MusapSscd, SignatureReq, SscdInfo} from '@/types/musap-types';
 
 export default function HomeScreen() {
 
+  const sign = (key: MusapKey, jwt:object, sscdInfo:SscdInfo) => {
+    const req: SignatureReq = {
+      key,
+      data: JSON.stringify(jwt),
+      displayText: "test",
+      attributes: [{name: "key", value: "value"}],
+    }
+    //const reqData = sscdInfo.sscdName === "SE" ? req : JSON.stringify(req)
+    console.log(`Signing a request2`)
+    MusapModule.sign(req, (error: any, result: any) => {
+      if (error) {
+        console.log("An error occurred.\n")
+        console.log(error)
+      }
+      if (result) {
+        console.log("Data successfully signed:")
+        console.log(result)
+      }
+    })
+  };
+
   const musapDemo = async () => {
     MusapModule?.enableSscd('TEE')
-    const listEnabledSscds = MusapModule?.listEnabledSscds()
-    const listActiveSscds = MusapModule?.listActiveSscds()
-    const listKeys = MusapModule?.listKeys()
     try {
+      const listActiveSscds = MusapModule?.listActiveSscds()
       console.log(`active SSCDs: ${JSON.stringify(listActiveSscds)}\n\n`)
+
+      const listEnabledSscds = MusapModule?.listEnabledSscds()
       console.log(`enabled SSCDs: ${JSON.stringify(listEnabledSscds)}\n\n`)
-      console.log(`list keys: ${JSON.stringify(listKeys)}\n\n`)
+
+      const listKeys = MusapModule?.listKeys()
+      console.log(`list keys: found ${listKeys?.length} keys\n\n`)
+
       const musapSscd = listEnabledSscds[0]
 
       const keyGenRequest: KeyGenReq = {
@@ -32,7 +56,7 @@ export default function HomeScreen() {
         role: "administrator",
       }
 
-      const jwt = {
+      const jwt  = {
           iss: "test_issuer",
           sub: "test_subject",
           aud: "test_audience",
@@ -102,7 +126,7 @@ export default function HomeScreen() {
 
       console.log(`Generating key for sscdId ${musapSscd.sscdId}...\n\n`)
       // iOS uses the error as result
-      await MusapModule.generateKey(musapSscd.sscdId, keyGenRequest, (error: any, result: any) => {
+      await MusapModule.generateKey(musapSscd.sscdId, keyGenRequest, (error: any, keyUri: string) => {
           if (listEnabledSscds[0].sscdInfo.sscdName === "SE" && error) {
             // Security Enclave handles both error and result in error
             console.log(error)
@@ -111,32 +135,17 @@ export default function HomeScreen() {
             if (error) {
               console.log(error)
             }
-            if (result) {
-              console.log(`Key successfully generated: ${result}`)
+            if (keyUri) {
+              console.log(`Key successfully generated: ${keyUri}`)
+
               // Works on Android
-              console.log(`GetKeyByUri(): ${MusapModule.getKeyByUri(result)}`)
+              const key = MusapModule.getKeyByUri(keyUri) as MusapKey
+
+              console.log(`GetKeyByUri(): ${key}`)
+              console.log(`key`, key)
+              sign(key, jwt, listEnabledSscds[0].sscdInfo);
             }
           }
-      })
-
-      const key: MusapKey = typeof listKeys === 'string' ? JSON.parse(listKeys)[0] : listKeys[0]
-
-      const req: SignatureReq = {
-        key,
-        data: jwt,
-        displayText: "test",
-        attributes: [{ name: "key", value: "value"}]
-      }
-      const reqData = listEnabledSscds[0].sscdInfo.sscdName === "SE" ? req : JSON.stringify(req)
-      MusapModule.sign(reqData, (error: any, result: any) => {
-        if (error) {
-          console.log("An error occurred.\n")
-          console.log(error)
-        }
-        if (result) {
-          console.log("Data successfully signed:")
-          console.log(result)
-        }
       })
 
     } catch(e) {

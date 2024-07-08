@@ -8,22 +8,11 @@ import fi.methics.musap.sdk.internal.datatype.SscdInfo
 import fi.methics.musap.sdk.internal.util.MusapSscd
 
 
-fun KeyAlgorithm.toWritableMap(): WritableMap {
-
-    return Arguments.createMap().apply {
-        putString("curve", curve)
-        putString("primitive", primitive)
-        putInt("bits", bits)
-        putBoolean("isRsa", isRsa)
-        putBoolean("isEc", isEc)
-    }
-}
-
 fun SscdInfo.toWritableMap(): WritableMap {
 
     val supportedAlgorithms = Arguments.createArray()
     this.supportedAlgorithms?.forEach {
-        supportedAlgorithms.pushMap(it.toWritableMap())
+        supportedAlgorithms.pushString(it.toEnumString())
     }
 
     return Arguments.createMap().apply {

@@ -129,10 +129,11 @@ interface SignatureAttribute {
 
 export interface SignatureReq {
     key: MusapKey
-    data: any
+    data: string // TODO if we want to support binary data we need to do base64 as we can't transfer byte arrays out of the box
     displayText?: string
-    algorithm?: string
-    format?: string
+    algorithm?: 'SHA256withECDSA' | 'SHA384withECDSA' | 'SHA512withECDSA' | 'NONEwithECDSA' | 'NONEwithEdDSA' | 'SHA256withRSA' | 'SHA384withRSA'
+        | 'SHA512withRSA' | 'NONEwithRSA' | 'SHA256withRSASSA-PSS' | 'SHA384withRSASSA-PSS' | 'SHA512withRSASSA-PSS' | 'NONEwithRSASSA-PSS'
+    format?: 'CMS' | 'RAW'
     attributes?: SignatureAttribute[]
     transId?: string
 }
