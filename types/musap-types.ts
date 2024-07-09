@@ -20,7 +20,6 @@ export type KeyAlgorithmType =
 
 export type SignatureFormatType = 'CMS' | 'RAW' | 'PKCS1';
 
-// TypeScript interfaces
 export interface SscdInfo {
     sscdName: string;
     sscdType: string;
@@ -56,7 +55,6 @@ export interface KeyAttribute {
 export interface StepUpPolicy {
 }
 
-// Updated KeyGenReq Interface
 export interface KeyGenReq {
     keyAlias: string;
     did: string;
