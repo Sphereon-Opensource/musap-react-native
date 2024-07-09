@@ -47,7 +47,7 @@ class MusapModuleAndroid(private val context: ReactApplicationContext) : ReactCo
             }
 
             override fun onException(e: MusapException?) {
-                Log.e("MUSAP", "generateKey failed",e)
+                Log.e("MUSAP", "generateKey failed", e)
                 callback.invoke(e?.message, null)
             }
         }
@@ -62,7 +62,8 @@ class MusapModuleAndroid(private val context: ReactApplicationContext) : ReactCo
 
             val key = signatureReq.key
             val keyAlgo = key.algorithm
-            val signatureAlgorithm = if (keyAlgo.isEc) SignatureAlgorithm.EDDSA else SignatureAlgorithm.SHA256_WITH_ECDSA
+            val signatureAlgorithm =
+                if (keyAlgo.isEc) SignatureAlgorithm.EDDSA else SignatureAlgorithm.SHA256_WITH_ECDSA
 
             val header = JWSHeader.Builder(JWSAlgorithm.parse(signatureAlgorithm.jwsAlgorithm))
                 .keyID(key.keyId)
@@ -81,7 +82,11 @@ class MusapModuleAndroid(private val context: ReactApplicationContext) : ReactCo
             }
             MusapClient.sign(signatureReq, callbackTmp)
         } catch (e: Exception) {
-            Log.e("MUSAP", "sign failed", e)  // This will log a nice Java style exception to logcat with full stack trace
+            Log.e(
+                "MUSAP",
+                "sign failed",
+                e
+            )  // This will log a nice Java style exception to logcat with full stack trace
             throw e
         }
     }
@@ -124,46 +129,32 @@ class MusapModuleAndroid(private val context: ReactApplicationContext) : ReactCo
     }
 
     @ReactMethod(isBlockingSynchronousMethod = true)
-    fun enableSscd(sscdType: String)  {
+    fun enableSscd(sscdType: String) {
         MusapClient.enableSscd(getSscdInstance(SscdType.valueOf(sscdType)), sscdType)
     }
 
     @ReactMethod(isBlockingSynchronousMethod = true)
     fun getKeyByUri(keyUri: String): WritableMap {
         return MusapClient.getKeyByUri(keyUri).toWritableMap()
-
-        /** Fails because a deserialization of java.time.Instant - I cannot override the Gson configurations
-         * [Error: Exception in HostFunction: com.google.gson.JsonSyntaxException: java.lang.IllegalStateException: Expected a string but was BEGIN_OBJECT at line 1 column 95 path $.createdDate
-         * See https://github.com/google/gson/blob/main/Troubleshooting.md#unexpected-json-structure]
-         * LOG  Exception in HostFunction: com.google.gson.JsonSyntaxException: java.lang.IllegalStateException: Expected a string but was BEGIN_OBJECT at line 1 column 95 path $.createdDate
-         * See https://github.com/google/gson/blob/main/Troubleshooting.md#unexpected-json-structure
-         */
-
-        // FIXME find a better solution using the RN Bridge or use Turbo Modules to completely avoid using JSON: https://sphereon.atlassian.net/browse/SPRIND-24
-        //return gson.toJson(MusapClient.getKeyByUri(keyUri))
     }
 
     @ReactMethod(isBlockingSynchronousMethod = true)
     fun getSscdInfo(sscdId: String): WritableMap {
-        return MusapClient.listEnabledSscds().first{ it.sscdId == sscdId}.sscdInfo.toWritableMap()
+        return MusapClient.listEnabledSscds().first { it.sscdId == sscdId }.sscdInfo.toWritableMap()
     }
 
     @ReactMethod(isBlockingSynchronousMethod = true)
     fun getSettings(sscdId: String): WritableMap {
-        return MusapClient.listEnabledSscds().first{ it.sscdId == sscdId }.settings.toWritableMap()
+        return MusapClient.listEnabledSscds().first { it.sscdId == sscdId }.settings.toWritableMap()
     }
 
     @ReactMethod(isBlockingSynchronousMethod = true)
-    fun listKeys(): String {
-        /** Fails because a deserialization of java.time.Instant - I cannot override the Gson configurations
-         * [Error: Exception in HostFunction: com.google.gson.JsonSyntaxException: java.lang.IllegalStateException: Expected a string but was BEGIN_OBJECT at line 1 column 95 path $.createdDate
-         * See https://github.com/google/gson/blob/main/Troubleshooting.md#unexpected-json-structure]
-         * LOG  Exception in HostFunction: com.google.gson.JsonSyntaxException: java.lang.IllegalStateException: Expected a string but was BEGIN_OBJECT at line 1 column 95 path $.createdDate
-         * See https://github.com/google/gson/blob/main/Troubleshooting.md#unexpected-json-structure
-         */
-
-        // FIXME find a better solution using the RN Bridge or use Turbo Modules to completely or avoid using JSON: https://sphereon.atlassian.net/browse/SPRIND-24
-        return gson.toJson(MusapClient.listKeys())
+    fun listKeys(): WritableArray {
+        return Arguments.createArray().apply {
+            MusapClient.listKeys().forEach {
+                pushMap(it.toWritableMap())
+            }
+        }
     }
 
     fun getSscdInstance(type: SscdType): MusapSscdInterface<*> {
@@ -175,7 +166,7 @@ class MusapModuleAndroid(private val context: ReactApplicationContext) : ReactCo
 
     // For Android Native use, won't work otherwise because of the context
     companion object {
-        var initialContext:Context? = null
+        var initialContext: Context? = null
 
         fun init(context: Context) {
             MusapClient.init(context)

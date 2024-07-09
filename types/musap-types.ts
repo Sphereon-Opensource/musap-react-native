@@ -127,7 +127,7 @@ interface SignatureAttribute {
 
 export interface SignatureReq {
     key: MusapKey
-    data: string // TODO if we want to support binary data we need to send an array of numbers (or ga base64)
+    data: string // TODO if we want to support binary data we need to send an array of numbers (or go base64)
     displayText?: string
     algorithm?: 'SHA256withECDSA' | 'SHA384withECDSA' | 'SHA512withECDSA' | 'NONEwithECDSA' | 'NONEwithEdDSA' | 'SHA256withRSA' | 'SHA384withRSA'
         | 'SHA512withRSA' | 'NONEwithRSA' | 'SHA256withRSASSA-PSS' | 'SHA384withRSASSA-PSS' | 'SHA512withRSASSA-PSS' | 'NONEwithRSASSA-PSS'
@@ -151,7 +151,7 @@ export interface MusapModuleType {
     listActiveSscds(): Array<MusapSscd>;
     enableSscd(sscdType: SscdType): void;
     generateKey (sscdType: string | SscdType, req: unknown, callback: Function): Promise<void>
-    sign(req: string | SignatureReq, callback: Function): Promise<void>
+    sign(req: SignatureReq, callback: Function): Promise<void>
     listKeys(): MusapKey[] | string
     getKeyByUri(keyUri: string): MusapKey | string
     getSscdInfo(sscdId: string): SscdInfo
