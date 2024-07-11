@@ -32,7 +32,6 @@ dependencies {
         exclude(group = "com.yubico.yubikit", module = "piv")
     }
     implementation("com.nimbusds:nimbus-jose-jwt:9.40")
-    // implementation(files("libs/nimbus-jose-jwt-9.21.jar"))
 }
 
 repositories {
