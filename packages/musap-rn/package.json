@@ -2,7 +2,7 @@
   "name": "@sphereon/musap-react-native",
   "title": "musap-rn",
   "version": "0.0.2-unstable.48+81bc614",
-  "description": "TODO",
+  "description": "A React Native module wrapping the MUSAP library for Android & iOS",
   "main": "dist/module/index.js",
   "module": "dist/module/index.js",
   "types": "dist/typescript/index.d.ts",
