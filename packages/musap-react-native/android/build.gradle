@@ -25,6 +25,7 @@ def isNewArchitectureEnabled() {
 
 apply plugin: "com.android.library"
 apply plugin: "kotlin-android"
+apply plugin: 'maven-publish'
 
 if (isNewArchitectureEnabled()) {
     apply plugin: "com.facebook.react"
@@ -65,12 +66,14 @@ android {
     defaultConfig {
         minSdkVersion getExtOrIntegerDefault("minSdkVersion")
         targetSdkVersion getExtOrIntegerDefault("targetSdkVersion")
-
+        versionCode 1
+        versionName "1.0.0"
     }
 
     buildTypes {
         release {
             minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
     }
 
@@ -87,8 +90,107 @@ android {
         jvmTarget = "17"
     }
 
+    libraryVariants.all { variant ->
+        variant.outputs.all {
+            outputFileName = "musap-react-native-${variant.name}.aar"
+        }
+    }
+
     publishing {
         singleVariant("release")
+    }
+}
+
+
+afterEvaluate {
+    publishing {
+        publications {
+            aar(MavenPublication) {
+                groupId 'com.sphereon.musap'
+                artifactId 'musap-react-native'
+                version '1.0.0'
+
+                artifact("$buildDir/outputs/aar/musap-react-native-release.aar") {
+                    builtBy tasks.bundleReleaseAar
+                }
+
+                pom {
+                    name = 'musap-react-native'
+                    description = 'A description of the musap-react-native library'
+                    url = 'http://www.example.com/musap-react-native'
+
+                    scm {
+                        connection = 'scm:git:git://example.com/musap-react-native.git'
+                        developerConnection = 'scm:git:ssh://example.com/musap-react-native.git'
+                        url = 'http://example.com/musap-react-native'
+                    }
+
+                    licenses {
+                        license {
+                            name = 'The Apache Software License, Version 2.0'
+                            url = 'http://www.apache.org/licenses/LICENSE-2.0.txt'
+                            distribution = 'repo'
+                        }
+                    }
+
+                    developers {
+                        developer {
+                            id = 'sphereon'
+                            name = 'Sphereon Developer'
+                            email = 'dev@example.com'
+                        }
+                    }
+                }
+
+                pom.withXml {
+                    asNode().appendNode('dependencies').with {
+                        appendNode('dependency').with {
+                            appendNode('groupId', 'com.facebook.react')
+                            appendNode('artifactId', 'react-android')
+                            appendNode('version', '+')
+                            appendNode('scope', 'compile')
+                        }
+                        appendNode('dependency').with {
+                            appendNode('groupId', 'org.jetbrains.kotlin')
+                            appendNode('artifactId', 'kotlin-stdlib')
+                            appendNode('version', project.kotlin_version)
+                            appendNode('scope', 'compile')
+                        }
+                        appendNode('dependency').with {
+                            appendNode('groupId', 'fi.methics.musap')
+                            appendNode('artifactId', 'musap-android')
+                            appendNode('version', '1.0.0')
+                            appendNode('scope', 'compile')
+                            appendNode('exclusions').with {
+                                appendNode('exclusion').with {
+                                    appendNode('groupId', 'com.yubico.yubikit')
+                                    appendNode('artifactId', 'core')
+                                }
+                                appendNode('exclusion').with {
+                                    appendNode('groupId', 'com.yubico.yubikit')
+                                    appendNode('artifactId', 'android')
+                                }
+                                appendNode('exclusion').with {
+                                    appendNode('groupId', 'com.yubico.yubikit')
+                                    appendNode('artifactId', 'piv')
+                                }
+                            }
+                        }
+                        appendNode('dependency').with {
+                            appendNode('groupId', 'com.nimbusds')
+                            appendNode('artifactId', 'nimbus-jose-jwt')
+                            appendNode('version', '9.40')
+                            appendNode('scope', 'compile')
+                        }
+                    }
+                }
+            }
+        }
+        repositories {
+            maven {
+                url = "maven"
+            }
+        }
     }
 }
 
@@ -125,45 +227,9 @@ dependencies {
     implementation("com.nimbusds:nimbus-jose-jwt:9.40")
 }
 
-configurations {
-    embeddedDeps
+
+tasks.register("publishReleaseAar") {
+    dependsOn tasks.bundleReleaseAar
+    finalizedBy tasks.publish
 }
 
-dependencies {
-    embeddedDeps "fi.methics.musap:musap-android:1.0.0"
-    embeddedDeps "com.nimbusds:nimbus-jose-jwt:9.40"
-}
-
-task copyAar(type: Copy) {
-    dependsOn 'assembleRelease'
-    from("${buildDir}/outputs/aar/")
-    include('android-release.aar')
-    into("${projectDir}/../dist/android/libs")
-    rename('android-release.aar', 'musap-react-native.aar')
-}
-
-task copyBuild(type: Copy) {
-    dependsOn 'assembleRelease'
-    from("${projectDir}/../android-dist/")
-    include('build.gradle')
-    into("${projectDir}/../dist/android")
-}
-
-task copyRnConfig(type: Copy) {
-    dependsOn 'assembleRelease'
-    from("${projectDir}/../android-dist/")
-    include('react-native.config.js')
-    into("${projectDir}/../dist")
-}
-
-task copyDependencies(type: Copy) {
-    from configurations.embeddedDeps
-    into "../dist/android/libs"
-    include '*.jar', '*.aar'
-}
-
-tasks.whenTaskAdded { task ->
-    if (task.name == 'bundleReleaseAar') {
-        task.finalizedBy copyAar, copyDependencies, copyBuild, copyRnConfig
-    }
-}
