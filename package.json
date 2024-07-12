@@ -1,5 +1,5 @@
 {
-  "name": "musap-react-native-parent",
+  "name": "@sphereon/musap-react-native-parent",
   "version": "1.0.0",
   "main": "index.js",
   "repository": "https://github.com/Sphereon-Opensource/musap-react-native",
