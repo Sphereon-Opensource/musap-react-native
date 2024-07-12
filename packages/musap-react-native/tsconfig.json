@@ -5,12 +5,13 @@
     "rootDir": "src",
     "outDir": "./dist",
     "baseUrl": "./",
+    "types": ["react-native"],
     "paths": {
       "musap-rn": ["./src/index"]
     },
     "noEmit": false,
-    "emitDeclarationOnly": true,
-    "allowImportingTsExtensions": true,
+    "emitDeclarationOnly": false,
+    "allowImportingTsExtensions": false,
   },
   "include": ["src"],
   "exclude": ["node_modules", "dist"]

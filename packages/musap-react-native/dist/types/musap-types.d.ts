@@ -58,12 +58,12 @@ export interface MusapKey {
     state: string;
     attestation: KeyAttestation;
 }
-interface PublicKey {
+export interface PublicKey {
     publickeyDer: Uint8Array;
     getDER(): Uint8Array;
     getPEM(): string;
 }
-interface MusapCertificate {
+export interface MusapCertificate {
     subject: string;
     certificate: Uint8Array;
     publicKey: PublicKey;
@@ -76,20 +76,20 @@ interface MusapCertificate {
     getCertificate(): Uint8Array;
     getPublicKey(): PublicKey;
 }
-interface MusapLoA extends Comparable<MusapLoA> {
+export interface MusapLoA extends Comparable<MusapLoA> {
     loa: string;
     scheme: string;
     number: number;
     compareLoA(other: MusapLoA): boolean;
 }
-interface KeyAttestation {
+export interface KeyAttestation {
     attestationType: string;
     signature: Uint8Array;
     certificate: MusapCertificate;
     certificateChain: MusapCertificate[];
     aaguid: string;
 }
-interface SignatureAttribute {
+export interface SignatureAttribute {
     name: string;
     value: string;
 }
@@ -105,7 +105,10 @@ export interface SignatureReq {
 interface Comparable<T> {
     compareTo(other: T): number;
 }
-type SscdType = 'TEE' | 'YUBI_KEY';
+export type MusapLoAScheme = 'EIDAS-2014' | 'ISO-29115';
+export declare const LOA_SCHEME_EIDAS: MusapLoAScheme;
+export declare const LOA_SCHEME_ISO: MusapLoAScheme;
+export type SscdType = 'TEE' | 'YUBI_KEY';
 export interface MusapModuleType {
     listEnabledSscds(): Array<MusapSscd>;
     listActiveSscds(): Array<MusapSscd>;

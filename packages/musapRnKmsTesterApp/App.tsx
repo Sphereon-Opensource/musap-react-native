@@ -24,6 +24,7 @@ import {
   LearnMoreLinks,
   ReloadInstructions,
 } from 'react-native/Libraries/NewAppScreen';
+import {MusapModule} from "@sphereon/musap-react-native";
 
 type SectionProps = PropsWithChildren<{
   title: string;
@@ -61,6 +62,9 @@ function App(): React.JSX.Element {
   const backgroundStyle = {
     backgroundColor: isDarkMode ? Colors.darker : Colors.lighter,
   };
+
+  MusapModule.enableSscd('TEE');
+  console.log(MusapModule.listEnabledSscds());
 
   return (
     <SafeAreaView style={backgroundStyle}>

@@ -1,2 +1,2 @@
 
-export * from './types/musap-types.ts'
+export * from './types/musap-types'

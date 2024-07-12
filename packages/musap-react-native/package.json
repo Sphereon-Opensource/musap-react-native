@@ -3,6 +3,8 @@
   "title": "musap-rn",
   "version": "0.0.2",
   "description": "A React Native module wrapping the MUSAP library for Android & iOS",
+  "main": "dist/index.js",
+  "module": "dist/index.js",
   "types": "dist/index.d.ts",
   "nativePackage": true,
   "files": [
@@ -13,10 +15,7 @@
   "scripts": {
     "build": "tsc --build --clean && tsc --build",
     "prepare": "yarn build",
-    "assemble:android:windows": "cd android && .\\gradlew.bat assembleDebug",
-    "assemble:android:linux": "cd android && ./gradlew assembleDebug",
-    "assemble:ios": "cd ios && xcodebuild -scheme MusapRn -sdk iphonesimulator -destination 'platform=iOS Simulator,name=iPhone 12' build",
-    "build:android:windows": "cd android && .\\gradlew.bat bundleReleaseAar",
+    "build:android:windows": "cd android && gradlew.bat bundleReleaseAar",
     "build:android:linux": "cd android && ./gradlew bundleReleaseAar",
     "build:ios": "cd ios && xcodebuild -scheme MusapRn -sdk iphonesimulator -destination 'platform=iOS Simulator,name=iPhone 12' build"
   },
@@ -36,12 +35,13 @@
   "license": "MIT",
   "licenseFilename": "LICENSE",
   "readmeFilename": "README.md",
-  "peerDependencies": {
+  "dependencies": {
     "react": ">=16.8.1",
     "react-native": ">=0.60.0-rc.0 <1.0.x"
   },
   "devDependencies": {
     "@react-native-community/cli": "^13.6.9",
+    "@react-native/typescript-config": "^0.74.85",
     "@types/react": "^18.3.3",
     "@types/react-native": "^0.73.0",
     "react": "^18.3.1",
