@@ -1,0 +1,14 @@
+{
+  "extends": "../tsconfig-base.json",
+  "compilerOptions": {
+    "target": "es2016",
+    "rootDir": "src",
+    "outDir": "./dist",
+    "baseUrl": "./",
+    "paths": {
+      "musap-rn": ["./src/index"]
+    }
+  },
+  "include": ["src"],
+  "exclude": ["node_modules", "dist"]
+}

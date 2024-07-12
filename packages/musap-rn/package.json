@@ -1,0 +1,59 @@
+
+{
+  "name": "musap-rn",
+  "title": "musap-rn",
+  "version": "1.0.0",
+  "description": "TODO",
+  "main": "dist/module/index.js",
+  "module": "dist/module/index.js",
+  "types": "dist/typescript/index.d.ts",
+  "nativePackage": true,
+  "files": [
+    "src",
+    "dist",
+    "android",
+    "ios",
+    "!android/build",
+    "!ios/build",
+    "!**/__tests__",
+    "!**/__fixtures__",
+    "!**/__mocks__"
+  ],
+  "scripts": {
+    "build": "tsc",
+    "prepare": "yarn build",
+    "assemble:android:windows": "cd android && .\\gradlew.bat assembleDebug",
+    "assemble:android:linux": "cd android && ./gradlew assembleDebug",
+    "assemble:ios": "cd ios && xcodebuild -scheme MusapRn -sdk iphonesimulator -destination 'platform=iOS Simulator,name=iPhone 12' build",
+    "build:android:windows": "cd android && .\\gradlew.bat bundleReleaseAar",
+    "build:android:linux": "cd android && ./gradlew bundleReleaseAar",
+    "build:ios": "cd ios && xcodebuild -scheme MusapRn -sdk iphonesimulator -destination 'platform=iOS Simulator,name=iPhone 12' build"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Sphereon-Opensource/musap-react-native.git",
+    "baseUrl": "https://github.com/Sphereon-Opensource/musap-react-native"
+  },
+  "keywords": [
+    "react-native",
+    "musap"
+  ],
+  "author": {
+    "name": "Sphereon",
+    "email": "dev@sphereon.com"
+  },
+  "license": "MIT",
+  "licenseFilename": "LICENSE",
+  "readmeFilename": "README.md",
+  "peerDependencies": {
+    "react": ">=16.8.1",
+    "react-native": ">=0.60.0-rc.0 <1.0.x"
+  },
+  "devDependencies": {
+    "@types/react": "^18.3.3",
+    "@types/react-native": "^0.73.0",
+    "react": "^18.3.1",
+    "react-native": "^0.74.3",
+    "@react-native-community/cli": "^13.6.9"
+  }
+}
