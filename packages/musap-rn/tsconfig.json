@@ -7,7 +7,10 @@
     "baseUrl": "./",
     "paths": {
       "musap-rn": ["./src/index"]
-    }
+    },
+    "noEmit": false,
+    "emitDeclarationOnly": true,
+    "allowImportingTsExtensions": true,
   },
   "include": ["src"],
   "exclude": ["node_modules", "dist"]

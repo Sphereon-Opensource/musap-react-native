@@ -8,7 +8,7 @@ buildscript {
     }
 
     dependencies {
-        classpath "com.android.tools.build:gradle:8.5.0"
+        classpath "com.android.tools.build:gradle:8.2.0"
         // noinspection DifferentKotlinGradleVersion
         classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
     }
@@ -86,6 +86,10 @@ android {
     kotlinOptions {
         jvmTarget = "17"
     }
+
+    publishing {
+        singleVariant("release")
+    }
 }
 
 repositories {
@@ -121,3 +125,16 @@ dependencies {
     implementation("com.nimbusds:nimbus-jose-jwt:9.40")
 }
 
+task copyAar(type: Copy) {
+    dependsOn 'assembleRelease'
+    from("${buildDir}/outputs/aar/")
+    include('android-release.aar')
+    into("${projectDir}/../dist")
+    rename('android-release.aar', 'musap-react-native.aar')
+}
+
+tasks.whenTaskAdded { task ->
+    if (task.name == 'bundleReleaseAar') {
+        task.finalizedBy copyAar
+    }
+}
