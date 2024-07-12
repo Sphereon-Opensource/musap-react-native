@@ -117,12 +117,12 @@ dependencies {
     //noinspection GradleDynamicVersion
     implementation "com.facebook.react:react-android:+"
     implementation "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
-    implementation("fi.methics.musap:musap-android:1.0.0") {
+    api("fi.methics.musap:musap-android:1.0.0") {
         exclude group: "com.yubico.yubikit", module: "core"
         exclude group: "com.yubico.yubikit", module: "android"
         exclude group: "com.yubico.yubikit", module: "piv"
     }
-    implementation("com.nimbusds:nimbus-jose-jwt:9.40")
+    api("com.nimbusds:nimbus-jose-jwt:9.40")
 }
 
 task copyAar(type: Copy) {

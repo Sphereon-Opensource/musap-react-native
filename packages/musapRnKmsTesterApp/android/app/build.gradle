@@ -131,6 +131,13 @@ dependencies {
     }
 
     implementation(name: 'musap-react-native', ext: 'aar')
+    implementation("fi.methics.musap:musap-android:1.0.0") {
+        exclude group: "com.yubico.yubikit", module: "core"
+        exclude group: "com.yubico.yubikit", module: "android"
+        exclude group: "com.yubico.yubikit", module: "piv"
+    }
+    implementation("com.nimbusds:nimbus-jose-jwt:9.40")
+
 }
 
 apply from: file("../../node_modules/@react-native-community/cli-platform-android/native_modules.gradle"); applyNativeModulesAppBuildGradle(project)

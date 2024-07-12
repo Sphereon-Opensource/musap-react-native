@@ -13,6 +13,7 @@
     "hoistingLimits": "workspaces"
   },
   "dependencies": {
+    "@sphereon/musap-react-native": "0.0.2-unstable.54",
     "react": "18.2.0",
     "react-native": "0.74.3"
   },
