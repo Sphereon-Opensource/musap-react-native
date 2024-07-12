@@ -1,8 +1,7 @@
-
 {
   "name": "@sphereon/musap-react-native",
   "title": "musap-rn",
-  "version": "1.0.0",
+  "version": "0.0.2-unstable.48+81bc614",
   "description": "TODO",
   "main": "dist/module/index.js",
   "module": "dist/module/index.js",
@@ -50,10 +49,14 @@
     "react-native": ">=0.60.0-rc.0 <1.0.x"
   },
   "devDependencies": {
+    "@react-native-community/cli": "^13.6.9",
     "@types/react": "^18.3.3",
     "@types/react-native": "^0.73.0",
     "react": "^18.3.1",
-    "react-native": "^0.74.3",
-    "@react-native-community/cli": "^13.6.9"
+    "react-native": "^0.74.3"
+  },
+  "gitHead": "81bc614f7a93b9d09c4a0d94fc23a6b9a7d44c0e",
+  "publishConfig": {
+    "access": "public"
   }
 }
