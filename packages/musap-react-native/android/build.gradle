@@ -117,24 +117,53 @@ dependencies {
     //noinspection GradleDynamicVersion
     implementation "com.facebook.react:react-android:+"
     implementation "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
-    api("fi.methics.musap:musap-android:1.0.0") {
+    implementation("fi.methics.musap:musap-android:1.0.0") {
         exclude group: "com.yubico.yubikit", module: "core"
         exclude group: "com.yubico.yubikit", module: "android"
         exclude group: "com.yubico.yubikit", module: "piv"
     }
-    api("com.nimbusds:nimbus-jose-jwt:9.40")
+    implementation("com.nimbusds:nimbus-jose-jwt:9.40")
+}
+
+configurations {
+    embeddedDeps
+}
+
+dependencies {
+    embeddedDeps "fi.methics.musap:musap-android:1.0.0"
+    embeddedDeps "com.nimbusds:nimbus-jose-jwt:9.40"
 }
 
 task copyAar(type: Copy) {
     dependsOn 'assembleRelease'
     from("${buildDir}/outputs/aar/")
     include('android-release.aar')
-    into("${projectDir}/../dist")
+    into("${projectDir}/../dist/android/libs")
     rename('android-release.aar', 'musap-react-native.aar')
+}
+
+task copyBuild(type: Copy) {
+    dependsOn 'assembleRelease'
+    from("${projectDir}/../android-dist/")
+    include('build.gradle')
+    into("${projectDir}/../dist/android")
+}
+
+task copyRnConfig(type: Copy) {
+    dependsOn 'assembleRelease'
+    from("${projectDir}/../android-dist/")
+    include('react-native.config.js')
+    into("${projectDir}/../dist")
+}
+
+task copyDependencies(type: Copy) {
+    from configurations.embeddedDeps
+    into "../dist/android/libs"
+    include '*.jar', '*.aar'
 }
 
 tasks.whenTaskAdded { task ->
     if (task.name == 'bundleReleaseAar') {
-        task.finalizedBy copyAar
+        task.finalizedBy copyAar, copyDependencies, copyBuild, copyRnConfig
     }
 }
