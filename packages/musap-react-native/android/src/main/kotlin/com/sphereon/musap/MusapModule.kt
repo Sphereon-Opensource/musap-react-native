@@ -169,7 +169,9 @@ class MusapModuleAndroid(private val context: ReactApplicationContext) : ReactCo
         var initialContext: Context? = null
 
         fun init(context: Context) {
+            Log.i("MUSAP", "MusapClient.init(context)")
             MusapClient.init(context)
+            Log.i("MUSAP", "MusapClient.init(context) done")
             initialContext = context
         }
     }
