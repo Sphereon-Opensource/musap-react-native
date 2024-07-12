@@ -2,6 +2,22 @@ apply plugin: "com.android.application"
 apply plugin: "org.jetbrains.kotlin.android"
 apply plugin: "com.facebook.react"
 
+// At the top of the file, add:
+repositories {
+    google()
+    mavenCentral()
+    flatDir {
+        dirs "$rootDir/../musap-react-native/dist"
+        dirs "$rootDir/../../musap-react-native/dist"
+        dirs "$rootDir/../node_modules/musap-react-native/dist"
+    }
+    maven {
+        name = "Sphereon Public"
+        url = uri("https://nexus.sphereon.com/repository/sphereon-opensource-releases")
+    }
+}
+
+
 /**
  * This is the configuration block to customize your React Native Android app.
  * By default you don't need to apply any configuration, just uncomment the lines you need.
@@ -113,6 +129,8 @@ dependencies {
     } else {
         implementation jscFlavor
     }
+
+    implementation(name: 'musap-react-native', ext: 'aar')
 }
 
 apply from: file("../../node_modules/@react-native-community/cli-platform-android/native_modules.gradle"); applyNativeModulesAppBuildGradle(project)
