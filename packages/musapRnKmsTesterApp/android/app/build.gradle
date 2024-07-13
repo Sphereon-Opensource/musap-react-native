@@ -6,10 +6,8 @@ apply plugin: "com.facebook.react"
 repositories {
     google()
     mavenCentral()
-    flatDir {
-        dirs "$rootDir/../musap-react-native/dist"
-        dirs "$rootDir/../../musap-react-native/dist"
-        dirs "$rootDir/../node_modules/musap-react-native/dist"
+    maven {
+        url "$rootDir/../node_modules/@sphereon/musap-react-native/android/maven"
     }
     maven {
         name = "Sphereon Public"
@@ -123,6 +121,7 @@ android {
 dependencies {
     // The version of react-native is set by the React Native Gradle Plugin
     implementation("com.facebook.react:react-android")
+    implementation("com.sphereon.musap:musap-react-native:1.0.0")
 
     if (hermesEnabled.toBoolean()) {
         implementation("com.facebook.react:hermes-android")

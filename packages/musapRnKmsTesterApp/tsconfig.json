@@ -6,6 +6,8 @@
     }
   ],
   "compilerOptions": {
-    "allowSyntheticDefaultImports": true
-  }
+    "allowSyntheticDefaultImports": true,
+    "types": ["detox", "jest"]
+  },
+  "include": ["e2e/**/*.ts"]
 }

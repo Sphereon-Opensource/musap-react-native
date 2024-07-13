@@ -1,0 +1,15 @@
+{
+  "preset": "react-native",
+  "setupFilesAfterEnv": ["../detox.setup.js"],
+  "transform": {
+    "^.+\\.(js|jsx|ts|tsx)$": ["babel-jest", {"presets": ["@babel/preset-env", "@babel/preset-typescript"]}]
+  },
+  "testMatch": ["**/?(*.)+(e2e).[jt]s?(x)"],
+  "moduleFileExtensions": ["ts", "tsx", "js", "jsx", "json", "node"],
+  "transformIgnorePatterns": ["/node_modules/(?!(@react-native|react-native)).*/"],
+  "globals": {
+    "ts-jest": {
+      "babelConfig": true
+    }
+  }
+}
