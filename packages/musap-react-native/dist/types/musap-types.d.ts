@@ -1,6 +1,8 @@
 export type KeyAlgorithmPrimitive = 'RSA' | 'EC';
+export type SignatureAlgorithmType = 'SHA256withECDSA' | 'SHA384withECDSA' | 'SHA512withECDSA' | 'NONEwithECDSA' | 'NONEwithEdDSA' | 'SHA256withRSA' | 'SHA384withRSA' | 'SHA512withRSA' | 'NONEwithRSA' | 'SHA256withRSASSA-PSS' | 'SHA384withRSASSA-PSS' | 'SHA512withRSASSA-PSS' | 'NONEwithRSASSA-PSS';
 export type KeyAlgorithmType = 'RSA' | 'EC' | 'RSA2K' | 'RSA4K' | 'ECCP256K1' | 'ECCP256R1' | 'ECCP384K1' | 'ECCP384R1' | 'ECC_ED25519' | 'secp256k1' | 'secp384k1' | 'secp256r1' | 'secp384r1' | 'Ed25519';
 export type SignatureFormatType = 'CMS' | 'RAW' | 'PKCS1';
+export type SignatureFormat = 'CMS' | 'RAW';
 export interface SscdInfo {
     sscdName: string;
     sscdType: string;
@@ -9,7 +11,6 @@ export interface SscdInfo {
     provider: string;
     keygenSupported: boolean;
     supportedAlgorithms: KeyAlgorithm[];
-    formats: SignatureFormat[];
 }
 export interface MusapSscd {
     sscdId: string;
@@ -20,9 +21,6 @@ export interface KeyAlgorithm {
     primitive: KeyAlgorithmType;
     curve?: string;
     bits: number;
-}
-export interface SignatureFormat {
-    format: SignatureFormatType;
 }
 export interface KeyAttribute {
     name: string;
@@ -97,8 +95,8 @@ export interface SignatureReq {
     key: MusapKey;
     data: string;
     displayText?: string;
-    algorithm?: 'SHA256withECDSA' | 'SHA384withECDSA' | 'SHA512withECDSA' | 'NONEwithECDSA' | 'NONEwithEdDSA' | 'SHA256withRSA' | 'SHA384withRSA' | 'SHA512withRSA' | 'NONEwithRSA' | 'SHA256withRSASSA-PSS' | 'SHA384withRSASSA-PSS' | 'SHA512withRSASSA-PSS' | 'NONEwithRSASSA-PSS';
-    format?: 'CMS' | 'RAW';
+    algorithm?: SignatureAlgorithmType;
+    format?: SignatureFormat;
     attributes?: SignatureAttribute[];
     transId?: string;
 }
@@ -113,10 +111,10 @@ export interface MusapModuleType {
     listEnabledSscds(): Array<MusapSscd>;
     listActiveSscds(): Array<MusapSscd>;
     enableSscd(sscdType: SscdType): void;
-    generateKey(sscdType: SscdType, req: KeyGenReq, callback: Function): Promise<void>;
-    sign(req: SignatureReq, callback: Function): Promise<void>;
-    listKeys(): MusapKey[] | string;
-    getKeyByUri(keyUri: string): MusapKey | string;
+    generateKey(sscdType: SscdType, req: KeyGenReq, callback: (error: string | undefined, keyUri: string | undefined) => void): Promise<void>;
+    sign(req: SignatureReq, callback: (error: string | undefined, signed: string | undefined) => void): Promise<void>;
+    listKeys(): MusapKey[];
+    getKeyByUri(keyUri: string): MusapKey;
     getSscdInfo(sscdId: string): SscdInfo;
     getSettings(sscdId: string): Map<string, string>;
 }
