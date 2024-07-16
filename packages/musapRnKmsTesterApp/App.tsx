@@ -84,12 +84,16 @@ function App(): React.JSX.Element {
       keyUsage: "sign",
       role: "administrator",
     }
-    const result = await kms.createKey({type: 'Secp256r1', meta: {keyMetadata: keyGenRequest}})
+    console.log('kms.createKey()')
+
+    // @ts-ignore
+    const result = await kms.createKey({type: 'TEE', meta: {keyGenReq: keyGenRequest}})
+    console.log('kms.createKey() result', result)
     return result
   }
 
   generateKey()
-      .then(value => console.log('generateKey', value))
+      .then(value => console.log('generateKey result', value))
       .catch(reason => {
         console.error(reason)
       })
