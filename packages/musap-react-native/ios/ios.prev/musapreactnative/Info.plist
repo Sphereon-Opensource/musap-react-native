@@ -27,7 +27,7 @@
       <dict>
         <key>CFBundleURLSchemes</key>
         <array>
-          <string>myapp</string>
+          <string>testApp</string>
           <string>com.sphereon.musaprn</string>
         </array>
       </dict>

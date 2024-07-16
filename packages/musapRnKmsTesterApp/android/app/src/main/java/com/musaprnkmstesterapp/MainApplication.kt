@@ -42,11 +42,10 @@ class MainApplication : Application(), ReactApplication {
             load()
         }
         try {
-            Log.i("MUSAP", " MusapModuleAndroid.init")
             MusapModuleAndroid.init(this)
-            Log.i("MUSAP", " MusapModuleAndroid.init done")
         } catch (e: Throwable) {
-            Log.e("MUSAP", "init failed", e)
+            Log.e("MUSAP", "init failed", e) // To logcat
+            throw e
         }
     }
 }

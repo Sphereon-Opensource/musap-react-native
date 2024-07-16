@@ -3,7 +3,6 @@ package com.sphereon.musap.serializers
 import com.facebook.react.bridge.Arguments
 import com.facebook.react.bridge.WritableMap
 import fi.methics.musap.sdk.extension.SscdSettings
-import fi.methics.musap.sdk.internal.datatype.KeyAlgorithm
 import fi.methics.musap.sdk.internal.datatype.SscdInfo
 import fi.methics.musap.sdk.internal.util.MusapSscd
 
