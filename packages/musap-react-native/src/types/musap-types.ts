@@ -136,6 +136,10 @@ export interface SignatureReq {
     transId?: string
 }
 
+export interface KeyRef {
+  kid: string
+}
+
 interface Comparable<T> {
     compareTo(other: T): number
 }
@@ -152,6 +156,7 @@ export interface MusapModuleType {
     enableSscd(sscdType: SscdType): void
     generateKey (sscdType: SscdType, req: KeyGenReq, callback: (error: string | undefined, keyUri: string | undefined) => void): Promise<void>
     sign(req: SignatureReq, callback:  (error: string | undefined, signed: string | undefined) => void): Promise<void>
+    deleteKey(keyRef: KeyRef, callback:  (error: string | undefined, deleted: boolean | undefined) => void): Promise<void>
     listKeys(): MusapKey[]
     getKeyByUri(keyUri: string): MusapKey
     getSscdInfo(sscdId: string): SscdInfo

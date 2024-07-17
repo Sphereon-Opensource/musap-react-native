@@ -56,6 +56,30 @@ class MusapModuleAndroid(private val context: ReactApplicationContext) : ReactCo
     }
 
     @ReactMethod
+    fun deleteKey(keyRef: ReadableMap, callback: Callback) {
+        try {
+            val kid = keyRef.getString("kid") ?: throw IllegalArgumentException("Key ID is required")
+            val musapCallback = object : MusapCallback<Boolean> {
+                override fun onSuccess(result: Boolean?) {
+                    if (result == true) {
+                        callback.invoke(null, true)
+                    } else {
+                        callback.invoke("Failed to delete key", false)
+                    }
+                }
+                override fun onException(e: MusapException?) {
+                    Log.e("MUSAP", "deleteKey failed", e)
+                    callback.invoke(e?.message, false)
+                }
+            }
+            MusapClient.deleteKey(kid, musapCallback)
+        } catch (e: Exception) {
+            Log.e("MUSAP", "deleteKey failed", e)
+            callback.invoke(e.message, false)
+        }
+    }
+
+    @ReactMethod
     fun sign(req: ReadableMap, callback: Callback) {
         try {
             val signatureReq = req.toSignatureReq(this.currentActivity)
