@@ -13,8 +13,9 @@
     "hoistingLimits": "workspaces"
   },
   "dependencies": {
+    "@react-native-community/cli-platform-android": "^13.6.9",
     "@sphereon/musap-react-native": "0.0.2-unstable.69",
-    "@sphereon/ssi-sdk-ext.musap-rn-kms": "0.22.1-unstable.16",
+    "@sphereon/ssi-sdk-ext.musap-rn-kms": "0.22.1-unstable.16+ab72368",
     "react": "18.2.0",
     "react-native": "0.74.3",
     "react-native-uuid": "^2.0.2"

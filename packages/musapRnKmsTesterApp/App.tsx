@@ -6,7 +6,6 @@
  */
 
 import React from 'react';
-import uuid from 'react-native-uuid'
 import type {PropsWithChildren} from 'react';
 import {
   SafeAreaView,
@@ -26,7 +25,7 @@ import {
   ReloadInstructions,
 } from 'react-native/Libraries/NewAppScreen';
 import {MusapKeyManagementSystem} from "@sphereon/ssi-sdk-ext.musap-rn-kms/dist/agent/MusapKeyManagerSystem";
-import {KeyAlgorithmType, KeyGenReq, MusapModule} from "@sphereon/musap-react-native";
+import {MusapModule} from "@sphereon/musap-react-native";
 
 
 type SectionProps = PropsWithChildren<{
@@ -73,21 +72,8 @@ function App(): React.JSX.Element {
   const kms:MusapKeyManagementSystem = new MusapKeyManagementSystem(MusapModule)
 
   async function generateKey() {
-    const keyGenRequest: KeyGenReq = {
-      attributes: [
-        {name: 'purpose', value: 'encrypt'},
-        {name: 'purpose', value: 'decrypt'}
-      ],
-      did: 'did:example:123456789abcdefghi',
-      keyAlgorithm: 'secp256r1',
-      keyAlias: uuid.v4().toString(), // Alias must be unique, at least for iOS otherwise error code 900 is thrown
-      keyUsage: "sign",
-      role: "administrator",
-    }
-    console.log('kms.createKey()')
-
     // @ts-ignore
-    const result = await kms.createKey({type: 'TEE', meta: {keyGenReq: keyGenRequest}})
+    const result = await kms.createKey({type: 'secp256r1'})
     console.log('kms.createKey() result', result)
     return result
   }
