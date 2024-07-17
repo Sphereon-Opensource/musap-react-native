@@ -1,11 +1,19 @@
 package com.sphereon.musap.serializers
 
+import android.os.Build
+import androidx.annotation.RequiresApi
 import com.facebook.react.bridge.Arguments
 import com.facebook.react.bridge.WritableMap
-import fi.methics.musap.sdk.internal.datatype.*
+import fi.methics.musap.sdk.internal.datatype.KeyAttribute
+import fi.methics.musap.sdk.internal.datatype.KeyURI
+import fi.methics.musap.sdk.internal.datatype.MusapCertificate
+import fi.methics.musap.sdk.internal.datatype.MusapKey
+import fi.methics.musap.sdk.internal.datatype.MusapLoA
+import fi.methics.musap.sdk.internal.datatype.PublicKey
+import fi.methics.musap.sdk.internal.datatype.SignatureAlgorithm
 import java.security.Principal
 import java.security.cert.X509Certificate
-import java.time.Instant
+import java.time.format.DateTimeFormatter
 import javax.security.auth.x500.X500Principal
 
 fun KeyAttribute.toWritableMap(): WritableMap {
@@ -142,13 +150,26 @@ fun KeyURI.toWritableMap(): WritableMap {
     }
 }
 
-fun Instant.toWritableMap(): WritableMap {
-    return Arguments.createMap().apply {
-        putInt("nano", nano)
-        putString("epochSecond", epochSecond.toString())
+fun String.toMusapLoA(): MusapLoA {
+    return when (this.lowercase()) {
+        "low" -> MusapLoA.EIDAS_LOW
+        "substantial" -> MusapLoA.EIDAS_SUBSTANTIAL
+        "high" -> MusapLoA.EIDAS_HIGH
+        "loa1" -> MusapLoA.ISO_LOA1
+        "loa2" -> MusapLoA.ISO_LOA2
+        "loa3" -> MusapLoA.ISO_LOA3
+        "loa4" -> MusapLoA.ISO_LOA4
+        "ial1" -> MusapLoA.NIST_IAL1
+        "ial2" -> MusapLoA.NIST_IAL2
+        "ial3" -> MusapLoA.NIST_IAL3
+        "aal1" -> MusapLoA.NIST_AAL1
+        "aal2" -> MusapLoA.NIST_AAL2
+        "aal3" -> MusapLoA.NIST_AAL3
+        else -> throw IllegalArgumentException("Unknown LoA: $this")
     }
 }
 
+@RequiresApi(Build.VERSION_CODES.O)
 fun MusapKey.toWritableMap(): WritableMap {
     val keyAttributes = Arguments.createArray()
     this.attributes.forEach {
@@ -185,7 +206,7 @@ fun MusapKey.toWritableMap(): WritableMap {
         certificateChain?.let {
             putArray("certificateChain", certificateChain)
         }
-        putMap("createdDate", createdDate.toWritableMap())
+        putString("createdDate",  DateTimeFormatter.ISO_INSTANT.format(createdDate))
         putMap("defaultsignatureAlgorithm", defaultsignatureAlgorithm.toWritableMap())
         putMap("keyUri", keyUri.toWritableMap())
         putArray("keyUsages", keyUsages)
