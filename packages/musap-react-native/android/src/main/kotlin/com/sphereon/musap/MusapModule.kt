@@ -4,6 +4,7 @@ import android.content.Context
 import android.util.Log
 import com.facebook.react.bridge.Arguments
 import com.facebook.react.bridge.Callback
+import com.facebook.react.bridge.Promise
 import com.facebook.react.bridge.ReactApplicationContext
 import com.facebook.react.bridge.ReactContextBaseJavaModule
 import com.facebook.react.bridge.ReactMethod
@@ -56,26 +57,13 @@ class MusapModuleAndroid(private val context: ReactApplicationContext) : ReactCo
     }
 
     @ReactMethod
-    fun deleteKey(keyRef: ReadableMap, callback: Callback) {
+    fun removeKey(keyUri: String, promise: Promise) {
         try {
-            val kid = keyRef.getString("kid") ?: throw IllegalArgumentException("Key ID is required")
-            val musapCallback = object : MusapCallback<Boolean> {
-                override fun onSuccess(result: Boolean?) {
-                    if (result == true) {
-                        callback.invoke(null, true)
-                    } else {
-                        callback.invoke("Failed to delete key", false)
-                    }
-                }
-                override fun onException(e: MusapException?) {
-                    Log.e("MUSAP", "deleteKey failed", e)
-                    callback.invoke(e?.message, false)
-                }
-            }
-            MusapClient.deleteKey(kid, musapCallback)
+            val musapKey = MusapClient.getKeyByUri(keyUri) ?: throw IllegalArgumentException("No key found for URI $keyUri")
+            promise.resolve(MusapClient.removeKey(musapKey))
         } catch (e: Exception) {
             Log.e("MUSAP", "deleteKey failed", e)
-            callback.invoke(e.message, false)
+            promise.reject(e)
         }
     }
 
