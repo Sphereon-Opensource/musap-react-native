@@ -1,11 +1,19 @@
 package com.sphereon.musap.serializers
 
+import android.os.Build
+import androidx.annotation.RequiresApi
 import com.facebook.react.bridge.Arguments
 import com.facebook.react.bridge.WritableMap
-import fi.methics.musap.sdk.internal.datatype.*
+import fi.methics.musap.sdk.internal.datatype.KeyAttribute
+import fi.methics.musap.sdk.internal.datatype.KeyURI
+import fi.methics.musap.sdk.internal.datatype.MusapCertificate
+import fi.methics.musap.sdk.internal.datatype.MusapKey
+import fi.methics.musap.sdk.internal.datatype.MusapLoA
+import fi.methics.musap.sdk.internal.datatype.PublicKey
+import fi.methics.musap.sdk.internal.datatype.SignatureAlgorithm
 import java.security.Principal
 import java.security.cert.X509Certificate
-import java.time.Instant
+import java.time.format.DateTimeFormatter
 import javax.security.auth.x500.X500Principal
 
 fun KeyAttribute.toWritableMap(): WritableMap {
@@ -142,15 +150,8 @@ fun KeyURI.toWritableMap(): WritableMap {
     }
 }
 
-fun Instant.toWritableMap(): WritableMap {
-    return Arguments.createMap().apply {
-        putInt("nano", nano)
-        putString("epochSecond", epochSecond.toString())
-    }
-}
-
 fun String.toMusapLoA(): MusapLoA {
-    return when (this.toLowerCase()) {
+    return when (this.lowercase()) {
         "low" -> MusapLoA.EIDAS_LOW
         "substantial" -> MusapLoA.EIDAS_SUBSTANTIAL
         "high" -> MusapLoA.EIDAS_HIGH
@@ -168,6 +169,7 @@ fun String.toMusapLoA(): MusapLoA {
     }
 }
 
+@RequiresApi(Build.VERSION_CODES.O)
 fun MusapKey.toWritableMap(): WritableMap {
 
     val keyAttributes = Arguments.createArray()
@@ -205,7 +207,7 @@ fun MusapKey.toWritableMap(): WritableMap {
         certificateChain?.let {
             putArray("certificateChain", certificateChain)
         }
-        putMap("createdDate", createdDate.toWritableMap())
+        putString("createdDate",  DateTimeFormatter.ISO_INSTANT.format(createdDate))
         putMap("defaultsignatureAlgorithm", defaultsignatureAlgorithm.toWritableMap())
         putMap("keyUri", keyUri.toWritableMap())
         putArray("keyUsages", keyUsages)
