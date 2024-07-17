@@ -26,7 +26,7 @@ import {
   ReloadInstructions,
 } from 'react-native/Libraries/NewAppScreen';
 import {MusapKeyManagementSystem} from "@sphereon/ssi-sdk-ext.musap-rn-kms/dist/agent/MusapKeyManagerSystem";
-import {KeyGenReq, MusapModule} from "@sphereon/musap-react-native";
+import {KeyAlgorithmType, KeyGenReq, MusapModule} from "@sphereon/musap-react-native";
 
 
 type SectionProps = PropsWithChildren<{
@@ -79,7 +79,7 @@ function App(): React.JSX.Element {
         {name: 'purpose', value: 'decrypt'}
       ],
       did: 'did:example:123456789abcdefghi',
-      keyAlgorithm: {primitive: "EC", curve: "secp256r1", bits: 256},
+      keyAlgorithm: 'secp256r1',
       keyAlias: uuid.v4().toString(), // Alias must be unique, at least for iOS otherwise error code 900 is thrown
       keyUsage: "sign",
       role: "administrator",

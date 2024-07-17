@@ -59,9 +59,15 @@ class MusapModuleAndroid(private val context: ReactApplicationContext) : ReactCo
     }
 
     @ReactMethod
-    fun removeKey(keyUri: String, promise: Promise) {
+    fun removeKey(keyIdOrUri: String, promise: Promise) {
         try {
-            val musapKey = MusapClient.getKeyByUri(keyUri) ?: throw IllegalArgumentException("No key found for URI $keyUri")
+            val musapKey = if (keyIdOrUri.startsWith("keyuri:")) {
+                MusapClient.getKeyByUri(keyIdOrUri)
+                    ?: throw IllegalArgumentException("No key found for URI $keyIdOrUri")
+            } else {
+                MusapClient.getKeyByKeyID(keyIdOrUri)
+                    ?: throw IllegalArgumentException("No key found for ID $keyIdOrUri")
+            }
             val removedKey = MusapClient.removeKey(musapKey)
             promise.resolve(removedKey)
         } catch (e: Exception) {
@@ -153,6 +159,13 @@ class MusapModuleAndroid(private val context: ReactApplicationContext) : ReactCo
     @ReactMethod(isBlockingSynchronousMethod = true)
     fun getKeyByUri(keyUri: String): WritableMap {
         val keyByUri = MusapClient.getKeyByUri(keyUri) ?: throw Exception("Key not found for $keyUri")
+        return keyByUri.toWritableMap()
+    }
+
+    @RequiresApi(Build.VERSION_CODES.O)
+    @ReactMethod(isBlockingSynchronousMethod = true)
+    fun getKeyById(keyId: String): WritableMap {
+        val keyByUri = MusapClient.getKeyByKeyID(keyId) ?: throw Exception("Key not found for $keyId")
         return keyByUri.toWritableMap()
     }
 
