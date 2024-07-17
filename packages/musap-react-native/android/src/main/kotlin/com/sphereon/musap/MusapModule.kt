@@ -1,7 +1,9 @@
 package com.sphereon.musap;
 
 import android.content.Context
+import android.os.Build
 import android.util.Log
+import androidx.annotation.RequiresApi
 import com.facebook.react.bridge.Arguments
 import com.facebook.react.bridge.Callback
 import com.facebook.react.bridge.Promise
@@ -60,9 +62,10 @@ class MusapModuleAndroid(private val context: ReactApplicationContext) : ReactCo
     fun removeKey(keyUri: String, promise: Promise) {
         try {
             val musapKey = MusapClient.getKeyByUri(keyUri) ?: throw IllegalArgumentException("No key found for URI $keyUri")
-            promise.resolve(MusapClient.removeKey(musapKey))
+            val removedKey = MusapClient.removeKey(musapKey)
+            promise.resolve(removedKey)
         } catch (e: Exception) {
-            Log.e("MUSAP", "deleteKey failed", e)
+            Log.e("MUSAP", "removeKey failed", e)
             promise.reject(e)
         }
     }
@@ -146,11 +149,14 @@ class MusapModuleAndroid(private val context: ReactApplicationContext) : ReactCo
         MusapClient.enableSscd(getSscdInstance(SscdType.valueOf(sscdType)), sscdType)
     }
 
+    @RequiresApi(Build.VERSION_CODES.O)
     @ReactMethod(isBlockingSynchronousMethod = true)
     fun getKeyByUri(keyUri: String): WritableMap {
-        return MusapClient.getKeyByUri(keyUri).toWritableMap()
+        val keyByUri = MusapClient.getKeyByUri(keyUri) ?: throw Exception("Key not found for $keyUri")
+        return keyByUri.toWritableMap()
     }
 
+    // TODO BEFORE PR check everything for possible NPs
     @ReactMethod(isBlockingSynchronousMethod = true)
     fun getSscdInfo(sscdId: String): WritableMap {
         return MusapClient.listEnabledSscds().first { it.sscdId == sscdId }.sscdInfo.toWritableMap()

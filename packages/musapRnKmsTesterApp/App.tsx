@@ -93,7 +93,21 @@ function App(): React.JSX.Element {
   }
 
   generateKey()
-      .then(value => console.log('generateKey result', value))
+      .then(value => {
+        console.log('generateKey result', value);
+        const keyUri = (value as any).keyUri.uri
+        console.log('Deleted keyUri:', keyUri)
+        kms.deleteKey({kid: keyUri}).then(value => {
+          console.log('Key deleted:', value)
+
+          try {
+            const key = MusapModule.getKeyByUri(keyUri)
+            console.log('Deleted key:', key)
+          } catch (e) {
+            console.log('Deleted key error:', e.message)
+          }
+        })
+      })
       .catch(reason => {
         console.error(reason)
       })
