@@ -29,8 +29,10 @@
   },
   "devDependencies": {
     "@react-native-community/cli": "^13.6.9",
+    "@react-native/typescript-config": "^0.74.85",
     "lerna": "^8.1.6",
     "prettier": "^3.3.2",
     "typescript": "5.5"
-  }
+  },
+  "packageManager": "yarn@4.3.1"
 }

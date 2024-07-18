@@ -11,8 +11,9 @@
     "src",
     "dist",
     "android",
-    "!android/src",
-    "expo-module.config.json"
+    "ios",
+    "expo-module.config.json",
+    "musap-react-native.podspec"
   ],
   "scripts": {
     "build": "tsc --build --clean && tsc --build",
@@ -20,6 +21,9 @@
     "build:android:windows": "cd android && gradlew.bat publishReleaseAar",
     "build:android:linux": "cd android && ./gradlew bundleReleaseAar",
     "build:ios": "cd ios && xcodebuild -scheme MusapRn -sdk iphonesimulator -destination 'platform=iOS Simulator,name=iPhone 12' build"
+  },
+  "installConfig": {
+    "hoistingLimits": "workspaces"
   },
   "repository": {
     "type": "git",
