@@ -97,7 +97,7 @@ fun ReadableMap.toSignatureReq(activity: Activity?): SignatureReq {
     }
 
     val createSignatureReq = builder.createSignatureReq()
-    createSignatureReq.setActivity(activity)
+    createSignatureReq.activity = activity
     return createSignatureReq
 }
 
@@ -115,7 +115,7 @@ fun ReadableArray.toStringList(): List<String> {
 
 
 fun String.toMusapLoA(): MusapLoA {
-    return when (this.toLowerCase()) {
+    return when (this.lowercase()) {
         "low" -> MusapLoA.EIDAS_LOW
         "substantial" -> MusapLoA.EIDAS_SUBSTANTIAL
         "high" -> MusapLoA.EIDAS_HIGH

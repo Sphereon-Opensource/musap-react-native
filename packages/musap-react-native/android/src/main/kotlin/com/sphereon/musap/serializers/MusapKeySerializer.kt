@@ -150,25 +150,6 @@ fun KeyURI.toWritableMap(): WritableMap {
     }
 }
 
-fun String.toMusapLoA(): MusapLoA {
-    return when (this.lowercase()) {
-        "low" -> MusapLoA.EIDAS_LOW
-        "substantial" -> MusapLoA.EIDAS_SUBSTANTIAL
-        "high" -> MusapLoA.EIDAS_HIGH
-        "loa1" -> MusapLoA.ISO_LOA1
-        "loa2" -> MusapLoA.ISO_LOA2
-        "loa3" -> MusapLoA.ISO_LOA3
-        "loa4" -> MusapLoA.ISO_LOA4
-        "ial1" -> MusapLoA.NIST_IAL1
-        "ial2" -> MusapLoA.NIST_IAL2
-        "ial3" -> MusapLoA.NIST_IAL3
-        "aal1" -> MusapLoA.NIST_AAL1
-        "aal2" -> MusapLoA.NIST_AAL2
-        "aal3" -> MusapLoA.NIST_AAL3
-        else -> throw IllegalArgumentException("Unknown LoA: $this")
-    }
-}
-
 @RequiresApi(Build.VERSION_CODES.O)
 fun MusapKey.toWritableMap(): WritableMap {
     val keyAttributes = Arguments.createArray()
