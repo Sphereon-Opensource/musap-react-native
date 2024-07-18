@@ -1,3 +1,5 @@
+source 'https://github.com/CocoaPods/Specs.git'
+
 # Resolve react_native_pods.rb with node to allow for hoisting
 require Pod::Executable.execute_command('node', ['-p',
   'require.resolve(
@@ -23,10 +25,11 @@ target 'musapRnKmsTesterApp' do
     :app_path => "#{Pod::Config.instance.installation_root}/.."
   )
 
-  target 'musapRnKmsTesterAppTests' do
-    inherit! :complete
-    # Pods for testing
-  end
+  pod 'musap-ios', :path => './musap-ios', :modular_headers => true
+  pod 'YubiKit', :modular_headers => true
+  pod 'React-RuntimeApple', :modular_headers => true
+  pod 'SocketRocket', :modular_headers => true
+  pod 'fmt', :modular_headers => true
 
   post_install do |installer|
     # https://github.com/facebook/react-native/blob/main/packages/react-native/scripts/react_native_pods.rb#L197-L202

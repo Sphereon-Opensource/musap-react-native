@@ -11,7 +11,7 @@ Pod::Spec.new do |s|
   s.license      = package["license"]
   s.authors      = package["author"]
 
-  s.platforms    = { :ios => min_ios_version_supported }
+  s.platforms    = { :ios => '15.0' }
   s.source       = { :git => "https://github.com/Sphereon-Opensource/musap-react-native.git", :tag => "#{s.version}" }
 
   s.source_files = "ios/**/*.{h,m,mm,swift}"
@@ -43,13 +43,9 @@ Pod::Spec.new do |s|
 
   # musap-ios Swift package dependency
   s.swift_versions = ['5.0']
-  s.pod_target_xcconfig = {
-    'SWIFT_PACKAGE_REPOSITORY_URL' => 'https://github.com/methics/musap-ios',
-    'SWIFT_PACKAGE_VERSION' => 'main'
-  }
 
   s.subspec "musap-ios" do |ms|
-    ms.source_files = "ios/**/*.{h,m,mm,swift}"
-    ms.dependency 'musap-ios', 'main'
+    ms.source_files = "ios/musap-ios/**/*.{h,m,mm,swift}"
+    ms.dependency 'YubiKit'
   end
 end

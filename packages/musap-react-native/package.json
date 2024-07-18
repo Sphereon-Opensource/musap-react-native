@@ -3,6 +3,7 @@
   "title": "musap-rn",
   "version": "0.0.2",
   "description": "A React Native module wrapping the MUSAP library for Android & iOS",
+  "homepage": "https://github.com/Sphereon-Opensource/musap-react-native",
   "main": "dist/index.js",
   "module": "dist/index.js",
   "types": "dist/index.d.ts",

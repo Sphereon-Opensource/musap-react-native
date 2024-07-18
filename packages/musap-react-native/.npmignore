@@ -3,6 +3,7 @@
 
  # Exclude iOS Pods directory
  ios/Pods/
+ *.xcprivacy
 
  # Exclude iOS build output
  ios/build/
