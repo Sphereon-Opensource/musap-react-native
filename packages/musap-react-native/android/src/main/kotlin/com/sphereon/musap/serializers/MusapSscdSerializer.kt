@@ -20,7 +20,7 @@ fun SscdInfo.toWritableMap(): WritableMap {
         putString("sscdName", sscdName)
         putString("country", country)
         putString("provider", provider)
-        putBoolean("isKeyGenSupported", isKeygenSupported ?: false)
+        putBoolean("isKeyGenSupported", isKeygenSupported)
         putArray("supportedAlgorithms", supportedAlgorithms)
     }
 }

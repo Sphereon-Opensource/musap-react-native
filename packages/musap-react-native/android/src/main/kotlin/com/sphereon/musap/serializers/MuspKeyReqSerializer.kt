@@ -44,16 +44,8 @@ fun ReadableMap.toKeyGenReq(activity: Activity?, view: View? = null): KeyGenReq 
     }
 
     if (hasKey("keyAlgorithm")) {
-        getMap("keyAlgorithm")?.let { keyAlgorithmMap ->
-            val primitive = keyAlgorithmMap.getString("primitive")
-            val bits = keyAlgorithmMap.getInt("bits")
-            val curve = keyAlgorithmMap.getString("curve")
-            val keyAlgorithm = if (curve != null) {
-                KeyAlgorithm(primitive, curve, bits)
-            } else {
-                KeyAlgorithm(primitive, bits)
-            }
-            builder.setKeyAlgorithm(keyAlgorithm)
+        getString("keyAlgorithm")?.let { keyAlgorithm ->
+            builder.setKeyAlgorithm(KeyAlgorithm.fromString(keyAlgorithm))
         }
     }
 

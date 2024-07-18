@@ -5,9 +5,8 @@ export type KeyAlgorithmPrimitive = 'RSA' | 'EC'
 export type SignatureAlgorithmType = 'SHA256withECDSA' | 'SHA384withECDSA' | 'SHA512withECDSA' | 'NONEwithECDSA' | 'NONEwithEdDSA' | 'SHA256withRSA' | 'SHA384withRSA'
     | 'SHA512withRSA' | 'NONEwithRSA' | 'SHA256withRSASSA-PSS' | 'SHA384withRSASSA-PSS' | 'SHA512withRSASSA-PSS' | 'NONEwithRSASSA-PSS'
 
+
 export type KeyAlgorithmType =
-    | 'RSA'
-    | 'EC'
     | 'RSA2K'
     | 'RSA4K'
     | 'ECCP256K1'
@@ -42,7 +41,7 @@ export interface MusapSscd {
 }
 
 export interface KeyAlgorithm {
-    primitive: KeyAlgorithmType
+    primitive: KeyAlgorithmPrimitive
     curve?: string
     bits: number
 }
@@ -63,7 +62,7 @@ export interface KeyGenReq {
     keyUsage: string
     stepUpPolicy?: StepUpPolicy
     attributes: KeyAttribute[]
-    keyAlgorithm: KeyAlgorithm
+    keyAlgorithm: KeyAlgorithmType
 }
 
 export interface MusapKey {
@@ -136,6 +135,10 @@ export interface SignatureReq {
     transId?: string
 }
 
+export interface KeyRef {
+  kid: string
+}
+
 interface Comparable<T> {
     compareTo(other: T): number
 }
@@ -152,8 +155,10 @@ export interface MusapModuleType {
     enableSscd(sscdType: SscdType): void
     generateKey (sscdType: SscdType, req: KeyGenReq, callback: (error: string | undefined, keyUri: string | undefined) => void): Promise<void>
     sign(req: SignatureReq, callback:  (error: string | undefined, signed: string | undefined) => void): Promise<void>
+    removeKey(keyIdOrUri: String): Promise<boolean>
     listKeys(): MusapKey[]
     getKeyByUri(keyUri: string): MusapKey
+    getKeyById(keyId: string): MusapKey
     getSscdInfo(sscdId: string): SscdInfo
     getSettings(sscdId: string): Map<string, string>
 }
