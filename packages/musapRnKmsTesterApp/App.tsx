@@ -25,7 +25,7 @@ import {
   ReloadInstructions,
 } from 'react-native/Libraries/NewAppScreen';
 import {MusapKeyManagementSystem} from "@sphereon/ssi-sdk-ext.musap-rn-kms/dist/agent/MusapKeyManagerSystem";
-import {MusapModule} from "@sphereon/musap-react-native";
+import {MusapKey, MusapModule} from "@sphereon/musap-react-native";
 
 
 type SectionProps = PropsWithChildren<{
@@ -75,6 +75,17 @@ function App(): React.JSX.Element {
     // @ts-ignore
     const result = await kms.createKey({type: 'secp256r1'})
     console.log('kms.createKey() result', result)
+    const encoder = new TextEncoder();
+    const data = encoder.encode('test');
+    console.log('>>>>>> App.tsx: encoded data', data);
+    try {
+      const keyUri = ((result as unknown as MusapKey).keyUri as any).uri
+      console.log('getting the keyUri:', keyUri)
+      const signresult = await kms.sign({data, keyRef: {kid: keyUri}})
+      console.log('signresult', signresult)
+    } catch (error) {
+      console.log('>>>>>> App.tsx:', error)
+    }
     return result
   }
 
