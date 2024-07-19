@@ -41,6 +41,7 @@ class MusapModuleAndroid(private val context: ReactApplicationContext) : ReactCo
 
     @ReactMethod
     fun generateKey(sscdType: String, req: ReadableMap, callback: Callback) {
+        Log.i("MUSAP", "generateKey for ${sscdType}")
         val sscd = MusapClient.listEnabledSscds().first { it.sscdId == sscdType }
         val musapCallback = object : MusapCallback<MusapKey> {
             override fun onSuccess(musapKey: MusapKey?) {
@@ -79,11 +80,11 @@ class MusapModuleAndroid(private val context: ReactApplicationContext) : ReactCo
 
     @ReactMethod
     fun sign(req: ReadableMap, callback: Callback) {
+        Log.i("MUSAP", "sign called")
         try {
             Log.i(
-                "MUSAP:sign",
-                "entry",
-                req
+                "MUSAP",
+                "entry ${req}"
             )
             val signatureReq = req.toSignatureReq(this.currentActivity)
             val key = signatureReq.key
@@ -91,42 +92,38 @@ class MusapModuleAndroid(private val context: ReactApplicationContext) : ReactCo
             val signatureAlgorithm =
                 if (keyAlgo.isEc) SignatureAlgorithm.EDDSA else SignatureAlgorithm.SHA256_WITH_ECDSA
             Log.i(
-                "MUSAP:sign",
-                "data transform",
-                signatureReq, key, keyAlgo, signatureAlgorithm
+                "MUSAP",
+                "data transform ${signatureReq},\n ${key},\n ${keyAlgo},\n ${signatureAlgorithm}"
             )
             val header = JWSHeader.Builder(JWSAlgorithm.parse(signatureAlgorithm.jwsAlgorithm))
                 .keyID(key.keyId)
                 .build()
             Log.i(
-                "MUSAP:sign",
-                "header transform",
-                header
+                "MUSAP",
+                "header transform ${header}",
             )
             val claims = JWTClaimsSet.parse(signatureReq.data.decodeToString())
             Log.i(
-                "MUSAP:sign",
-                "claims transform",
-                claims
+                "MUSAP",
+                "claims transform ${claims}",
             )
             val callbackTmp = object : MusapCallback<MusapSignature> {
                 override fun onSuccess(p0: MusapSignature) {
                     Log.i(
-                        "MUSAP:sign",
+                        "MUSAP",
                         "before attachSignature"
                     )
                     val signed = attachSignature(JWSObject(header, claims.toPayload()), p0)
                     Log.i(
-                        "MUSAP:sign",
-                        "after attachSignature",
-                        signed
+                        "MUSAP",
+                        "after attachSignature ${signed}",
                     )
                     callback.invoke(null, signed.serialize())
                 }
 
                 override fun onException(p0: MusapException?) {
                     Log.i(
-                        "MUSAP:sign",
+                        "MUSAP",
                         "onException",
                         p0
                     )
@@ -147,27 +144,19 @@ class MusapModuleAndroid(private val context: ReactApplicationContext) : ReactCo
     private fun attachSignature(orig: JWSObject, sig: MusapSignature): JWSObject {
         try {
             Log.i(
-                "MUSAP:attachSignature",
-                "entry",
-                orig,
-                sig
+                "MUSAP",
+                "entry ${orig} ${sig}"
             )
             val header = orig.header.toBase64URL()
             val payload = orig.payload.toBase64URL()
             val signature = Base64URL.encode(transcodeSignature(sig.rawSignature))
             Log.i(
-                "MUSAP:attachSignature",
-                "data transform: after encoding the signature",
-                signature
+                "MUSAP",
+                "data transform: after encoding the signature ${signature}"
             )
             return JWSObject(header, payload, signature)
         } catch (e: Exception) {
-            Log.e(
-                "MUSAP:attachSignature",
-                "data transform: after encoding the signature",
-                signature
-            )
-            RNLog.e(reactApplicationContext, "Error attaching signature ${e.message}")
+            Log.e("MUSAP", "data transform: after encoding the signature ", e)
             return orig
         }
     }
