@@ -33,6 +33,11 @@ import fi.methics.musap.sdk.internal.datatype.MusapSignature
 import fi.methics.musap.sdk.internal.datatype.SignatureAlgorithm
 import fi.methics.musap.sdk.sscd.android.AndroidKeystoreSscd
 import fi.methics.musap.sdk.sscd.yubikey.YubiKeySscd
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.suspendCancellableCoroutine
+import kotlin.coroutines.resumeWithException
 
 
 class MusapModuleAndroid(private val context: ReactApplicationContext) : ReactContextBaseJavaModule(context) {
@@ -40,22 +45,46 @@ class MusapModuleAndroid(private val context: ReactApplicationContext) : ReactCo
     override fun getName(): String = "MusapModule"
 
     @ReactMethod
-    fun generateKey(sscdType: String, req: ReadableMap, callback: Callback) {
-        val sscd = MusapClient.listEnabledSscds().first { it.sscdId == sscdType }
-        val musapCallback = object : MusapCallback<MusapKey> {
-            override fun onSuccess(musapKey: MusapKey?) {
-                if (musapKey != null) {
-                    callback.invoke(null, musapKey.keyUri.uri)
+    fun generateKey(sscdType: String, req: ReadableMap, promise: Promise) {
+        Log.i("MUSAP", "generateKey for $sscdType")
+        try {
+            val sscd = MusapClient.listEnabledSscds().first { it.sscdId == sscdType }
+            val reqObj = req.toKeyGenReq(reactApplicationContext.currentActivity)
+
+            CoroutineScope(Dispatchers.Default).launch {
+                try {
+                    val result = suspendCancellableCoroutine<MusapKey> { continuation ->
+                        val musapCallback = object : MusapCallback<MusapKey> {
+                            override fun onSuccess(musapKey: MusapKey?) {
+                                if (musapKey != null) {
+                                    continuation.resume(musapKey) {
+                                        Log.w("MUSAP", "Key generation cancelled")
+                                    }
+                                } else {
+                                    continuation.resumeWithException(Exception("MusapKey is null"))
+                                }
+                            }
+
+                            override fun onException(e: MusapException?) {
+                                continuation.resumeWithException(e ?: Exception("Key generation failed"))
+                            }
+                        }
+                        MusapClient.generateKey(sscd, reqObj, musapCallback)
+
+                        continuation.invokeOnCancellation {
+                            // Handle cancellation here
+                            Log.i("MUSAP", "Key generation cancelled")
+                            // Add any necessary cleanup code here, e.g., cancelling the ongoing operation if possible
+                        }
+                    }
+                    promise.resolve(result.keyUri.uri)
+                } catch (e: Exception) {
+                    promise.reject("GENERATE_KEY_ERROR", e.message, e)
                 }
             }
-
-            override fun onException(e: MusapException?) {
-                Log.e("MUSAP", "generateKey failed", e)
-                callback.invoke(e?.message, null)
-            }
+        } catch (e: Exception) {
+            promise.reject("GENERATE_KEY_ERROR", "Error setting up key generation: ${e.message}", e)
         }
-        val reqObj = req.toKeyGenReq(reactApplicationContext.currentActivity)
-        MusapClient.generateKey(sscd, reqObj, musapCallback)
     }
 
     @ReactMethod
@@ -77,41 +106,56 @@ class MusapModuleAndroid(private val context: ReactApplicationContext) : ReactCo
     }
 
 
-    @ReactMethod
-    fun sign(req: ReadableMap, callback: Callback) {
-        try {
-            val signatureReq = req.toSignatureReq(this.currentActivity)
+  @ReactMethod
+  fun sign(req: ReadableMap, promise: Promise) {
+    try {
+        val signatureReq = req.toSignatureReq(this.currentActivity)
 
-            val key = signatureReq.key
-            val keyAlgo = key.algorithm
-            val signatureAlgorithm =
-                if (keyAlgo.isEc) SignatureAlgorithm.EDDSA else SignatureAlgorithm.SHA256_WITH_ECDSA
+        val key = signatureReq.key
+        val keyAlgo = key.algorithm
+        val signatureAlgorithm =
+            if (keyAlgo.isEc) SignatureAlgorithm.EDDSA else SignatureAlgorithm.SHA256_WITH_ECDSA
 
-            val header = JWSHeader.Builder(JWSAlgorithm.parse(signatureAlgorithm.jwsAlgorithm))
-                .keyID(key.keyId)
-                .build()
-            val claims = JWTClaimsSet.parse(signatureReq.data.decodeToString())
+        val header = JWSHeader.Builder(JWSAlgorithm.parse(signatureAlgorithm.jwsAlgorithm))
+            .keyID(key.keyId)
+            .build()
+        val claims = JWTClaimsSet.parse(signatureReq.data.decodeToString())
 
-            val callbackTmp = object : MusapCallback<MusapSignature> {
-                override fun onSuccess(p0: MusapSignature) {
-                    val signed = attachSignature(JWSObject(header, claims.toPayload()), p0)
-                    callback.invoke(null, signed.serialize())
+        CoroutineScope(Dispatchers.Default).launch {
+            try {
+                val result = suspendCancellableCoroutine<MusapSignature> { continuation ->
+                    val musapCallback = object : MusapCallback<MusapSignature> {
+                        override fun onSuccess(signature: MusapSignature?) {
+                            if (signature != null) {
+                                continuation.resume(signature) {
+                                    Log.w("MUSAP", "Signing cancelled")
+                                }
+                            } else {
+                                continuation.resumeWithException(Exception("MusapSignature is null"))
+                            }
+                        }
+
+                        override fun onException(e: MusapException?) {
+                            continuation.resumeWithException(e ?: Exception("sign error"))
+                        }
+                    }
+                    MusapClient.sign(signatureReq, musapCallback)
+
+                    continuation.invokeOnCancellation {
+                        Log.w("MUSAP", "Signing cancelled")
+                    }
                 }
-
-                override fun onException(p0: MusapException?) {
-                    callback.invoke(p0?.message, null)
-                }
+                val signed = attachSignature(JWSObject(header, claims.toPayload()), result)
+                promise.resolve(signed.serialize())
+            } catch (e: Exception) {
+                promise.reject("SIGN_ERROR", "Error signing the data: ${e.message}", e)
             }
-            MusapClient.sign(signatureReq, callbackTmp)
-        } catch (e: Exception) {
-            Log.e(
-                "MUSAP",
-                "sign failed",
-                e
-            )  // This will log a nice Java style exception to logcat with full stack trace
-            throw e
         }
+    } catch (e: Exception) {
+        Log.e("MUSAP", "sign failed", e)
+        promise.reject("SIGN_ERROR", "Error preparing signature request: ${e.message}", e)
     }
+}
 
     private fun attachSignature(orig: JWSObject, sig: MusapSignature): JWSObject {
         try {
@@ -120,7 +164,7 @@ class MusapModuleAndroid(private val context: ReactApplicationContext) : ReactCo
             val signature = Base64URL.encode(transcodeSignature(sig.rawSignature))
             return JWSObject(header, payload, signature)
         } catch (e: Exception) {
-            RNLog.e(reactApplicationContext, "Error attaching signature ${e.message}")
+            Log.e("MUSAP", "data transform: after encoding the signature ", e)
             return orig
         }
     }

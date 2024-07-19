@@ -25,7 +25,7 @@ import {
   ReloadInstructions,
 } from 'react-native/Libraries/NewAppScreen';
 import {MusapKeyManagementSystem} from "@sphereon/ssi-sdk-ext.musap-rn-kms/dist/agent/MusapKeyManagerSystem";
-import {KeyGenReq, MusapKey, MusapModule} from "@sphereon/musap-react-native";
+import {KeyGenReq, MusapKey, MusapModule, SignatureReq, SscdInfo} from "@sphereon/musap-react-native";
 import uuid from 'react-native-uuid';
 
 
@@ -59,55 +59,11 @@ function Section({children, title}: SectionProps): React.JSX.Element {
   );
 }
 
-function App(): React.JSX.Element {
-  const isDarkMode = useColorScheme() === 'dark';
-
-  const backgroundStyle = {
-    backgroundColor: isDarkMode ? Colors.darker : Colors.lighter,
-  };
-
-
-
-  MusapModule.enableSscd('TEE')
-    const sscds = MusapModule.listEnabledSscds();
-    console.log(sscds)
-    const sscdInfo = sscds[0].sscdInfo
-
- /* const kms:MusapKeyManagementSystem = new MusapKeyManagementSystem(MusapModule)
-
-  async function generateKey() {
-    // @ts-ignore
-    const result = await kms.createKey({type: 'secp256r1'})
-    console.log('kms.createKey() result', result)
-    return result
-  }
-
-  generateKey()
-      .then(value => {
-        console.log('generateKey result', value);
-        const keyUri = (value as any).keyUri.uri
-        console.log('Deleted keyUri:', keyUri)
-        kms.deleteKey({kid: keyUri}).then(value => {
-          console.log('Key deleted:', value)
-
-          try {
-            const key = MusapModule.getKeyByUri(keyUri)
-            console.log('Deleted key:', key)
-          } catch (e) {
-            console.log('Deleted key error:', e.message)
-          }
-        })
-      })
-      .catch(reason => {
-        console.error(reason)
-      })
-*/
-
-
+async function noKMSRun(sscdInfo: SscdInfo) {
     const keyGenRequest: KeyGenReq = {
         attributes: [
-            { name: 'purpose', value: 'encrypt' },
-            { name: 'purpose', value: 'decrypt' }
+            {name: 'purpose', value: 'encrypt'},
+            {name: 'purpose', value: 'decrypt'}
         ],
         did: 'did:example:123456789abcdefghi',
         keyAlgorithm: "ECCP256R1",
@@ -115,7 +71,7 @@ function App(): React.JSX.Element {
         keyUsage: "sign",
         role: "administrator",
     }
-    const jwt  = {
+    const jwt = {
         iss: "test_issuer",
         sub: "test_subject",
         aud: "test_audience",
@@ -183,30 +139,88 @@ function App(): React.JSX.Element {
         }
     }
 
-    console.log(`Generating key \n\n`)
-    // iOS uses the error as result
-    MusapModule.generateKey('TEE', keyGenRequest, (error: any, keyUri: string) => {
-        if (sscdInfo.sscdName === "SE" && error) {
-            // Security Enclave handles both error and result in error
-            console.log(error)
-            console.log(`GetKeyByUri(): ${MusapModule.getKeyByUri(error)}`)
-        } else {
-            if (error) {
-                console.log(error)
-            }
-            if (keyUri) {
-                console.log(`Key successfully generated: ${keyUri}`)
+    try {
+        const keyUri = await MusapModule.generateKey('TEE', keyGenRequest)
+        console.log(`Key successfully generated: ${keyUri}`)
 
-                // Works on Android
-                const key = MusapModule.getKeyByUri(keyUri) as MusapKey
+        // Works on Android
+        const key = MusapModule.getKeyByUri(keyUri) as MusapKey
 
-                console.log(`GetKeyByUri(): ${key}`)
-                console.log(`key`, key)
-                //sign(key, jwt, listEnabledSscds[0].sscdInfo);
-            }
-        }
-    })
-  //console.log(MusapModule.listEnabledSscds());
+        console.log(`NOKMS GetKeyByUri(): ${key}`)
+        console.log(`NOKMS key`, key)
+        sign(key, jwt, sscdInfo);
+    } catch (e) {
+        console.error('generateKey failed', e)
+    }
+}
+
+
+const sign = (key: MusapKey, jwt:object, sscdInfo:SscdInfo) => {
+    const req: SignatureReq = {
+        key,
+        data: JSON.stringify(jwt),
+        displayText: "test",
+        attributes: [{name: "key", value: "value"}],
+    }
+    //const reqData = sscdInfo.sscdName === "SE" ? req : JSON.stringify(req)
+    console.log('NOKMS signatureReq', JSON.stringify(req))
+    try {
+        const result = MusapModule.sign(req)
+        console.log("NOKMS Data successfully signed:")
+        console.log(result)
+    } catch (e) {
+        console.log("NOKMS An error occurred.\n")
+        console.log(e)
+    }
+};
+
+
+function App(): React.JSX.Element {
+  const isDarkMode = useColorScheme() === 'dark';
+
+  const backgroundStyle = {
+    backgroundColor: isDarkMode ? Colors.darker : Colors.lighter,
+  };
+
+
+
+  MusapModule.enableSscd('TEE')
+    const sscds = MusapModule.listEnabledSscds();
+    console.log(sscds)
+    const sscdInfo = sscds[0].sscdInfo
+
+ /* const kms:MusapKeyManagementSystem = new MusapKeyManagementSystem(MusapModule)
+
+  async function generateKey() {
+    // @ts-ignore
+    const result = await kms.createKey({type: 'secp256r1'})
+    console.log('kms.createKey() result', result)
+    return result
+  }
+
+  generateKey()
+      .then(value => {
+        console.log('generateKey result', value);
+        const keyUri = (value as any).keyUri.uri
+        console.log('Deleted keyUri:', keyUri)
+        kms.deleteKey({kid: keyUri}).then(value => {
+          console.log('Key deleted:', value)
+
+          try {
+            const key = MusapModule.getKeyByUri(keyUri)
+            console.log('Deleted key:', key)
+          } catch (e) {
+            console.log('Deleted key error:', e.message)
+          }
+        })
+      })
+      .catch(reason => {
+        console.error(reason)
+      })
+*/
+    noKMSRun(sscdInfo);
+
+    //console.log(MusapModule.listEnabledSscds());
 
   return (
     <SafeAreaView style={backgroundStyle}>

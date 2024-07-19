@@ -153,8 +153,8 @@ export interface MusapModuleType {
     listEnabledSscds(): Array<MusapSscd>
     listActiveSscds(): Array<MusapSscd>
     enableSscd(sscdType: SscdType): void
-    generateKey (sscdType: SscdType, req: KeyGenReq, callback: (error: string | undefined, keyUri: string | undefined) => void): Promise<void>
-    sign(req: SignatureReq, callback:  (error: string | undefined, signed: string | undefined) => void): Promise<void>
+    generateKey (sscdType: SscdType, req: KeyGenReq): Promise<string>
+    sign(req: SignatureReq): Promise<string>
     removeKey(keyIdOrUri: String): Promise<boolean>
     listKeys(): MusapKey[]
     getKeyByUri(keyUri: string): MusapKey
