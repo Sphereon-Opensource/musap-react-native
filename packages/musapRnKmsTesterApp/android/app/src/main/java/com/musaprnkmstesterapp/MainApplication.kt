@@ -20,7 +20,7 @@ class MainApplication : Application(), ReactApplication {
         object : DefaultReactNativeHost(this) {
             override fun getPackages(): List<ReactPackage> =
                 PackageList(this).packages.apply {
-                    add(MusapPackage())
+                    //add(MusapPackage())
                 }
 
             override fun getJSMainModuleName(): String = "index"

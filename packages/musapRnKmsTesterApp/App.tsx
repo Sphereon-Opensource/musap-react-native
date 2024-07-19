@@ -5,27 +5,19 @@
  * @format
  */
 
-import React from 'react';
 import type {PropsWithChildren} from 'react';
-import {
-  SafeAreaView,
-  ScrollView,
-  StatusBar,
-  StyleSheet,
-  Text,
-  useColorScheme,
-  View,
-} from 'react-native';
+import React from 'react';
+import {SafeAreaView, ScrollView, StatusBar, StyleSheet, Text, useColorScheme, View,} from 'react-native';
 
 import {
-  Colors,
-  DebugInstructions,
-  Header,
-  LearnMoreLinks,
-  ReloadInstructions,
+    Colors,
+    DebugInstructions,
+    Header,
+    LearnMoreLinks,
+    ReloadInstructions,
 } from 'react-native/Libraries/NewAppScreen';
 import {MusapKeyManagementSystem} from "@sphereon/ssi-sdk-ext.musap-rn-kms/dist/agent/MusapKeyManagerSystem";
-import {MusapKey, MusapModule} from "@sphereon/musap-react-native";
+import {MusapModule} from "@sphereon/musap-react-native";
 
 
 type SectionProps = PropsWithChildren<{
@@ -68,6 +60,9 @@ function App(): React.JSX.Element {
 
 
   MusapModule.enableSscd('TEE')
+    const sscds = MusapModule.listEnabledSscds();
+    console.log(sscds)
+    const sscdInfo = sscds[0].sscdInfo
 
   const kms:MusapKeyManagementSystem = new MusapKeyManagementSystem(MusapModule)
 
@@ -109,7 +104,108 @@ function App(): React.JSX.Element {
         console.error(reason)
       })
 
+    const keyGenRequest: KeyGenReq = {
+        attributes: [
+            { name: 'purpose', value: 'encrypt' },
+            { name: 'purpose', value: 'decrypt' }
+        ],
+        did: 'did:example:123456789abcdefghi',
+        keyAlgorithm: "ECCP256R1",
+        keyAlias: uuid.v4().toString(), // Alias must be unique, at least for iOS otherwise error code 900 is thrown
+        keyUsage: "sign",
+        role: "administrator",
+    }
+    const jwt  = {
+        iss: "test_issuer",
+        sub: "test_subject",
+        aud: "test_audience",
+        iat: Math.floor(Date.now()),
+        exp: Math.floor(Date.now()) + 900,
+        vp: {
+            "@context": [
+                "https://www.w3.org/2018/credentials/v1",
+                "https://identity.foundation/presentation-exchange/submission/v1"
+            ],
+            "presentation_submission": {
+                "id": "accd5adf-1dbf-4ed9-9ba2-d687476126cb",
+                "definition_id": "31e2f0f1-6b70-411d-b239-56aed5321884",
+                "descriptor_map": [
+                    {
+                        "id": "867bfe7a-5b91-46b2-9ba4-70028b8d9cc8",
+                        "format": "ldp_vp",
+                        "path": "$.verifiableCredential[0]"
+                    }
+                ]
+            },
+            "type": [
+                "VerifiablePresentation",
+                "PresentationSubmission"
+            ],
+            "verifiableCredential": [
+                {
+                    "@context": [
+                        "https://www.w3.org/2018/credentials/v1"
+                    ],
+                    "credentialSchema": [
+                        {
+                            "id": "https://www.w3.org/TR/vc-data-model/#types"
+                        }
+                    ],
+                    "credentialSubject": {
+                        "age": 19,
+                        "details": {
+                            "citizenship": [
+                                "eu"
+                            ]
+                        },
+                        "country": [
+                            {
+                                "abbr": "NLD"
+                            }
+                        ],
+                        "birthPlace": "Maarssen"
+                    },
+                    "id": "2dc74354-e965-4883-be5e-bfec48bf60c7",
+                    "issuer": "",
+                    "type": [
+                        "VerifiableCredential"
+                    ],
+                    "proof": {
+                        "type": "BbsBlsSignatureProof2020",
+                        "created": "2020-04-25",
+                        "verificationMethod": "did:example:489398593#test",
+                        "proofPurpose": "assertionMethod",
+                        "proofValue": "kTTbA3pmDa6Qia/JkOnIXDLmoBz3vsi7L5t3DWySI/VLmBqleJ/Tbus5RoyiDERDBEh5rnACXlnOqJ/U8yFQFtcp/mBCc2FtKNPHae9jKIv1dm9K9QK1F3GI1AwyGoUfjLWrkGDObO1ouNAhpEd0+et+qiOf2j8p3MTTtRRx4Hgjcl0jXCq7C7R5/nLpgimHAAAAdAx4ouhMk7v9dXijCIMaG0deicn6fLoq3GcNHuH5X1j22LU/hDu7vvPnk/6JLkZ1xQAAAAIPd1tu598L/K3NSy0zOy6obaojEnaqc1R5Ih/6ZZgfEln2a6tuUp4wePExI1DGHqwj3j2lKg31a/6bSs7SMecHBQdgIYHnBmCYGNQnu/LZ9TFV56tBXY6YOWZgFzgLDrApnrFpixEACM9rwrJ5ORtxAAAAAgE4gUIIC9aHyJNa5TBklMOh6lvQkMVLXa/vEl+3NCLXblxjgpM7UEMqBkE9/QcoD3Tgmy+z0hN+4eky1RnJsEg=",
+                        "nonce": "6i3dTz5yFfWJ8zgsamuyZa4yAHPm75tUOOXddR6krCvCYk77sbCOuEVcdBCDd/l6tIY="
+                    }
+                }
+            ]
+        }
+    }
 
+    console.log(`Generating key \n\n`)
+    // iOS uses the error as result
+    MusapModule.generateKey('TEE', keyGenRequest, (error: any, keyUri: string) => {
+        if (sscdInfo.sscdName === "SE" && error) {
+            // Security Enclave handles both error and result in error
+            console.log(error)
+            console.log(`GetKeyByUri(): ${MusapModule.getKeyByUri(error)}`)
+        } else {
+            if (error) {
+                console.log(error)
+            }
+            if (keyUri) {
+                console.log(`Key successfully generated: ${keyUri}`)
+
+                // Works on Android
+                const key = MusapModule.getKeyByUri(keyUri) as MusapKey
+
+                console.log(`GetKeyByUri(): ${key}`)
+                console.log(`key`, key)
+                //sign(key, jwt, listEnabledSscds[0].sscdInfo);
+            }
+        }
+    })
   //console.log(MusapModule.listEnabledSscds());
 
   return (
