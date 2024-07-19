@@ -20,7 +20,7 @@ target 'musap-react-native' do
   )
 
   #pod 'YubiKit', :modular_headers => true
-  #pod 'musap-ios', :path => './musap-ios'
+  #pod 'musap_ios', :path => './musap_ios'
 
   post_install do |installer|
 

@@ -44,8 +44,8 @@ Pod::Spec.new do |s|
   # musap-ios Swift package dependency
   s.swift_versions = ['5.0']
 
-  s.subspec "musap-ios" do |ms|
-    ms.source_files = "ios/musap-ios/**/*.{h,m,mm,swift}"
+  s.subspec "musap_ios" do |ms|
+    ms.source_files = "ios/musap_ios/**/*.{h,m,mm,swift}"
     ms.dependency 'YubiKit'
   end
 end

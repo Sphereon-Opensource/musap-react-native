@@ -14,7 +14,7 @@
   },
   "dependencies": {
     "@react-native-community/cli-platform-android": "^13.6.9",
-    "@sphereon/musap-react-native": "0.0.2-unstable.79",
+    "@sphereon/musap-react-native": "0.0.2-unstable.80",
     "@sphereon/ssi-sdk-ext.musap-rn-kms": "0.22.1-unstable.17",
     "react": "18.2.0",
     "react-native": "0.74.3",

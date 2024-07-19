@@ -8,6 +8,8 @@
  # Exclude iOS build output
  ios/build/
 
+ ios/musap_ios/Tests
+
  # Exclude Xcode user-specific files
  ios/*.xcuserstate
  ios/*.xcworkspace/xcuserdata/
