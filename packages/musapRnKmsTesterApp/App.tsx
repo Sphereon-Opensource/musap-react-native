@@ -143,6 +143,8 @@ async function noKMSRun(sscdInfo: SscdInfo) {
         const keyUri = await MusapModule.generateKey('TEE', keyGenRequest)
         console.log(`Key successfully generated: ${keyUri}`)
 
+        console.log(MusapModule.listKeys())
+
         // Works on Android
         const key = MusapModule.getKeyByUri(keyUri) as MusapKey
 
@@ -155,17 +157,18 @@ async function noKMSRun(sscdInfo: SscdInfo) {
 }
 
 
-const sign = (key: MusapKey, jwt:object, sscdInfo:SscdInfo) => {
+const sign = async (key: MusapKey, jwt: object, sscdInfo: SscdInfo) => {
     const req: SignatureReq = {
         key,
         data: JSON.stringify(jwt),
         displayText: "test",
+        format: 'RAW',
         attributes: [{name: "key", value: "value"}],
     }
     //const reqData = sscdInfo.sscdName === "SE" ? req : JSON.stringify(req)
     console.log('NOKMS signatureReq', JSON.stringify(req))
     try {
-        const result = MusapModule.sign(req)
+        const result = await MusapModule.sign(req)
         console.log("NOKMS Data successfully signed:")
         console.log(result)
     } catch (e) {
