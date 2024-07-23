@@ -3590,9 +3590,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@sphereon/musap-ios@workspace:packages/musap-ios":
+"@sphereon/musap-native@workspace:packages/musap-native":
   version: 0.0.0-use.local
-  resolution: "@sphereon/musap-ios@workspace:packages/musap-ios"
+  resolution: "@sphereon/musap-native@workspace:packages/musap-native"
   dependencies:
     fs-extra: "npm:^11.2.0"
   languageName: unknown

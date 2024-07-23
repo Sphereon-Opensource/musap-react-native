@@ -1,7 +1,7 @@
 {
   "name": "@sphereon/musap-react-native",
   "title": "musap-rn",
-  "version": "0.0.2",
+  "version": "0.0.0",
   "description": "A React Native module wrapping the MUSAP library for Android & iOS",
   "homepage": "https://github.com/Sphereon-Opensource/musap-react-native",
   "main": "dist/index.js",
@@ -54,7 +54,7 @@
     "react": "^18.3.1",
     "react-native": "^0.74.3"
   },
-  "gitHead": "84eaff903416c6ce6fe2d0592940b7d16fc27916",
+  "gitHead": "abc07c73d7758ce637713102389f3e37d2b903ec",
   "publishConfig": {
     "access": "public"
   }
