@@ -3590,6 +3590,14 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@sphereon/musap-ios@workspace:packages/musap-ios":
+  version: 0.0.0-use.local
+  resolution: "@sphereon/musap-ios@workspace:packages/musap-ios"
+  dependencies:
+    fs-extra: "npm:^11.2.0"
+  languageName: unknown
+  linkType: soft
+
 "@sphereon/musap-react-native-parent@workspace:.":
   version: 0.0.0-use.local
   resolution: "@sphereon/musap-react-native-parent@workspace:."

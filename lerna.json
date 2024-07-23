@@ -3,7 +3,8 @@
   "version": "0.0.1",
   "npmClient": "yarn",
   "packages": [
-    "packages/*"
+    "packages/musap-native",
+    "packages/musap-react-native"
   ],
   "useNx": true
 }

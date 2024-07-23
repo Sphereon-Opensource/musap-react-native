@@ -5,20 +5,23 @@ export type KeyAlgorithmPrimitive = 'RSA' | 'EC'
 export type SignatureAlgorithmType = 'SHA256withECDSA' | 'SHA384withECDSA' | 'SHA512withECDSA' | 'NONEwithECDSA' | 'NONEwithEdDSA' | 'SHA256withRSA' | 'SHA384withRSA'
     | 'SHA512withRSA' | 'NONEwithRSA' | 'SHA256withRSASSA-PSS' | 'SHA384withRSASSA-PSS' | 'SHA512withRSASSA-PSS' | 'NONEwithRSASSA-PSS'
 
+export type JWTAlgorithm = 'ES256' | 'ES384' | 'RS256' | 'RS384' | 'RS512'
 
 export type KeyAlgorithmType =
+    | 'RSA1K'
     | 'RSA2K'
     | 'RSA4K'
     | 'ECCP256K1'
     | 'ECCP256R1'
+//    | 'ECCP256R1'
     | 'ECCP384K1'
     | 'ECCP384R1'
-    | 'ECC_ED25519'
-    | 'secp256k1'
-    | 'secp384k1'
-    | 'secp256r1'
-    | 'secp384r1'
-    | 'Ed25519'
+//    | 'ECC_ED25519'
+ //   | 'secp256k1'
+ //   | 'SECP384K1'
+ //   | 'secp256r1'
+ //   | 'secp384r1'
+ //   | 'Ed25519'
 
 export type SignatureFormatType = 'CMS' | 'RAW' | 'PKCS1'
 
@@ -40,12 +43,7 @@ export interface MusapSscd {
     settings: Map<String, String>
 }
 
-export interface KeyAlgorithm {
-    primitive: KeyAlgorithmPrimitive
-    curve?: string
-    bits: number
-}
-
+export type KeyAlgorithm = 'eccp256k1' | 'eccp256r1' | 'eccp384k1' | 'eccp384r1' | 'rsa2k' | 'rsa4k'
 
 export interface KeyAttribute {
     name: string
@@ -86,9 +84,8 @@ export interface MusapKey {
 }
 
 export interface PublicKey {
-    publickeyDer: Uint8Array
-    getDER(): Uint8Array
-    getPEM(): string
+    der: Uint8Array
+    pem: string
 }
 
 export interface MusapCertificate {
@@ -126,7 +123,7 @@ export interface SignatureAttribute {
 }
 
 export interface SignatureReq {
-    key: MusapKey
+    keyUri: string
     data: string // TODO if we want to support binary data we need to send an array of numbers (or go base64)
     displayText?: string
     algorithm?: SignatureAlgorithmType
@@ -155,13 +152,47 @@ export interface MusapModuleType {
     enableSscd(sscdType: SscdType): void
     generateKey (sscdType: SscdType, req: KeyGenReq): Promise<string>
     sign(req: SignatureReq): Promise<string>
-    removeKey(keyIdOrUri: String): Promise<boolean>
+    removeKey(keyIdOrUri: String): number
     listKeys(): MusapKey[]
     getKeyByUri(keyUri: string): MusapKey
     getKeyById(keyId: string): MusapKey
     getSscdInfo(sscdId: string): SscdInfo
     getSettings(sscdId: string): Map<string, string>
 }
+
+export const signatureAlgorithmFromKeyAlgorithm = (keyAlgorithm: KeyAlgorithm): SignatureAlgorithmType => {
+    switch (keyAlgorithm) {
+        case 'eccp256k1':
+        case 'eccp256r1':
+            return 'SHA256withECDSA';
+        case 'eccp384k1':
+        case 'eccp384r1':
+            return 'SHA384withECDSA';
+        case 'rsa2k':
+        case 'rsa4k':
+            return 'SHA256withRSA';
+        default:
+            throw new Error(`Unsupported key algorithm: ${keyAlgorithm}`);
+    }
+}
+
+export const mapKeyAlgorithmToJWTAlgorithm = (keyAlgorithm: KeyAlgorithm): JWTAlgorithm => {
+    switch (keyAlgorithm) {
+        case 'eccp256k1':
+        case 'eccp256r1':
+            return 'ES256';
+        case 'eccp384k1':
+        case 'eccp384r1':
+            return 'ES384';
+        case 'rsa2k':
+            return 'RS256';
+        case 'rsa4k':
+            return 'RS512';
+        default:
+            throw new Error(`Unsupported key algorithm: ${keyAlgorithm}`);
+    }
+};
+
 
 export const MusapModule: MusapModuleType = NativeModules.MusapModule as MusapModuleType
 
