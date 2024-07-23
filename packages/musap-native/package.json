@@ -8,7 +8,7 @@
   "files": [
     "android",
     "ios",
-    "musap-react-native.podspec"
+    "musap-ios.podspec"
   ],
   "scripts": {
     "prepare": "yarn copy-musap-ios",
@@ -37,4 +37,3 @@
   },
   "gitHead": "abc07c73d7758ce637713102389f3e37d2b903ec"
 }
-
