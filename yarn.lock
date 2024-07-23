@@ -3590,10 +3590,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@sphereon/musap-native@npm:^0.0.1-unstable.87":
-  version: 0.0.1-unstable.87
-  resolution: "@sphereon/musap-native@npm:0.0.1-unstable.87"
-  checksum: 10/7dd87e607b7ec6d2ddeee956680143df0055b0272e197402866002f150f2dda3f7d4fba36ed57bf81ff04fcae28e00d5d64538aa9cbb116c6c5923fdce222197
+"@sphereon/musap-native@npm:0.0.1-unstable.88+a02db7fa":
+  version: 0.0.1-unstable.88
+  resolution: "@sphereon/musap-native@npm:0.0.1-unstable.88"
+  checksum: 10/c6141bc03aa89803a9c8ebbe378480d9a610938a8266856f35056a94857ab7dcaec8301e71f66a7dba290275a2a232ec08bc4ed40ce9b3fa5370a70e51150070
   languageName: node
   linkType: hard
 
@@ -3643,7 +3643,7 @@ __metadata:
   dependencies:
     "@react-native-community/cli": "npm:^13.6.9"
     "@react-native/typescript-config": "npm:^0.74.85"
-    "@sphereon/musap-native": "npm:^0.0.1-unstable.87"
+    "@sphereon/musap-native": "npm:0.0.1-unstable.88+a02db7fa"
     "@types/react": "npm:^18.3.3"
     "@types/react-native": "npm:^0.73.0"
     react: "npm:^18.3.1"
