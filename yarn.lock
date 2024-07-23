@@ -3590,14 +3590,14 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@sphereon/musap-native@npm:0.0.1-unstable.88+a02db7fa":
-  version: 0.0.1-unstable.88
-  resolution: "@sphereon/musap-native@npm:0.0.1-unstable.88"
-  checksum: 10/c6141bc03aa89803a9c8ebbe378480d9a610938a8266856f35056a94857ab7dcaec8301e71f66a7dba290275a2a232ec08bc4ed40ce9b3fa5370a70e51150070
+"@sphereon/musap-native@npm:0.0.1-unstable.89+5df316cc":
+  version: 0.0.1-unstable.89
+  resolution: "@sphereon/musap-native@npm:0.0.1-unstable.89"
+  checksum: 10/0e2775cb5ef13490b1847b66acd95140c52ca80d450a667dbf7211b8c25c616c283008d8fc916aacfeea56f6473f416356bd09c585b693544b456b54bb199a55
   languageName: node
   linkType: hard
 
-"@sphereon/musap-native@workspace:packages/musap-native":
+"@sphereon/musap-native@workspace:*, @sphereon/musap-native@workspace:packages/musap-native":
   version: 0.0.0-use.local
   resolution: "@sphereon/musap-native@workspace:packages/musap-native"
   dependencies:
@@ -3616,6 +3616,17 @@ __metadata:
     typescript: "npm:5.5"
   languageName: unknown
   linkType: soft
+
+"@sphereon/musap-react-native@npm:0.0.1-unstable.89+5df316cc":
+  version: 0.0.1-unstable.89
+  resolution: "@sphereon/musap-react-native@npm:0.0.1-unstable.89"
+  dependencies:
+    "@sphereon/musap-native": "npm:0.0.1-unstable.89+5df316cc"
+    react: "npm:>=16.8.1"
+    react-native: "npm:>=0.60.0-rc.0 <1.0.x"
+  checksum: 10/b05ff68a007286c4fac729ca3b7102dc58ce94a13c54aa6636268d29464f129f0737a2e4b6c2a15bcb67ec3cef2f63e99c995e404d28aac2defba5f96bbebf3b
+  languageName: node
+  linkType: hard
 
 "@sphereon/musap-react-native@npm:0.0.2-unstable.69":
   version: 0.0.2-unstable.69
@@ -3643,7 +3654,8 @@ __metadata:
   dependencies:
     "@react-native-community/cli": "npm:^13.6.9"
     "@react-native/typescript-config": "npm:^0.74.85"
-    "@sphereon/musap-native": "npm:0.0.1-unstable.88+a02db7fa"
+    "@sphereon/musap-native": "workspace:*"
+    "@sphereon/musap-react-native": "npm:0.0.1-unstable.89+5df316cc"
     "@types/react": "npm:^18.3.3"
     "@types/react-native": "npm:^0.73.0"
     react: "npm:^18.3.1"

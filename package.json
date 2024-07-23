@@ -10,6 +10,10 @@
     "packages": [
       "packages/*",
       "packages/musapRnKmsTesterApp"
+    ],
+    "nohoist": [
+      "**/@sphereon/musap-native",
+      "**/@sphereon/musap-native/**"
     ]
   },
   "nmHoistingLimits": {

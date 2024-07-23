@@ -44,6 +44,7 @@
   "readmeFilename": "README.md",
   "dependencies": {
     "@sphereon/musap-native": "workspace:*",
+    "@sphereon/musap-react-native": "0.0.1-unstable.89+5df316cc",
     "react": ">=16.8.1",
     "react-native": ">=0.60.0-rc.0 <1.0.x"
   },

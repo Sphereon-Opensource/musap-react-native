@@ -7,13 +7,11 @@ PODS:
   - hermes-engine (0.74.3):
     - hermes-engine/Pre-built (= 0.74.3)
   - hermes-engine/Pre-built (0.74.3)
-  - "musap-ios (0.0.2-unstable.80+085d028b)":
-    - YubiKit
   - "musap-react-native (0.0.2-unstable.80+085d028b)":
     - DoubleConversion
     - glog
     - hermes-engine
-    - musap-ios
+    - "musap-react-native/musap-ios (= 0.0.2-unstable.80+085d028b)"
     - RCT-Folly (= 2024.01.01.00)
     - RCTRequired
     - RCTTypeSafety
@@ -31,6 +29,28 @@ PODS:
     - ReactCommon/turbomodule/bridging
     - ReactCommon/turbomodule/core
     - Yoga
+  - "musap-react-native/musap-ios (0.0.2-unstable.80+085d028b)":
+    - DoubleConversion
+    - glog
+    - hermes-engine
+    - RCT-Folly (= 2024.01.01.00)
+    - RCTRequired
+    - RCTTypeSafety
+    - React-Codegen
+    - React-Core
+    - React-debug
+    - React-Fabric
+    - React-featureflags
+    - React-graphics
+    - React-ImageManager
+    - React-NativeModulesApple
+    - React-RCTFabric
+    - React-rendererdebug
+    - React-utils
+    - ReactCommon/turbomodule/bridging
+    - ReactCommon/turbomodule/core
+    - Yoga
+    - YubiKit
   - RCT-Folly (2024.01.01.00):
     - boost
     - DoubleConversion
@@ -1199,7 +1219,6 @@ DEPENDENCIES:
   - fmt (from `../node_modules/react-native/third-party-podspecs/fmt.podspec`)
   - glog (from `../node_modules/react-native/third-party-podspecs/glog.podspec`)
   - hermes-engine (from `../node_modules/react-native/sdks/hermes-engine/hermes-engine.podspec`)
-  - "musap-ios (from `../node_modules/@sphereon/musap-ios`)"
   - "musap-react-native (from `../node_modules/@sphereon/musap-react-native`)"
   - RCT-Folly (from `../node_modules/react-native/third-party-podspecs/RCT-Folly.podspec`)
   - RCT-Folly/Fabric (from `../node_modules/react-native/third-party-podspecs/RCT-Folly.podspec`)
@@ -1272,8 +1291,6 @@ EXTERNAL SOURCES:
   hermes-engine:
     :podspec: "../node_modules/react-native/sdks/hermes-engine/hermes-engine.podspec"
     :tag: hermes-2024-06-28-RNv0.74.3-7bda0c267e76d11b68a585f84cfdd65000babf85
-  musap-ios:
-    :path: "../node_modules/@sphereon/musap-ios"
   musap-react-native:
     :path: "../node_modules/@sphereon/musap-react-native"
   RCT-Folly:
@@ -1380,8 +1397,7 @@ SPEC CHECKSUMS:
   fmt: 4c2741a687cc09f0634a2e2c72a838b99f1ff120
   glog: fdfdfe5479092de0c4bdbebedd9056951f092c4f
   hermes-engine: 1f547997900dd0752dc0cc0ae6dd16173c49e09b
-  musap-ios: c98decee85df6b0ec9b55aa64cbc44e6fcaf827f
-  musap-react-native: 0c076780f9c8503bcaa3e4b3855383718c31c29f
+  musap-react-native: e3ed6fc5910ac24f42d211a06008b9f5b57e190d
   RCT-Folly: 02617c592a293bd6d418e0a88ff4ee1f88329b47
   RCTDeprecation: 4c7eeb42be0b2e95195563c49be08d0b839d22b4
   RCTRequired: d530a0f489699c8500e944fde963102c42dcd0c2
@@ -1433,6 +1449,6 @@ SPEC CHECKSUMS:
   Yoga: 88480008ccacea6301ff7bf58726e27a72931c8d
   YubiKit: 390e7733942f9518f9b3f5890c60914f7b8d74c8
 
-PODFILE CHECKSUM: 2c0c53517b5e8f2f3a6306fdab4211089ec45d3d
+PODFILE CHECKSUM: 80b31a8775ddba97f6edf8b37f9556f7a49c94c1
 
 COCOAPODS: 1.15.2
