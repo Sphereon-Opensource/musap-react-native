@@ -74,10 +74,12 @@ class MusapModuleAndroid(private val context: ReactApplicationContext) : ReactCo
                     }
                     promise.resolve(result.keyUri.uri)
                 } catch (e: Exception) {
+                    Log.e("MUSAP", "generateKey failed", e)
                     promise.reject("GENERATE_KEY_ERROR", e.message, e)
                 }
             }
         } catch (e: Exception) {
+            Log.e("MUSAP", "generateKey failed", e)
             promise.reject("GENERATE_KEY_ERROR", "Error setting up key generation: ${e.message}", e)
         }
     }
