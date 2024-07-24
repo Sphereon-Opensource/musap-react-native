@@ -9,7 +9,7 @@ PODS:
   - hermes-engine/Pre-built (0.74.3)
   - musap-ios (0.1.0):
     - YubiKit
-  - "musap-react-native (0.0.1-unstable.92+57938ca9)":
+  - "musap-react-native (0.0.1-unstable.93+78e181a5)":
     - DoubleConversion
     - glog
     - hermes-engine
@@ -1381,7 +1381,7 @@ SPEC CHECKSUMS:
   glog: fdfdfe5479092de0c4bdbebedd9056951f092c4f
   hermes-engine: 1f547997900dd0752dc0cc0ae6dd16173c49e09b
   musap-ios: d1f24632d1cbb24ccf79e5ac6876d6b1356621d1
-  musap-react-native: 0c028bbb4ee47b8b8c4c50fcbdb36ceb376fbacc
+  musap-react-native: 065925bb0864c4cdf39dc11ba9f928d64cb5f051
   RCT-Folly: 02617c592a293bd6d418e0a88ff4ee1f88329b47
   RCTDeprecation: 4c7eeb42be0b2e95195563c49be08d0b839d22b4
   RCTRequired: d530a0f489699c8500e944fde963102c42dcd0c2
