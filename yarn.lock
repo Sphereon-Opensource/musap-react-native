@@ -3597,6 +3597,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@sphereon/musap-native@npm:0.0.1-unstable.90+59b1562b":
+  version: 0.0.1-unstable.90
+  resolution: "@sphereon/musap-native@npm:0.0.1-unstable.90"
+  checksum: 10/c18bc035b825e16a8b73105f7f232d8da0a176949207dd56e0954bc2998c6c14cfa8bc20dbd229d876cf14ac097ab419fb91cccb25fe00ee95d53a3422b20937
+  languageName: node
+  linkType: hard
+
 "@sphereon/musap-native@workspace:*, @sphereon/musap-native@workspace:packages/musap-native":
   version: 0.0.0-use.local
   resolution: "@sphereon/musap-native@workspace:packages/musap-native"
@@ -3638,13 +3645,15 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@sphereon/musap-react-native@npm:0.0.2-unstable.80":
-  version: 0.0.2-unstable.80
-  resolution: "@sphereon/musap-react-native@npm:0.0.2-unstable.80"
+"@sphereon/musap-react-native@npm:^0.0.1-unstable.90":
+  version: 0.0.1-unstable.90
+  resolution: "@sphereon/musap-react-native@npm:0.0.1-unstable.90"
   dependencies:
+    "@sphereon/musap-native": "npm:0.0.1-unstable.90+59b1562b"
+    "@sphereon/musap-react-native": "npm:0.0.1-unstable.89+5df316cc"
     react: "npm:>=16.8.1"
     react-native: "npm:>=0.60.0-rc.0 <1.0.x"
-  checksum: 10/a4bf08577dfe05cfded6be09791c4f101a4baf7e5adf92ee890bcd30d5d5c3ac972951426e35721e9c4ca1d75ce65c44f44db438593b57f23fdbb2ef3339f5e0
+  checksum: 10/540fe2592b954a5b30705ec30879df2960f0f1f38affa41a391012e3281e2a5ede494514c10b992b13d52d293b2f2ca2122bcdfb73b1aefe5c0e68ba6518bc40
   languageName: node
   linkType: hard
 
@@ -3679,7 +3688,7 @@ __metadata:
     "@react-native/eslint-config": "npm:0.74.85"
     "@react-native/metro-config": "npm:0.74.85"
     "@react-native/typescript-config": "npm:0.74.85"
-    "@sphereon/musap-react-native": "npm:0.0.2-unstable.80"
+    "@sphereon/musap-react-native": "npm:^0.0.1-unstable.90"
     "@sphereon/ssi-sdk-ext.musap-rn-kms": "npm:0.22.1-unstable.17"
     "@testing-library/jest-native": "npm:^5.4.3"
     "@types/jest": "npm:^29.5.12"

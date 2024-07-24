@@ -13,7 +13,7 @@ const itemsToCopyToIos = [
 ];
 
 const itemsToCopyToRoot = [
-  'musap-ios.podspec'
+ // 'musap-ios.podspec' RN podspec is a bit different; ./ios/**
 ];
 
 async function copyMusapIos() {
