@@ -3590,17 +3590,17 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@sphereon/musap-native@npm:0.0.1-unstable.103+d0885f3":
+  version: 0.0.1-unstable.103
+  resolution: "@sphereon/musap-native@npm:0.0.1-unstable.103"
+  checksum: 10/5da71a7cbee6c40d805d141be6e1f10e9fe4a2e304a293029ecfc1787884f65f451a6a34998b2e7d5f7c8ebc2f53594e278a33f9ce11f9facd0f57008e753a5e
+  languageName: node
+  linkType: hard
+
 "@sphereon/musap-native@npm:0.0.1-unstable.89+5df316cc":
   version: 0.0.1-unstable.89
   resolution: "@sphereon/musap-native@npm:0.0.1-unstable.89"
   checksum: 10/0e2775cb5ef13490b1847b66acd95140c52ca80d450a667dbf7211b8c25c616c283008d8fc916aacfeea56f6473f416356bd09c585b693544b456b54bb199a55
-  languageName: node
-  linkType: hard
-
-"@sphereon/musap-native@npm:0.0.1-unstable.93+78e181a5":
-  version: 0.0.1-unstable.93
-  resolution: "@sphereon/musap-native@npm:0.0.1-unstable.93"
-  checksum: 10/3500e920dba0fa35c32c5a9ed71855160a22eca22ba812b2768345c34df368705c6a2e8641f118eac005981ffc5f8f9e5c674707d4ea5369023664aebcdd41cb
   languageName: node
   linkType: hard
 
@@ -3645,15 +3645,15 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@sphereon/musap-react-native@npm:^0.0.1-unstable.93":
-  version: 0.0.1-unstable.93
-  resolution: "@sphereon/musap-react-native@npm:0.0.1-unstable.93"
+"@sphereon/musap-react-native@npm:^0.0.1-unstable.103":
+  version: 0.0.1-unstable.103
+  resolution: "@sphereon/musap-react-native@npm:0.0.1-unstable.103"
   dependencies:
-    "@sphereon/musap-native": "npm:0.0.1-unstable.93+78e181a5"
+    "@sphereon/musap-native": "npm:0.0.1-unstable.103+d0885f3"
     "@sphereon/musap-react-native": "npm:0.0.1-unstable.89+5df316cc"
     react: "npm:>=16.8.1"
     react-native: "npm:>=0.60.0-rc.0 <1.0.x"
-  checksum: 10/0eff3590b817c4de0037ed4234547d80b1a4a86e423056c16417fd5ef10d4b097c6a123be7f73bc6c744c164dcb73f4258ad7d1e28e5808612bc280c3b9ab3f8
+  checksum: 10/32a8f3e3ca4bfc88e7ad29205eb74f342e3971f87c433806cecbf97adfb27dbbbfe53e6adfb63392ecdc82fa89f4f5fc20c68d2900ebd24f4cefb0885f9e6fa1
   languageName: node
   linkType: hard
 
@@ -3688,8 +3688,8 @@ __metadata:
     "@react-native/eslint-config": "npm:0.74.85"
     "@react-native/metro-config": "npm:0.74.85"
     "@react-native/typescript-config": "npm:0.74.85"
-    "@sphereon/musap-react-native": "npm:^0.0.1-unstable.93"
-    "@sphereon/ssi-sdk-ext.musap-rn-kms": "npm:0.22.1-unstable.17"
+    "@sphereon/musap-react-native": "npm:^0.0.1-unstable.103"
+    "@sphereon/ssi-sdk-ext.musap-rn-kms": "npm:0.22.1-unstable.22"
     "@testing-library/jest-native": "npm:^5.4.3"
     "@types/jest": "npm:^29.5.12"
     "@types/react": "npm:^18.2.6"
@@ -3711,17 +3711,19 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@sphereon/ssi-sdk-ext.musap-rn-kms@npm:0.22.1-unstable.17":
-  version: 0.22.1-unstable.17
-  resolution: "@sphereon/ssi-sdk-ext.musap-rn-kms@npm:0.22.1-unstable.17"
+"@sphereon/ssi-sdk-ext.musap-rn-kms@npm:0.22.1-unstable.22":
+  version: 0.22.1-unstable.22
+  resolution: "@sphereon/ssi-sdk-ext.musap-rn-kms@npm:0.22.1-unstable.22"
   dependencies:
     "@sphereon/musap-react-native": "npm:0.0.2-unstable.69"
     "@types/uuid": "npm:^8.3.4"
     "@veramo/core": "npm:4.2.0"
     "@veramo/key-manager": "npm:4.2.0"
     "@veramo/kms-local": "npm:4.2.0"
+    react-native-get-random-values: "npm:1.11.0"
+    text-encoding: "npm:^0.7.0"
     uuid: "npm:^10.0.0"
-  checksum: 10/8348f571618e569d7d5d6e1b302ab1c91cc4d96b66981839a401f0b24f70d9606bb4a2a48a6cfe382138e98885371101734716b80f1a0bca1aed6083fbca5e18
+  checksum: 10/98e06f2d726148b785faaedf2ca7d221a87c5ab769902e79597203ca7648d1ab5b0c041c8cc4c352413092e3c6b58639c33efe756a8ed7e29f1805fb29ce11d1
   languageName: node
   linkType: hard
 
@@ -7264,6 +7266,13 @@ __metadata:
     iconv-lite: "npm:^0.4.24"
     tmp: "npm:^0.0.33"
   checksum: 10/776dff1d64a1d28f77ff93e9e75421a81c062983fd1544279d0a32f563c0b18c52abbb211f31262e2827e48edef5c9dc8f960d06dd2d42d1654443b88568056b
+  languageName: node
+  linkType: hard
+
+"fast-base64-decode@npm:^1.0.0":
+  version: 1.0.0
+  resolution: "fast-base64-decode@npm:1.0.0"
+  checksum: 10/4c59eb1775a7f132333f296c5082476fdcc8f58d023c42ed6d378d2e2da4c328c7a71562f271181a725dd17cdaa8f2805346cc330cdbad3b8e4b9751508bd0a3
   languageName: node
   linkType: hard
 
@@ -12011,6 +12020,17 @@ __metadata:
   languageName: node
   linkType: hard
 
+"react-native-get-random-values@npm:1.11.0":
+  version: 1.11.0
+  resolution: "react-native-get-random-values@npm:1.11.0"
+  dependencies:
+    fast-base64-decode: "npm:^1.0.0"
+  peerDependencies:
+    react-native: ">=0.56"
+  checksum: 10/eb04833ce2b66309d737f1447ab01ad32aca00a8d1cc4de7b4e751c23f4d9f8059a2643bb16e0b6f3e6b074a9e57e769bb2bf2afc50a912c5661d80a6ce4de34
+  languageName: node
+  linkType: hard
+
 "react-native-uuid@npm:^2.0.2":
   version: 2.0.2
   resolution: "react-native-uuid@npm:2.0.2"
@@ -13423,6 +13443,13 @@ __metadata:
     glob: "npm:^7.1.4"
     minimatch: "npm:^3.0.4"
   checksum: 10/8fccb2cb6c8fcb6bb4115394feb833f8b6cf4b9503ec2485c2c90febf435cac62abe882a0c5c51a37b9bbe70640cdd05acf5f45e486ac4583389f4b0855f69e5
+  languageName: node
+  linkType: hard
+
+"text-encoding@npm:^0.7.0":
+  version: 0.7.0
+  resolution: "text-encoding@npm:0.7.0"
+  checksum: 10/c61b7a59a54c58f0714da0ef4c1f65732821bb1f761e6f21c3e681e51c6dd56fdefa4fcfccd3254bf47132d87420fbc9898da21a804c89e87861f4e1478d5f18
   languageName: node
   linkType: hard
 
