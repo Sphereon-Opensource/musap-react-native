@@ -3698,7 +3698,7 @@ __metadata:
     "@react-native/metro-config": "npm:0.74.85"
     "@react-native/typescript-config": "npm:0.74.85"
     "@sphereon/musap-react-native": "npm:^0.0.1-unstable.111"
-    "@sphereon/ssi-sdk-ext.musap-rn-kms": "npm:0.22.1-unstable.23"
+    "@sphereon/ssi-sdk-ext.musap-rn-kms": "npm:0.22.1-unstable.25"
     "@testing-library/jest-native": "npm:^5.4.3"
     "@types/jest": "npm:^29.5.12"
     "@types/react": "npm:^18.2.6"
@@ -3722,9 +3722,9 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@sphereon/ssi-sdk-ext.musap-rn-kms@npm:0.22.1-unstable.23":
-  version: 0.22.1-unstable.23
-  resolution: "@sphereon/ssi-sdk-ext.musap-rn-kms@npm:0.22.1-unstable.23"
+"@sphereon/ssi-sdk-ext.musap-rn-kms@npm:0.22.1-unstable.25":
+  version: 0.22.1-unstable.25
+  resolution: "@sphereon/ssi-sdk-ext.musap-rn-kms@npm:0.22.1-unstable.25"
   dependencies:
     "@sphereon/musap-react-native": "npm:0.0.1-unstable.106"
     "@types/uuid": "npm:^8.3.4"
@@ -3734,7 +3734,7 @@ __metadata:
     react-native-get-random-values: "npm:1.11.0"
     text-encoding: "npm:^0.7.0"
     uuid: "npm:^10.0.0"
-  checksum: 10/07218357461dd93772890fb4a7c652a9bd7247a4400f3702bc626060e5a6b5c54c59ed8bd021b96ea5d4f20dcf796b28c40ec909cb5db1846aaa0f022500afdf
+  checksum: 10/00552020486d1dbb02b4d29652e727a9d4bff1ca721858e115d92a642f97e862aa317e603f95ef718412386f0a3ddd21110cb758bc2ebeb3a0f62921cc622956
   languageName: node
   linkType: hard
 
