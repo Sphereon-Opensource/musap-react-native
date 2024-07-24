@@ -16,7 +16,6 @@ export const sign = async (key: MusapKey, jwtHeaderAndPayload: string, sscdInfo:
         algorithm: signatureAlgorithmFromKeyAlgorithm(key.algorithm),
         attributes: [{name: "key", value: "value"}],
     }
-    //const reqData = sscdInfo.sscdName === "SE" ? req : JSON.stringify(req)
     console.log('NOKMS signatureReq', JSON.stringify(req))
     try {
         const signature = await MusapModule.sign(req)

@@ -1,13 +1,18 @@
-import {mapKeyAlgorithmToJWTAlgorithm, MusapKey} from "@sphereon/musap-react-native";
+import {mapKeyAlgorithmToJWTAlgorithm, MusapKey} from "@sphereon/musap-react-native"
 
 export function base64Encode(str: string): string {
-    return btoa(unescape(encodeURIComponent(str)))
+    return btoa(
+        encodeURIComponent(str).replace(
+            /%([0-9A-F]{2})/g,
+            (match, p1) => String.fromCharCode(Number('0x' + p1))
+        )
+    )
 }
 
 export const base64UrlEncode = (str: string): string => base64Encode(str)
     .replace(/\+/g, '-')
     .replace(/\//g, '_')
-    .replace(/=/g, '');
+    .replace(/=/g, '')
 
 export const uint8ArrayToBase64 = (array: Uint8Array): string => {
     if (!(array instanceof Uint8Array)) {
@@ -24,9 +29,9 @@ export const uint8ArrayToBase64 = (array: Uint8Array): string => {
     }
 
     return btoa(binary)
-};
+}
 
-// Utility functions
+
 const base64ToUint8Array = (base64: string): Uint8Array => {
     const binaryString = atob(base64)
     const len = binaryString.length
@@ -111,4 +116,4 @@ export const buildJwtHeaderAndPayload = (key: MusapKey, jwtPayload: object): str
     const header = base64UrlEncode(JSON.stringify(headerMap))
     const payload = base64UrlEncode(JSON.stringify(jwtPayload))
     return `${header}.${payload}`
-};
+}
