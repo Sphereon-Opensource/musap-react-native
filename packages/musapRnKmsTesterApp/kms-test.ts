@@ -4,6 +4,8 @@ import {jwtPayload} from "./common";
 import {buildJwtHeaderAndPayload} from "./jwt-functions";
 
 export const kmsTestRun = async () => {
+    MusapModule.enableSscd('TEE')
+
     console.log(">>>>>>>>>>>>. kmsTestRun started!");
     const kms: MusapKeyManagementSystem = new MusapKeyManagementSystem(MusapModule)
   console.log(">>>>>>>>>>>>. kmsTestRun: KMS created!");
@@ -19,11 +21,15 @@ export const kmsTestRun = async () => {
         console.log('KMS jwtHeaderAndPayload', jwtHeaderAndPayload)
 
         const encoder = new TextEncoder();
-        const data = encoder.encode(JSON.stringify(jwtHeaderAndPayload));
+        const data = encoder.encode(jwtHeaderAndPayload)
 
         try {
-            const signresult = await kms.sign({data, keyRef: {kid: keyManagedInfo.kid}})
-            console.log('KMS signresult', signresult)
+            const signature = await kms.sign({data, keyRef: {kid: keyManagedInfo.kid}})
+            console.log('KMS signature', signature)
+
+            const jwt = `${jwtHeaderAndPayload}.${signature}`
+            console.log(`jwt`, jwt)
+            console.log("NOKMS Data successfully signed:")
         } catch (error) {
             console.error('KMS error', error)
         }
