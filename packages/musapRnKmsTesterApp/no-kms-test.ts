@@ -25,12 +25,11 @@ async function generateKey() {
 
 function clearKeystore() {
     console.log('DIRECT Clearing keystore')
-    /*  const allKeys = MusapModule.listKeys()
-      for (const key: MusapKey of allKeys) {
-          console.log('Removing key ', key)
-          MusapModule.removeKey(key.keyUri)
-      }
-*/
+    const allKeys: MusapKey[] = MusapModule.listKeys()
+    for (const key of allKeys) {
+        console.log('Removing key ', key.keyUri)
+        MusapModule.removeKey(key.keyUri)
+    }
 }
 
 export const testRunDirect = async () => {
@@ -39,7 +38,6 @@ export const testRunDirect = async () => {
     const sscds = MusapModule.listEnabledSscds()
     console.log('DIRECT listEnabledSscds', sscds)
     const sscdInfo = sscds[0].sscdInfo
-
 
 
     try {
