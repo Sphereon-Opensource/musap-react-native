@@ -1,6 +1,7 @@
-import {MusapModule} from "@sphereon/musap-react-native";
+import {MusapKey, MusapModule} from "@sphereon/musap-react-native";
 import {MusapKeyManagementSystem} from "@sphereon/ssi-sdk-ext.musap-rn-kms";
 import {jwtPayload} from "./common";
+import {buildJwtHeaderAndPayload} from "./jwt-functions";
 
 export const kmsTestRun = async () => {
     const kms: MusapKeyManagementSystem = new MusapKeyManagementSystem(MusapModule)
@@ -10,9 +11,14 @@ export const kmsTestRun = async () => {
         const keyManagedInfo = await kms.createKey({type: 'secp256r1'})
         console.log('KMS generateKey result keyUri', keyManagedInfo);
 
+        const key = MusapModule.getKeyByUri(keyManagedInfo.kid) as MusapKey
+        console.log(`KMS GetKeyByUri(): ${JSON.stringify(key)}`)
+        const jwtHeaderAndPayload = buildJwtHeaderAndPayload(key, jwtPayload)
+        console.log('KMS jwtHeaderAndPayload', jwtHeaderAndPayload)
+
         const encoder = new TextEncoder();
-        const data = encoder.encode(JSON.stringify(jwtPayload));
-        console.log('KMS encoded data', data);
+        const data = encoder.encode(JSON.stringify(jwtHeaderAndPayload));
+
         try {
             const signresult = await kms.sign({data, keyRef: {kid: keyManagedInfo.kid}})
             console.log('KMS signresult', signresult)
