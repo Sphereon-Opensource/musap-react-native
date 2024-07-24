@@ -5,7 +5,6 @@ import android.os.Build
 import android.util.Log
 import androidx.annotation.RequiresApi
 import com.facebook.react.bridge.Arguments
-import com.facebook.react.bridge.Callback
 import com.facebook.react.bridge.Promise
 import com.facebook.react.bridge.ReactApplicationContext
 import com.facebook.react.bridge.ReactContextBaseJavaModule
@@ -13,13 +12,9 @@ import com.facebook.react.bridge.ReactMethod
 import com.facebook.react.bridge.ReadableMap
 import com.facebook.react.bridge.WritableArray
 import com.facebook.react.bridge.WritableMap
-import com.facebook.react.util.RNLog
-import com.nimbusds.jose.JWSAlgorithm
-import com.nimbusds.jose.JWSHeader
 import com.nimbusds.jose.JWSObject
 import com.nimbusds.jose.crypto.impl.ECDSA
 import com.nimbusds.jose.util.Base64URL
-import com.nimbusds.jwt.JWTClaimsSet
 import com.sphereon.musap.models.SscdType
 import com.sphereon.musap.serializers.toKeyGenReq
 import com.sphereon.musap.serializers.toSignatureReq
@@ -30,16 +25,16 @@ import fi.methics.musap.sdk.api.MusapException
 import fi.methics.musap.sdk.extension.MusapSscdInterface
 import fi.methics.musap.sdk.internal.datatype.MusapKey
 import fi.methics.musap.sdk.internal.datatype.MusapSignature
-import fi.methics.musap.sdk.internal.datatype.SignatureAlgorithm
 import fi.methics.musap.sdk.sscd.android.AndroidKeystoreSscd
 import fi.methics.musap.sdk.sscd.yubikey.YubiKeySscd
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.suspendCancellableCoroutine
+import java.util.Base64
 import kotlin.coroutines.resumeWithException
 
-
+@kotlinx.coroutines.ExperimentalCoroutinesApi
 class MusapModuleAndroid(private val context: ReactApplicationContext) : ReactContextBaseJavaModule(context) {
 
     override fun getName(): String = "MusapModule"
@@ -106,56 +101,56 @@ class MusapModuleAndroid(private val context: ReactApplicationContext) : ReactCo
     }
 
 
-  @ReactMethod
-  fun sign(req: ReadableMap, promise: Promise) {
-    try {
-        val signatureReq = req.toSignatureReq(this.currentActivity)
+    @ReactMethod
+    fun sign(req: ReadableMap, promise: Promise) {
+        try {
+            val signatureReq = req.toSignatureReq(this.currentActivity)
 
-        val key = signatureReq.key
-        val keyAlgo = key.algorithm
-        val signatureAlgorithm =
-            if (keyAlgo.isEc) SignatureAlgorithm.EDDSA else SignatureAlgorithm.SHA256_WITH_ECDSA
-
-        val header = JWSHeader.Builder(JWSAlgorithm.parse(signatureAlgorithm.jwsAlgorithm))
-            .keyID(key.keyId)
-            .build()
-        val claims = JWTClaimsSet.parse(signatureReq.data.decodeToString())
-
-        CoroutineScope(Dispatchers.Default).launch {
-            try {
-                val result = suspendCancellableCoroutine<MusapSignature> { continuation ->
-                    val musapCallback = object : MusapCallback<MusapSignature> {
-                        override fun onSuccess(signature: MusapSignature?) {
-                            if (signature != null) {
-                                continuation.resume(signature) {
-                                    Log.w("MUSAP", "Signing cancelled")
+            val key = signatureReq.key
+            val keyAlgo = key.algorithm
+            CoroutineScope(Dispatchers.Default).launch {
+                try {
+                    val result = suspendCancellableCoroutine<MusapSignature> { continuation ->
+                        val musapCallback = object : MusapCallback<MusapSignature> {
+                            override fun onSuccess(signature: MusapSignature?) {
+                                if (signature != null) {
+                                    continuation.resume(signature) {
+                                        Log.w("MUSAP", "Signing cancelled")
+                                    }
+                                } else {
+                                    continuation.resumeWithException(Exception("MusapSignature is null"))
                                 }
-                            } else {
-                                continuation.resumeWithException(Exception("MusapSignature is null"))
+                            }
+
+                            override fun onException(e: MusapException?) {
+                                continuation.resumeWithException(e ?: Exception("sign error"))
                             }
                         }
+                        MusapClient.sign(signatureReq, musapCallback)
 
-                        override fun onException(e: MusapException?) {
-                            continuation.resumeWithException(e ?: Exception("sign error"))
+                        continuation.invokeOnCancellation {
+                            Log.w("MUSAP", "Signing cancelled")
                         }
                     }
-                    MusapClient.sign(signatureReq, musapCallback)
+                    val convertToRS = true // FIXME to req
 
-                    continuation.invokeOnCancellation {
-                        Log.w("MUSAP", "Signing cancelled")
+                    if (convertToRS) {
+                        val rsSignature = convertDERtoRS(result.rawSignature)
+                        val rsSignatureBase64 = Base64.getUrlEncoder().withoutPadding().encodeToString(rsSignature)
+                        promise.resolve(rsSignatureBase64)
+                    } else {
+                        promise.resolve(result.b64Signature)
                     }
+                } catch (e: Exception) {
+                    Log.e("MUSAP", "Error signing the data", e)
+                    promise.reject("SIGN_ERROR", "Error signing the data: ${e.message}", e)
                 }
-                val signed = attachSignature(JWSObject(header, claims.toPayload()), result)
-                promise.resolve(signed.serialize())
-            } catch (e: Exception) {
-                promise.reject("SIGN_ERROR", "Error signing the data: ${e.message}", e)
             }
+        } catch (e: Exception) {
+            Log.e("MUSAP", "sign failed", e)
+            promise.reject("SIGN_ERROR", "Error preparing signature request: ${e.message}", e)
         }
-    } catch (e: Exception) {
-        Log.e("MUSAP", "sign failed", e)
-        promise.reject("SIGN_ERROR", "Error preparing signature request: ${e.message}", e)
     }
-}
 
     private fun attachSignature(orig: JWSObject, sig: MusapSignature): JWSObject {
         try {
