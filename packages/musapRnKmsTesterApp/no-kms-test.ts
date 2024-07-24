@@ -48,7 +48,7 @@ export const testRunDirect = async () => {
         console.log(`DIRECT GetKeyByUri(): ${JSON.stringify(key)}`)
         const jwtHeaderAndPayload = buildJwtHeaderAndPayload(key, jwtPayload)
         console.log('DIRECT jwtHeaderAndPayload', jwtHeaderAndPayload)
-        sign(key, jwtHeaderAndPayload, sscdInfo)
+        await sign(key, jwtHeaderAndPayload, sscdInfo)
     } catch (e) {
         console.error('DIRECT sign failed', e)
     }

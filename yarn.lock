@@ -3590,10 +3590,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@sphereon/musap-native@npm:0.0.1-unstable.103+d0885f3":
-  version: 0.0.1-unstable.103
-  resolution: "@sphereon/musap-native@npm:0.0.1-unstable.103"
-  checksum: 10/5da71a7cbee6c40d805d141be6e1f10e9fe4a2e304a293029ecfc1787884f65f451a6a34998b2e7d5f7c8ebc2f53594e278a33f9ce11f9facd0f57008e753a5e
+"@sphereon/musap-native@npm:0.0.1-unstable.106+783d30d":
+  version: 0.0.1-unstable.106
+  resolution: "@sphereon/musap-native@npm:0.0.1-unstable.106"
+  checksum: 10/23bbd6b3c2f16cd764a4becfa63153401273f2042a91719ef89459a1cf375f7414c0750fcd7201fd5737e0bb85c362b49e55146d7bc48a8865792e54f12a6eaa
   languageName: node
   linkType: hard
 
@@ -3645,15 +3645,15 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@sphereon/musap-react-native@npm:^0.0.1-unstable.103":
-  version: 0.0.1-unstable.103
-  resolution: "@sphereon/musap-react-native@npm:0.0.1-unstable.103"
+"@sphereon/musap-react-native@npm:^0.0.1-unstable.106":
+  version: 0.0.1-unstable.106
+  resolution: "@sphereon/musap-react-native@npm:0.0.1-unstable.106"
   dependencies:
-    "@sphereon/musap-native": "npm:0.0.1-unstable.103+d0885f3"
+    "@sphereon/musap-native": "npm:0.0.1-unstable.106+783d30d"
     "@sphereon/musap-react-native": "npm:0.0.1-unstable.89+5df316cc"
     react: "npm:>=16.8.1"
     react-native: "npm:>=0.60.0-rc.0 <1.0.x"
-  checksum: 10/32a8f3e3ca4bfc88e7ad29205eb74f342e3971f87c433806cecbf97adfb27dbbbfe53e6adfb63392ecdc82fa89f4f5fc20c68d2900ebd24f4cefb0885f9e6fa1
+  checksum: 10/8aaad3d4f9db973c2c63c3aafd9dd42ecfdca90f5dac45d21eb73a02c74752101afd8e13c5ab004cf61345b57dc44c03b125e3d8d72963378aee718e5e0b8005
   languageName: node
   linkType: hard
 
@@ -3688,7 +3688,7 @@ __metadata:
     "@react-native/eslint-config": "npm:0.74.85"
     "@react-native/metro-config": "npm:0.74.85"
     "@react-native/typescript-config": "npm:0.74.85"
-    "@sphereon/musap-react-native": "npm:^0.0.1-unstable.103"
+    "@sphereon/musap-react-native": "npm:^0.0.1-unstable.106"
     "@sphereon/ssi-sdk-ext.musap-rn-kms": "npm:0.22.1-unstable.22"
     "@testing-library/jest-native": "npm:^5.4.3"
     "@types/jest": "npm:^29.5.12"
