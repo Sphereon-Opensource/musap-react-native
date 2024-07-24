@@ -17,7 +17,6 @@ import {
     ReloadInstructions,
 } from 'react-native/Libraries/NewAppScreen'
 import {testRunDirect} from "./no-kms-test";
-import {kmsTestRun} from "./kms-test";
 
 
 type SectionProps = PropsWithChildren<{
@@ -60,8 +59,8 @@ function App(): React.JSX.Element {
     }
 
     const runTests = async () => {
-        //await testRunDirect()
-        await kmsTestRun()
+        await testRunDirect()
+        //await kmsTestRun()
     }
 
     runTests()
