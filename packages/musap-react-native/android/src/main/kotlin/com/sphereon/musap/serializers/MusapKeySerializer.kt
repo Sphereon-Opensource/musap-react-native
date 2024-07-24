@@ -189,7 +189,7 @@ fun MusapKey.toWritableMap(): WritableMap {
         }
         putString("createdDate",  DateTimeFormatter.ISO_INSTANT.format(createdDate))
         putMap("defaultsignatureAlgorithm", defaultsignatureAlgorithm.toWritableMap())
-        putMap("keyUri", keyUri.toWritableMap())
+        putString("keyUri", keyUri.uri)
         putArray("keyUsages", keyUsages)
         putArray("loa", loa)
         putMap("publicKey", publicKey.toWritableMap())

@@ -150,10 +150,10 @@ function base64UrlDecode(str: string): string {
         case 0:
             break
         case 2:
-            str += '==';
+            str += '=='
             break
         case 3:
-            str += '=';
+            str += '='
             break
         default:
             throw new Error('Invalid base64url string')
@@ -162,24 +162,25 @@ function base64UrlDecode(str: string): string {
 }
 
 function base64ToHex(base64: string): string {
-    const raw = atob(base64);
-    let result = '';
+    const raw = atob(base64)
+    let result = ''
     for (let i = 0; i < raw.length; i++) {
-        const hex = raw.charCodeAt(i).toString(16);
-        result += (hex.length === 2 ? hex : '0' + hex);
+        const hex = raw.charCodeAt(i).toString(16)
+        result += (hex.length === 2 ? hex : '0' + hex)
     }
-    return result;
+    return result
 }
 
 function hexToBase64Url(hex: string): string {
-    const raw = hex.match(/\w{2}/g)!.map(function(a) {
-        return String.fromCharCode(parseInt(a, 16));
-    }).join('');
+    const raw = hex.match(/\w{2}/g)!.map(function (a) {
+        return String.fromCharCode(parseInt(a, 16))
+    }).join('')
     return btoa(raw)
         .replace(/\+/g, '-')
         .replace(/\//g, '_')
-        .replace(/=+$/, '');
+        .replace(/=+$/, '')
 }
+
 function uint8ArrayToBase64(array: Uint8Array): string {
     if (!(array instanceof Uint8Array)) {
         throw new Error('Input must be a Uint8Array')
@@ -197,6 +198,24 @@ function uint8ArrayToBase64(array: Uint8Array): string {
     return btoa(binary)
 }
 
+// Utility functions
+const base64ToUint8Array = (base64: string): Uint8Array => {
+    const binaryString = atob(base64)
+    const len = binaryString.length
+    const bytes = new Uint8Array(len)
+    for (let i = 0; i < len; i++) {
+        bytes[i] = binaryString.charCodeAt(i)
+    }
+    return bytes
+}
+
+const uint8ArrayToBase64Url = (array: Uint8Array): string => {
+    return btoa(String.fromCharCode.apply(null, array as unknown as number[]))
+        .replace(/=/g, '')
+        .replace(/\+/g, '-')
+        .replace(/\//g, '_')
+}
+
 const buildJwk = (pem: string): object => {
     // Remove PEM headers and newlines
     const base64Content = pem
@@ -204,20 +223,42 @@ const buildJwk = (pem: string): object => {
         .replace('-----END PUBLIC KEY-----', '')
         .replace(/\s/g, '')
 
-    // Convert base64 directly to hex
-    const publicKeyHex = base64ToHex(base64Content)
+    // Convert base64 to Uint8Array
+    const keyData = base64ToUint8Array(base64Content)
 
-    // Log the hex string for debugging
-    console.log('publicKeyHex', publicKeyHex)
+    let publicKey: Uint8Array
+
+    if (keyData[0] === 0x30) { // ASN.1 sequence
+        // Simple ASN.1 parser for ECDSA public keys
+        let offset = 2 // Skip sequence tag and length
+        offset += keyData[offset] === 0x30 ? keyData[offset + 1] + 2 : 0 // Skip AlgorithmIdentifier if present
+        if (keyData[offset] === 0x03) { // BitString
+            offset += 2 // Skip BitString tag and length
+            if (keyData[offset] === 0x00) { // Skip unused bits
+                offset++
+            }
+            publicKey = keyData.slice(offset)
+        } else {
+            throw new Error('Invalid ASN.1 structure for public key')
+        }
+    } else if (keyData[0] === 0x04) { // Raw public key
+        publicKey = keyData
+    } else {
+        throw new Error('Invalid public key format')
+    }
+
+    // Ensure we have the correct length for P-256
+    if (publicKey.length !== 65) { // 1 byte prefix + 32 bytes X + 32 bytes Y
+        throw new Error('Invalid public key length for P-256 curve')
+    }
 
     // Extract X and Y coordinates (32 bytes each)
-    // The first byte (04) indicates uncompressed point format, so we skip it
-    const x = publicKeyHex.substring(2, 66)
-    const y = publicKeyHex.substring(66)
+    const x = publicKey.slice(1, 33)
+    const y = publicKey.slice(33, 65)
 
     // Convert X and Y to Base64URL format
-    const xBase64 = hexToBase64Url(x)
-    const yBase64 = hexToBase64Url(y)
+    const xBase64 = uint8ArrayToBase64Url(x)
+    const yBase64 = uint8ArrayToBase64Url(y)
 
     // Construct the JWK
     const jwk = {
@@ -230,6 +271,7 @@ const buildJwk = (pem: string): object => {
 
     return jwk
 }
+
 
 function buildJwtHeaderAndPayload(key: MusapKey, jwtPayload: object): string {
     const headerMap: object = {
@@ -259,12 +301,12 @@ async function noKMSRun(sscdInfo: SscdInfo) {
 
     try {
         console.log('Clearing keystore')
-        const allKeys = MusapModule.listKeys()
-        for (const key: MusapKey of allKeys) {
-            console.log('Removing key ', key)
-            MusapModule.removeKey(key.keyUri)
-        }
-
+        /*  const allKeys = MusapModule.listKeys()
+          for (const key: MusapKey of allKeys) {
+              console.log('Removing key ', key)
+              MusapModule.removeKey(key.keyUri)
+          }
+  */
         const keyUri = await MusapModule.generateKey('TEE', keyGenRequest)
         console.log(`Key successfully generated: ${keyUri}`)
 
@@ -287,8 +329,9 @@ async function noKMSRun(sscdInfo: SscdInfo) {
 
 
 const sign = async (key: MusapKey, jwtHeaderAndPayload: string, sscdInfo: SscdInfo) => {
+    console.log('key.keyUri', key.keyUri)
     const req: SignatureReq = {
-        key,
+        keyUri: key.keyUri,
         data: jwtHeaderAndPayload,
         displayText: "test",
         format: 'RAW',
