@@ -3597,10 +3597,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@sphereon/musap-native@npm:0.0.1-unstable.90+59b1562b":
-  version: 0.0.1-unstable.90
-  resolution: "@sphereon/musap-native@npm:0.0.1-unstable.90"
-  checksum: 10/c18bc035b825e16a8b73105f7f232d8da0a176949207dd56e0954bc2998c6c14cfa8bc20dbd229d876cf14ac097ab419fb91cccb25fe00ee95d53a3422b20937
+"@sphereon/musap-native@npm:0.0.1-unstable.92+57938ca9":
+  version: 0.0.1-unstable.92
+  resolution: "@sphereon/musap-native@npm:0.0.1-unstable.92"
+  checksum: 10/eb7fa0eb79f99e3cad871207b5e78189dd4bedfb8cdaf14470e3695955f5ac452b4f5bdcbbbd5ac587ea4a4c9c3a4c4ec63345af90bfdaa03ceea6fd48d2a753
   languageName: node
   linkType: hard
 
@@ -3645,15 +3645,15 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@sphereon/musap-react-native@npm:^0.0.1-unstable.90":
-  version: 0.0.1-unstable.90
-  resolution: "@sphereon/musap-react-native@npm:0.0.1-unstable.90"
+"@sphereon/musap-react-native@npm:^0.0.1-unstable.92":
+  version: 0.0.1-unstable.92
+  resolution: "@sphereon/musap-react-native@npm:0.0.1-unstable.92"
   dependencies:
-    "@sphereon/musap-native": "npm:0.0.1-unstable.90+59b1562b"
+    "@sphereon/musap-native": "npm:0.0.1-unstable.92+57938ca9"
     "@sphereon/musap-react-native": "npm:0.0.1-unstable.89+5df316cc"
     react: "npm:>=16.8.1"
     react-native: "npm:>=0.60.0-rc.0 <1.0.x"
-  checksum: 10/540fe2592b954a5b30705ec30879df2960f0f1f38affa41a391012e3281e2a5ede494514c10b992b13d52d293b2f2ca2122bcdfb73b1aefe5c0e68ba6518bc40
+  checksum: 10/20a8c66c452b8d4a12a776872f5af04d08f63ece22aa588c706708bd126439edc006e88849e25d5429b11d8f676d1882a41948d7fa9b97bbe8d1be6747f5f5ee
   languageName: node
   linkType: hard
 
@@ -3688,7 +3688,7 @@ __metadata:
     "@react-native/eslint-config": "npm:0.74.85"
     "@react-native/metro-config": "npm:0.74.85"
     "@react-native/typescript-config": "npm:0.74.85"
-    "@sphereon/musap-react-native": "npm:^0.0.1-unstable.90"
+    "@sphereon/musap-react-native": "npm:^0.0.1-unstable.92"
     "@sphereon/ssi-sdk-ext.musap-rn-kms": "npm:0.22.1-unstable.17"
     "@testing-library/jest-native": "npm:^5.4.3"
     "@types/jest": "npm:^29.5.12"

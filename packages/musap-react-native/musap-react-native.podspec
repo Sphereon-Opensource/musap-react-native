@@ -51,5 +51,5 @@ Pod::Spec.new do |s|
   s.swift_versions = ['5.0']
 
   s.dependency "musap-ios"
-  s.exclude_files = "ios/**/FBReactNativeSpec*.{h,m,mm}h", "ios/**/RCTModulesConformingToProtocolsProvider.{h,m,mm}"
+  s.exclude_files = "ios/**/FBReactNativeSpec*.{h,m,mm}", "ios/**/RCTModulesConformingToProtocolsProvider.{h,m,mm}"
 end
