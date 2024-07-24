@@ -4,24 +4,32 @@ import {jwtPayload} from "./common";
 import {buildJwtHeaderAndPayload} from "./jwt-functions";
 
 export const kmsTestRun = async () => {
+    MusapModule.enableSscd('TEE')
+
+    console.log(">>>>>>>>>>>>. kmsTestRun started!");
     const kms: MusapKeyManagementSystem = new MusapKeyManagementSystem(MusapModule)
+  console.log(">>>>>>>>>>>>. kmsTestRun: KMS created!");
 
     try {
         // @ts-ignore
         const keyManagedInfo = await kms.createKey({type: 'secp256r1'})
         console.log('KMS generateKey result keyUri', keyManagedInfo);
 
-        const key = MusapModule.getKeyByUri(keyManagedInfo.kid) as MusapKey
+        const key = MusapModule.getKeyById(keyManagedInfo.kid) as MusapKey
         console.log(`KMS GetKeyByUri(): ${JSON.stringify(key)}`)
         const jwtHeaderAndPayload = buildJwtHeaderAndPayload(key, jwtPayload)
         console.log('KMS jwtHeaderAndPayload', jwtHeaderAndPayload)
 
         const encoder = new TextEncoder();
-        const data = encoder.encode(JSON.stringify(jwtHeaderAndPayload));
+        const data = encoder.encode(jwtHeaderAndPayload)
 
         try {
-            const signresult = await kms.sign({data, keyRef: {kid: keyManagedInfo.kid}})
-            console.log('KMS signresult', signresult)
+            const signature = await kms.sign({data, keyRef: {kid: keyManagedInfo.kid}})
+            console.log('KMS signature', signature)
+
+            const jwt = `${jwtHeaderAndPayload}.${signature}`
+            console.log(`jwt`, jwt)
+            console.log("NOKMS Data successfully signed:")
         } catch (error) {
             console.error('KMS error', error)
         }
@@ -31,7 +39,7 @@ export const kmsTestRun = async () => {
             console.log('KMS Key deleted:', value)
 
             try {
-                const key = MusapModule.getKeyByUri(keyManagedInfo.kid)
+                const key = MusapModule.getKeyById(keyManagedInfo.kid)
                 console.log('KMS Deleted key:', key)
             } catch (e) {
                 console.log('KMS Deleted key error:', e.message)

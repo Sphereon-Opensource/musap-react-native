@@ -74,10 +74,12 @@ class MusapModuleAndroid(private val context: ReactApplicationContext) : ReactCo
                     }
                     promise.resolve(result.keyUri.uri)
                 } catch (e: Exception) {
+                    Log.e("MUSAP", "generateKey failed", e)
                     promise.reject("GENERATE_KEY_ERROR", e.message, e)
                 }
             }
         } catch (e: Exception) {
+            Log.e("MUSAP", "generateKey failed", e)
             promise.reject("GENERATE_KEY_ERROR", "Error setting up key generation: ${e.message}", e)
         }
     }
@@ -199,15 +201,18 @@ class MusapModuleAndroid(private val context: ReactApplicationContext) : ReactCo
     @RequiresApi(Build.VERSION_CODES.O)
     @ReactMethod(isBlockingSynchronousMethod = true)
     fun getKeyByUri(keyUri: String): WritableMap {
-        val keyByUri = MusapClient.getKeyByUri(keyUri) ?: throw Exception("Key not found for $keyUri")
+        Log.i("MUSAP", "keyUri called with keyUri ${keyUri}")
+        val keyByUri = MusapClient.getKeyByUri(keyUri) ?: throw Exception("Key not found by keyUri for $keyUri")
         return keyByUri.toWritableMap()
     }
 
     @RequiresApi(Build.VERSION_CODES.O)
     @ReactMethod(isBlockingSynchronousMethod = true)
     fun getKeyById(keyId: String): WritableMap {
-        val keyByUri = MusapClient.getKeyByKeyID(keyId) ?: throw Exception("Key not found for $keyId")
-        return keyByUri.toWritableMap()
+        Log.i("MUSAP", "getKeyById called with id ${keyId}")
+        val key = MusapClient.getKeyByKeyID(keyId) ?: throw Exception("Key not found by id for $keyId")
+        Log.i("MUSAP", "found key ${key.keyUri}")
+        return key.toWritableMap()
     }
 
     // TODO BEFORE PR check everything for possible NPs
