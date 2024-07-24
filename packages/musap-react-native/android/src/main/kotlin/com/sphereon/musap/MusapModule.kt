@@ -107,7 +107,6 @@ class MusapModuleAndroid(private val context: ReactApplicationContext) : ReactCo
             val signatureReq = req.toSignatureReq(this.currentActivity)
 
             val key = signatureReq.key
-            val keyAlgo = key.algorithm
             CoroutineScope(Dispatchers.Default).launch {
                 try {
                     val result = suspendCancellableCoroutine<MusapSignature> { continuation ->
