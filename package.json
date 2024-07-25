@@ -23,6 +23,9 @@
   "engines": {
     "yarn": ">=4.0.0"
   },
+  "resolutions": {
+    "@sphereon/musap-react-native": "0.0.1-unstable.125"
+  },
   "scripts": {
     "test": "lerna run test",
     "build": "lerna run build",

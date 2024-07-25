@@ -27,6 +27,7 @@ class MusapModule: NSObject {
 
     @objc(generateKey:req:resolver:rejecter:)
     func generateKey(_ sscdId: String, req: NSDictionary, resolver: @escaping RCTPromiseResolveBlock, rejecter: @escaping RCTPromiseRejectBlock) {
+        logger.debug("generateKey called")
         guard let sscd = MusapClient.listEnabledSscds()?.first(where: { $0.getSscdId() == sscdId }) else {
             rejecter("GENERATE_KEY_ERROR", "Error: SSCD not found", nil)
             return
@@ -34,7 +35,7 @@ class MusapModule: NSObject {
 
         do {
             let reqObj = try req.toKeyGenReq()
-
+            logger.debug("generateKey request \(stringify(reqObj))")
             let queue = DispatchQueue(label: "com.sphereon.generateKey")
             var isResolved = false
 
@@ -75,6 +76,7 @@ class MusapModule: NSObject {
                 }
             }
         } catch {
+            logger.error("generateKey error \(stringify(error))")
             rejecter("GENERATE_KEY_ERROR", "Error creating request object: \(error.localizedDescription)", error)
         }
     }
@@ -83,7 +85,7 @@ class MusapModule: NSObject {
     func sign(_ req: NSDictionary, resolver: @escaping RCTPromiseResolveBlock, rejecter: @escaping RCTPromiseRejectBlock) {
         do {
             let signatureRequest = try req.toSignatureReq()
-
+            logger.debug("sign called \(stringify(signatureRequest))")
             let queue = DispatchQueue(label: "com.sphereon.sign")
             var isResolved = false
             let convertToRS = true // FIXME move to SignatureReq
@@ -121,12 +123,14 @@ class MusapModule: NSObject {
         } catch JWTError.missingAlgorithm {
             rejecter("MISSING_ALGORITHM", "No algorithm specified", JWTError.missingAlgorithm)
         } catch {
+            logger.error("sign error \(error.localizedDescription)")
             rejecter("SIGN_ERROR", "Error preparing signature request: \(error.localizedDescription)", error)
         }
     }
 
   @objc
   func enableSscd(_ sscdType: String) -> Any? { // -> Void crashes the app
+      logger.debug("enabledSscd called for \(sscdType)")
       let sscd: any MusapSscdProtocol
       switch sscdType {
       case "TEE":
@@ -198,7 +202,7 @@ class MusapModule: NSObject {
 
     @objc
     func convertDERtoRS(derSignature: Data) throws -> Data {
-        logger.info("Input DER signature: \(derSignature.map { String(format: "%02hhx", $0) }.joined())")
+        logger.debug("Input DER signature: \(derSignature.map { String(format: "%02hhx", $0) }.joined())")
 
         var derBytes = [UInt8](derSignature)
         guard derBytes.count > 8, derBytes[0] == 0x30 else {
@@ -243,7 +247,7 @@ class MusapModule: NSObject {
         let normalizedS = normalize(s)
 
         let result = Data(normalizedR + normalizedS)
-        logger.info("Output R|S signature: \(result.map { String(format: "%02hhx", $0) }.joined())")
+        logger.debug("Output R|S signature: \(result.map { String(format: "%02hhx", $0) }.joined())")
 
         return result
     }

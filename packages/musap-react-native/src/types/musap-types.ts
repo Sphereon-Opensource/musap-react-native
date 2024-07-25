@@ -127,7 +127,7 @@ export interface SignatureReq {
     data: string // TODO if we want to support binary data we need to send an array of numbers (or go base64)
     displayText?: string
     algorithm?: SignatureAlgorithmType
-    format?: SignatureFormat
+    format: SignatureFormat
     attributes?: SignatureAttribute[]
     transId?: string
 }
