@@ -10,6 +10,7 @@
 
 `$ yarn add @sphereon/react-native-musap`
 
+>**Note**: Since this is a mono-repository yarn 4.x or higher is required
 
 ### Usage
 The MUSAP (Mobile Universal Signing Application Protocol) library provides a set of functions for key management and signing operations. Here's how to use the main features:
