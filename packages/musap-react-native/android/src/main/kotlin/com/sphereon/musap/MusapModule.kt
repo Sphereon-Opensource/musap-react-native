@@ -153,23 +153,6 @@ class MusapModuleAndroid(private val context: ReactApplicationContext) : ReactCo
         }
     }
 
-    private fun attachSignature(orig: JWSObject, sig: MusapSignature): JWSObject {
-        try {
-            val header = orig.header.toBase64URL()
-            val payload = orig.payload.toBase64URL()
-            val signature = Base64URL.encode(transcodeSignature(sig.rawSignature))
-            return JWSObject(header, payload, signature)
-        } catch (e: Exception) {
-            Log.e("MUSAP", "data transform: after encoding the signature ", e)
-            return orig
-        }
-    }
-
-    private fun transcodeSignature(rawSignature: ByteArray): ByteArray {
-        val length = 64
-        return ECDSA.transcodeSignatureToConcat(rawSignature, length)
-    }
-
     // enabled = supported by device running MUSAP
     @ReactMethod(isBlockingSynchronousMethod = true)
     fun listEnabledSscds(): WritableArray {

@@ -67,7 +67,7 @@ android {
         minSdkVersion getExtOrIntegerDefault("minSdkVersion")
         targetSdkVersion getExtOrIntegerDefault("targetSdkVersion")
         versionCode 1
-        versionName "1.0.0"
+        versionName "0.1.0"
     }
 
     buildTypes {
@@ -108,7 +108,7 @@ afterEvaluate {
             aar(MavenPublication) {
                 groupId 'com.sphereon.musap'
                 artifactId 'musap-react-native'
-                version '1.0.0'
+                version '0.1.0'
 
                 artifact("$buildDir/outputs/aar/musap-react-native-release.aar") {
                     builtBy tasks.bundleReleaseAar
@@ -159,7 +159,7 @@ afterEvaluate {
                         appendNode('dependency').with {
                             appendNode('groupId', 'fi.methics.musap')
                             appendNode('artifactId', 'musap-android')
-                            appendNode('version', '1.0.0')
+                            appendNode('version', '0.1.0')
                             appendNode('scope', 'compile')
                             appendNode('exclusions').with {
                                 appendNode('exclusion').with {
@@ -220,7 +220,7 @@ dependencies {
     implementation "com.facebook.react:react-android:+"
     implementation "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
     implementation("fi.methics.musap:musap-android:1.0.0") {
-        exclude group: "com.yubico.yubikit", module: "core"
+        exclude group: "com.yubico.yubikit", module: "core" // Embedded in aar. Will get duplication errors when not excluded
         exclude group: "com.yubico.yubikit", module: "android"
         exclude group: "com.yubico.yubikit", module: "piv"
     }
