@@ -1,0 +1,12 @@
+{
+  "name": "musap-react-native",
+  "platforms": ["ios", "android"],
+  "ios": {
+    "modules": ["MusapModuleBridge"]
+  },
+  "android": {
+    "modules": [
+      "com.sphereon.musap.MusapModuleAndroid"
+    ]
+  }
+}

@@ -1,50 +1,33 @@
-# Welcome to your Expo app 👋
+<h1 align="center">
+  <br>
+  <a href="https://www.sphereon.com"><img src="https://sphereon.com/content/themes/sphereon/assets/img/logo.svg" alt="Sphereon" width="400"></a>
+  <br>MUSAP Library wrapper for React Native
+  <br>
+</h1>
 
-This is an [Expo](https://expo.dev) project created with [`create-expo-app`](https://www.npmjs.com/package/create-expo-app).
+---
 
-## Get started
+This is a mono-repository containing modules to wrap the MUSAP libraries for Android & iOS and 
+contains a bridge module for React Native.
 
-1. Install dependencies
+### Packages
+- [musap-native](./packages/musap-native/README.md): NPM package wrapper which makes the module easier to link in a React Native pods project.
+- [musap-react-native](./packages/musap-react-native/README.md): The React Native bridge code resulting in a NPM package
+- [musapRnKmsTesterApp](./packages/musapRnKmsTesterApp/README.md): An interactive test application where the MUSAP React Native libraries are tested.
 
-   ```bash
-   npm install
-   ```
 
-2. Start the app
-
-   ```bash
-    npx expo start
-   ```
-
-In the output, you'll find options to open the app in a
-
-- [development build](https://docs.expo.dev/develop/development-builds/introduction/)
-- [Android emulator](https://docs.expo.dev/workflow/android-studio-emulator/)
-- [iOS simulator](https://docs.expo.dev/workflow/ios-simulator/)
-- [Expo Go](https://expo.dev/go), a limited sandbox for trying out app development with Expo
-
-You can start developing by editing the files inside the **app** directory. This project uses [file-based routing](https://docs.expo.dev/router/introduction).
-
-## Get a fresh project
-
-When you're ready, run:
-
-```bash
-npm run reset-project
+Package musap-native contains a git sub-module, so after cloning the following commands should be executed: 
+```shell
+git submodule update --init --recursive
 ```
+For details see package [musap-native README](./packages/musap-native/README.md)
 
-This command will move the starter code to the **app-example** directory and create a blank **app** directory where you can start developing.
+### Usage
+Detailed usage of the API can be found [here - musap-react-native](./packages/musap-react-native/README.md)
+The [test application](./packages/musapRnKmsTesterApp/README.md) shows how to use the library to sign a JWT.
 
-## Learn more
+### License
+This project is licensed under the Apache-2 License.
 
-To learn more about developing your project with Expo, look at the following resources:
-
-- [Expo documentation](https://docs.expo.dev/): Learn fundamentals, or go into advanced topics with our [guides](https://docs.expo.dev/guides).
-- [Learn Expo tutorial](https://docs.expo.dev/tutorial/introduction/): Follow a step-by-step tutorial where you'll create a project that runs on Android, iOS, and the web.
-
-## Join the community
-
-Join our community of developers creating universal apps.
-
-- [Expo on GitHub](https://github.com/expo/expo): View our open source platform and contribute.
-- [Discord community](https://chat.expo.dev): Chat with Expo users and ask questions.
+### Support
+If you encounter any issues or have questions, please file an issue on our GitHub issue tracker.

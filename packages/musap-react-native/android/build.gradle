@@ -1,0 +1,235 @@
+buildscript {
+    // Buildscript is evaluated before everything else so we can't use getExtOrDefault
+    def kotlin_version = rootProject.ext.has("kotlinVersion") ? rootProject.ext.get("kotlinVersion") : project.properties["MusapRn_kotlinVersion"]
+
+    repositories {
+        google()
+        mavenCentral()
+    }
+
+    dependencies {
+        classpath "com.android.tools.build:gradle:8.2.0"
+        // noinspection DifferentKotlinGradleVersion
+        classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
+    }
+}
+
+def reactNativeArchitectures() {
+    def value = rootProject.getProperties().get("reactNativeArchitectures")
+    return value ? value.split(",") : ["armeabi-v7a", "x86", "x86_64", "arm64-v8a"]
+}
+
+def isNewArchitectureEnabled() {
+    return rootProject.hasProperty("newArchEnabled") && rootProject.getProperty("newArchEnabled") == "true"
+}
+
+apply plugin: "com.android.library"
+apply plugin: "kotlin-android"
+apply plugin: 'maven-publish'
+
+if (isNewArchitectureEnabled()) {
+    apply plugin: "com.facebook.react"
+}
+
+def getExtOrDefault(name) {
+    return rootProject.ext.has(name) ? rootProject.ext.get(name) : project.properties["MusapRn_" + name]
+}
+
+def getExtOrIntegerDefault(name) {
+    return rootProject.ext.has(name) ? rootProject.ext.get(name) : (project.properties["MusapRn_" + name]).toInteger()
+}
+
+def supportsNamespace() {
+    def parsed = com.android.Version.ANDROID_GRADLE_PLUGIN_VERSION.tokenize('.')
+    def major = parsed[0].toInteger()
+    def minor = parsed[1].toInteger()
+
+    // Namespace support was added in 7.3.0
+    return (major == 7 && minor >= 3) || major >= 8
+}
+
+android {
+    if (supportsNamespace()) {
+        namespace "com.musaprn"
+
+        sourceSets {
+            main {
+                manifest.srcFile "src/main/AndroidManifestNew.xml"
+                java.srcDirs("src/main/kotlin")
+                kotlin.srcDirs("src/main/kotlin")
+            }
+        }
+    }
+
+    compileSdkVersion getExtOrIntegerDefault("compileSdkVersion")
+
+    defaultConfig {
+        minSdkVersion getExtOrIntegerDefault("minSdkVersion")
+        targetSdkVersion getExtOrIntegerDefault("targetSdkVersion")
+        versionCode 1
+        versionName "0.1.0"
+    }
+
+    buildTypes {
+        release {
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+        }
+    }
+
+    lintOptions {
+        disable "GradleCompatible"
+    }
+
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_17
+        targetCompatibility JavaVersion.VERSION_17
+    }
+
+    kotlinOptions {
+        jvmTarget = "17"
+    }
+
+    libraryVariants.all { variant ->
+        variant.outputs.all {
+            outputFileName = "musap-react-native-${variant.name}.aar"
+        }
+    }
+
+    publishing {
+        singleVariant("release")
+    }
+}
+
+
+afterEvaluate {
+    publishing {
+        publications {
+            aar(MavenPublication) {
+                groupId 'com.sphereon.musap'
+                artifactId 'musap-react-native'
+                version '0.1.0'
+
+                artifact("$buildDir/outputs/aar/musap-react-native-release.aar") {
+                    builtBy tasks.bundleReleaseAar
+                }
+
+                pom {
+                    name = 'musap-react-native'
+                    description = 'A description of the musap-react-native library'
+                    url = 'http://www.example.com/musap-react-native'
+
+                    scm {
+                        connection = 'scm:git:git://example.com/musap-react-native.git'
+                        developerConnection = 'scm:git:ssh://example.com/musap-react-native.git'
+                        url = 'http://example.com/musap-react-native'
+                    }
+
+                    licenses {
+                        license {
+                            name = 'The Apache Software License, Version 2.0'
+                            url = 'http://www.apache.org/licenses/LICENSE-2.0.txt'
+                            distribution = 'repo'
+                        }
+                    }
+
+                    developers {
+                        developer {
+                            id = 'sphereon'
+                            name = 'Sphereon Developer'
+                            email = 'dev@example.com'
+                        }
+                    }
+                }
+
+                pom.withXml {
+                    asNode().appendNode('dependencies').with {
+                        appendNode('dependency').with {
+                            appendNode('groupId', 'com.facebook.react')
+                            appendNode('artifactId', 'react-android')
+                            appendNode('version', '+')
+                            appendNode('scope', 'compile')
+                        }
+                        appendNode('dependency').with {
+                            appendNode('groupId', 'org.jetbrains.kotlin')
+                            appendNode('artifactId', 'kotlin-stdlib')
+                            appendNode('version', project.kotlin_version)
+                            appendNode('scope', 'compile')
+                        }
+                        appendNode('dependency').with {
+                            appendNode('groupId', 'fi.methics.musap')
+                            appendNode('artifactId', 'musap-android')
+                            appendNode('version', '0.1.0')
+                            appendNode('scope', 'compile')
+                            appendNode('exclusions').with {
+                                appendNode('exclusion').with {
+                                    appendNode('groupId', 'com.yubico.yubikit')
+                                    appendNode('artifactId', 'core')
+                                }
+                                appendNode('exclusion').with {
+                                    appendNode('groupId', 'com.yubico.yubikit')
+                                    appendNode('artifactId', 'android')
+                                }
+                                appendNode('exclusion').with {
+                                    appendNode('groupId', 'com.yubico.yubikit')
+                                    appendNode('artifactId', 'piv')
+                                }
+                            }
+                        }
+                        appendNode('dependency').with {
+                            appendNode('groupId', 'com.nimbusds')
+                            appendNode('artifactId', 'nimbus-jose-jwt')
+                            appendNode('version', '9.40')
+                            appendNode('scope', 'compile')
+                        }
+                    }
+                }
+            }
+        }
+        repositories {
+            maven {
+                url = "maven"
+            }
+        }
+    }
+}
+
+repositories {
+    mavenCentral()
+    google()
+    mavenLocal()
+    maven {
+        url = uri("${rootProject.projectDir}/../../../node_modules/react-native/android")
+    }
+    maven {
+        url = uri("${rootProject.projectDir}/../../../node_modules/jsc-android/dist")
+    }
+    maven { url = uri("https://www.jitpack.io") }
+    maven {
+        name = "Sphereon Public"
+        url = uri("https://nexus.sphereon.com/repository/sphereon-opensource-releases")
+    }
+}
+
+def kotlin_version = getExtOrDefault("kotlinVersion")
+
+dependencies {
+    // For < 0.71, this will be from the local maven repo
+    // For > 0.71, this will be replaced by `com.facebook.react:react-android:$version` by react gradle plugin
+    //noinspection GradleDynamicVersion
+    implementation "com.facebook.react:react-android:+"
+    implementation "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
+    implementation("fi.methics.musap:musap-android:1.0.0") {
+        exclude group: "com.yubico.yubikit", module: "core" // Embedded in aar. Will get duplication errors when not excluded
+        exclude group: "com.yubico.yubikit", module: "android"
+        exclude group: "com.yubico.yubikit", module: "piv"
+    }
+    implementation("com.nimbusds:nimbus-jose-jwt:9.40")
+}
+
+
+tasks.register("publishReleaseAar") {
+    dependsOn tasks.bundleReleaseAar
+    finalizedBy tasks.publish
+}
+

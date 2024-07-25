@@ -1,0 +1,9 @@
+{
+  "extends": "../node_modules/@react-native/typescript-config/tsconfig.json",
+  "compilerOptions": {
+    "declaration": true,
+    "declarationMap": true,
+    "sourceMap": true,
+    "composite": true
+  }
+}

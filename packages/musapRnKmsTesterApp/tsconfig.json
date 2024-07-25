@@ -1,0 +1,13 @@
+{
+  "extends": "../tsconfig-base.json",
+  "references": [
+    {
+      "path": "../musap-react-native"
+    }
+  ],
+  "compilerOptions": {
+    "allowSyntheticDefaultImports": true,
+    "types": ["detox", "jest"]
+  },
+  "include": ["e2e/**/*.ts"]
+}

@@ -1,0 +1,10 @@
+{
+  "$schema": "node_modules/lerna/schemas/lerna-schema.json",
+  "version": "0.0.0",
+  "npmClient": "yarn",
+  "packages": [
+    "packages/musap-native",
+    "packages/musap-react-native"
+  ],
+  "useNx": true
+}

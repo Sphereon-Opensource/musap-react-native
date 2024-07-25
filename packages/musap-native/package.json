@@ -1,0 +1,41 @@
+{
+  "name": "@sphereon/musap-native",
+  "title": "musap-ios",
+  "version": "0.1.0",
+  "description": "An NPM package wrapper for React Native for the MUSAP iOS & Android libraries. Contains native modules only.",
+  "homepage": "https://github.com/methics/musap-ios",
+  "nativePackage": true,
+  "files": [
+    "android",
+    "ios",
+    "musap-ios.podspec",
+    "README.md",
+    "LICENSE"
+  ],
+  "scripts": {
+    "prepare": "yarn copy-musap-ios",
+    "copy-musap-ios": "node scripts/copy-musap-ios.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/methics/musap-ios.git",
+    "baseUrl": "https://github.com/methics/musap-ios"
+  },
+  "keywords": [
+    "musap"
+  ],
+  "author": {
+    "name": "Sphereon International",
+    "email": "dev@sphereon.com"
+  },
+  "license": "Apache-2.0",
+  "licenseFilename": "LICENSE",
+  "readmeFilename": "README.md",
+  "devDependencies": {
+    "fs-extra": "^11.2.0"
+  },
+  "publishConfig": {
+    "access": "public"
+  },
+  "gitHead": "7615c2bd75c6352d2405473c470248d230f5056e"
+}

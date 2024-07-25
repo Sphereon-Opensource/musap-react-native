@@ -1,0 +1,24 @@
+{
+  "originHash" : "f51b68ab6086465f22d0eb9dc17ebd9fee794be397bf761e0e57ee447b59d69e",
+  "pins" : [
+    {
+      "identity" : "musap_ios",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/methics/musap_ios",
+      "state" : {
+        "branch" : "main",
+        "revision" : "d57395b1d4278b57e688cf9aaab976ae292e205d"
+      }
+    },
+    {
+      "identity" : "yubikit-ios",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/Yubico/yubikit-ios",
+      "state" : {
+        "revision" : "1ea9c97010780499001ac8552d6440235d947686",
+        "version" : "4.6.0"
+      }
+    }
+  ],
+  "version" : 3
+}

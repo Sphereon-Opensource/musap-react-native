@@ -1,0 +1,7 @@
+buildscript {
+    repositories {
+        maven {
+            url "$projectDir/maven"
+        }
+    }
+}
