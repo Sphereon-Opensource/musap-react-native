@@ -1,0 +1,46 @@
+ # Exclude node_modules
+ **/node_modules/
+
+ # Exclude iOS Pods directory
+ **/ios/Pods/
+ *.xcprivacy
+
+ # Exclude iOS build output
+ **/ios/build
+
+ **/ios/musap_ios
+ **/ios/musap_ios/Tests
+
+ # Exclude Xcode user-specific files
+ ios/*.xcuserstate
+ ios/*.xcworkspace/xcuserdata/
+
+ # Exclude Android build directory
+ **/android/build/
+
+ # Exclude Gradle cache
+ .android/
+
+ # Exclude local.properties, which is user-specific
+ android/local.properties
+
+ # Exclude unnecessary gradle files
+ **/gradle.properties
+ **/gradlew.bat
+ **/gradlew
+ **/gradle/wrapper/gradle-wrapper.jar
+
+ # Exclude .env files
+ .env
+ .env.*
+
+ # Exclude test files (if any)
+ **/__tests__/
+
+ # Exclude temporary files
+ *.log
+ *.tmp
+
+ # Exclude git-specific files
+ .git/
+ .git
