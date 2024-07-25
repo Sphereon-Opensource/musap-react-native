@@ -1,2 +1,3 @@
 node_modules/
 /packages/musap-native/ios/**
+tsconfig.tsbuildinfo
