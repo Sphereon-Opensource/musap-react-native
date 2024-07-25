@@ -9,7 +9,9 @@
 
 # About This Application
 
-This test application is designed to demonstrate and validate the functionality of the MUSAP (Mobile Universal Signing Application Protocol) React Native module. MUSAP is a library that provides a standardized way to interact with various secure signature creation devices (SSCDs) and key management systems (KMS) in mobile environments.
+This test application is designed to demonstrate and validate the functionality of the MUSAP (Mobile Universal Signing Application Protocol) React Native module.
+MUSAP is a library that provides a standardized way to interact with various secure signature creation devices (SSCDs) 
+and the MUSAP key management system in [SSI-SDK-crypto-extensions](https://github.com/Sphereon-Opensource/SSI-SDK-crypto-extensions) (KMS) in mobile environments.
 
 ## Key Features
 
