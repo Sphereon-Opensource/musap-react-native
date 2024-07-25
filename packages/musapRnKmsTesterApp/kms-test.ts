@@ -12,7 +12,7 @@ export const kmsTestRun = async () => {
 
     try {
         // @ts-ignore
-        const keyManagedInfo = await kms.createKey({type: 'secp256r1'})
+        const keyManagedInfo = await kms.createKey({type: 'ECCP256R1'})
         console.log('KMS generateKey result keyUri', keyManagedInfo);
 
         const key = MusapModule.getKeyById(keyManagedInfo.kid) as MusapKey
@@ -24,7 +24,7 @@ export const kmsTestRun = async () => {
         const data = encoder.encode(jwtHeaderAndPayload)
 
         try {
-            const signature = await kms.sign({data, keyRef: {kid: keyManagedInfo.kid}})
+            const signature = await kms.sign({data, keyRef: {kid: keyManagedInfo.kid}, algorithm: 'SHA256withECDSA'})
             console.log('KMS signature', signature)
 
             const jwt = `${jwtHeaderAndPayload}.${signature}`

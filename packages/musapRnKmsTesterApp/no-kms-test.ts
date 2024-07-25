@@ -41,7 +41,7 @@ export const testRunDirect = async () => {
 
 
     try {
-       // clearKeystore();
+        clearKeystore();
         const keyUri = await generateKey();
 
         const key = MusapModule.getKeyByUri(keyUri) as MusapKey
