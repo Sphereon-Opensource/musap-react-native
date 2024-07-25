@@ -12,7 +12,7 @@
     "src",
     "dist",
     "android/{src,maven,build.gradle,gradle.properties,settings.gradle}",
-    "ios/*.{h,m,mm,swift}",
+    "ios/{musap-react-native,Podfile,Podfile.lock,.xcode.env}",
     "ios/MusapRn.xcodeproj",
     "expo-module.config.json",
     "musap-react-native.podspec"
