@@ -1,6 +1,3 @@
-[submodule "packages/musap-ios/musap-ios.github"]
-	path = packages/musap-ios/musap-ios.github
-	url = https://github.com/Sphereon-Opensource/musap-ios
 [submodule "packages/musap-native/musap-ios.github"]
 	path = packages/musap-native/musap-ios.github
 	url = https://github.com/Sphereon-Opensource/musap-ios

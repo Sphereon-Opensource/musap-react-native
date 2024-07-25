@@ -8,7 +8,9 @@
   "files": [
     "android",
     "ios",
-    "musap-ios.podspec"
+    "musap-ios.podspec",
+    "README.md",
+    "LICENSE"
   ],
   "scripts": {
     "prepare": "yarn copy-musap-ios",

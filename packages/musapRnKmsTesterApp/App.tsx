@@ -60,7 +60,7 @@ function App(): React.JSX.Element {
     }
 
     const runTests = async () => {
-        //await testRunDirect()
+        await testRunDirect()
         await kmsTestRun()
     }
 

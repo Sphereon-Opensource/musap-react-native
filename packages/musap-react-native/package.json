@@ -11,6 +11,8 @@
   "files": [
     "src",
     "dist",
+    "README.md",
+    "LICENSE",
     "android/{src,maven,build.gradle,gradle.properties,settings.gradle}",
     "ios/{Podfile,Podfile.lock,.xcode.env}",
     "ios/musap-react-native",
