@@ -65,10 +65,10 @@ export interface KeyGenReq {
 export interface MusapKey {
     keyUri: string
     keyAlias: string
-    keyType: string
+    keyType: KeyAlgorithmType
     keyId: string
     sscdId: string
-    sscdType: string
+    keyType: KeyAlgorithmType
     createdDate: string | number // ISO date string
     publicKey: PublicKey
     certificate: MusapCertificate
