@@ -55,7 +55,6 @@ export interface StepUpPolicy {
 
 export interface KeyGenReq {
     keyAlias: string
-    did: string
     role: string
     keyUsage: string
     stepUpPolicy?: StepUpPolicy
@@ -78,7 +77,6 @@ export interface MusapKey {
     keyUsages: string[]
     loa: MusapLoA[]
     algorithm: KeyAlgorithm
-    did: string
     state: string
     attestation: KeyAttestation
 }
