@@ -68,7 +68,7 @@ export interface MusapKey {
     keyType: KeyAlgorithmType
     keyId: string
     sscdId: string
-    keyType: KeyAlgorithmType
+    sscdType: SscdType
     createdDate: string | number // ISO date string
     publicKey: PublicKey
     certificate: MusapCertificate
