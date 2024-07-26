@@ -3699,12 +3699,11 @@ __metadata:
     "@react-native/eslint-config": "npm:0.74.85"
     "@react-native/metro-config": "npm:0.74.85"
     "@react-native/typescript-config": "npm:0.74.85"
-    "@sphereon/musap-react-native": "npm:^0.0.1-unstable.129"
+    "@sphereon/musap-react-native": "npm:^0.0.1-next.142"
     "@sphereon/ssi-sdk-ext.musap-rn-kms": "npm:^0.23.1-unstable.33"
     "@testing-library/jest-native": "npm:^5.4.3"
     "@types/jest": "npm:^29.5.12"
     "@types/react": "npm:^18.2.6"
-    "@types/react-native-get-random-values": "npm:^1.8.2"
     "@types/react-test-renderer": "npm:^18.0.0"
     babel-jest: "npm:^29.7.0"
     babel-plugin-transform-class-properties: "npm:^6.24.1"
@@ -4134,13 +4133,6 @@ __metadata:
   version: 15.7.12
   resolution: "@types/prop-types@npm:15.7.12"
   checksum: 10/ac16cc3d0a84431ffa5cfdf89579ad1e2269549f32ce0c769321fdd078f84db4fbe1b461ed5a1a496caf09e637c0e367d600c541435716a55b1d9713f5035dfe
-  languageName: node
-  linkType: hard
-
-"@types/react-native-get-random-values@npm:^1.8.2":
-  version: 1.8.2
-  resolution: "@types/react-native-get-random-values@npm:1.8.2"
-  checksum: 10/08f3f82efbb5b6d9acd8f7f55a2dac9f228886323ac3018a1bab46cd1b45f24809d194fd2a3fe02a9ec4196606325e5cfffde0b0057ae785208b658fdc83c821
   languageName: node
   linkType: hard
 

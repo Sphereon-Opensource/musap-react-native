@@ -14,7 +14,7 @@
   },
   "dependencies": {
     "@react-native-community/cli-platform-android": "^13.6.9",
-    "@sphereon/musap-react-native": "^0.0.1-unstable.129",
+    "@sphereon/musap-react-native": "^0.0.1-next.142",
     "@sphereon/ssi-sdk-ext.musap-rn-kms": "^0.23.1-unstable.33",
     "react": "18.2.0",
     "react-native": "0.74.3",
@@ -36,7 +36,6 @@
     "@testing-library/jest-native": "^5.4.3",
     "@types/jest": "^29.5.12",
     "@types/react": "^18.2.6",
-    "@types/react-native-get-random-values": "^1.8.2",
     "@types/react-test-renderer": "^18.0.0",
     "babel-jest": "^29.7.0",
     "babel-plugin-transform-class-properties": "^6.24.1",
