@@ -3676,7 +3676,6 @@ __metadata:
     "@react-native-community/cli": "npm:^13.6.9"
     "@react-native/typescript-config": "npm:^0.74.85"
     "@sphereon/musap-native": "workspace:*"
-    "@sphereon/musap-react-native": "npm:0.0.1-unstable.89+5df316cc"
     "@types/react": "npm:^18.3.3"
     "@types/react-native": "npm:^0.73.0"
     react: "npm:^18.3.1"
