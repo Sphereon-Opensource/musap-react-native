@@ -3630,10 +3630,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@sphereon/musap-native@npm:0.0.1-unstable.125+5ee6db5f":
-  version: 0.0.1-unstable.125
-  resolution: "@sphereon/musap-native@npm:0.0.1-unstable.125"
-  checksum: 10/d1f041bfd5582188f90d91c7c6001d31d7f4cd225c0c43328aaafd36d6b10063255a2026b664cd3076df5416e002acbe7508c50d18a8edd3a63c2ab6b51b03b1
+"@sphereon/musap-native@npm:0.0.1-next.143+dae481f":
+  version: 0.0.1-next.143
+  resolution: "@sphereon/musap-native@npm:0.0.1-next.143"
+  checksum: 10/ab65d597656943934091ff2b0f2c4777db37bf097807c0c992c8cec129eef3ccb31933220f7d10664e0db8fda2c470fbc7b78ef173f6fdb09b442166c6ebc74c
   languageName: node
   linkType: hard
 
@@ -3657,15 +3657,14 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@sphereon/musap-react-native@npm:0.0.1-unstable.125":
-  version: 0.0.1-unstable.125
-  resolution: "@sphereon/musap-react-native@npm:0.0.1-unstable.125"
+"@sphereon/musap-react-native@npm:0.0.1-next.143":
+  version: 0.0.1-next.143
+  resolution: "@sphereon/musap-react-native@npm:0.0.1-next.143"
   dependencies:
-    "@sphereon/musap-native": "npm:0.0.1-unstable.125+5ee6db5f"
-    "@sphereon/musap-react-native": "npm:0.0.1-unstable.89+5df316cc"
+    "@sphereon/musap-native": "npm:0.0.1-next.143+dae481f"
     react: "npm:>=16.8.1"
     react-native: "npm:>=0.60.0-rc.0 <1.0.x"
-  checksum: 10/e4ff56bf6b9703f08e3c53a976ff9714e06daadae0407c2064dc95385dcaa7244ee3b04a16d08e31bc032b13a71a991b3c9452ebdd6dbcf41ba48af991b0ae89
+  checksum: 10/057d9132e765340a1f2007db52b9af5851b324303a58e36cb6b097eacab08c255d772ebe449d643becc564e1749550a6b4107405d975729bcedbb7a580e22751
   languageName: node
   linkType: hard
 
@@ -3699,7 +3698,7 @@ __metadata:
     "@react-native/eslint-config": "npm:0.74.85"
     "@react-native/metro-config": "npm:0.74.85"
     "@react-native/typescript-config": "npm:0.74.85"
-    "@sphereon/musap-react-native": "npm:^0.0.1-next.142"
+    "@sphereon/musap-react-native": "npm:^0.0.1-next.143"
     "@sphereon/ssi-sdk-ext.musap-rn-kms": "npm:^0.23.1-unstable.33"
     "@testing-library/jest-native": "npm:^5.4.3"
     "@types/jest": "npm:^29.5.12"

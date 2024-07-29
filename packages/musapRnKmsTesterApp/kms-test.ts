@@ -31,7 +31,7 @@ export const kmsTestRun = async () => {
             console.log(`jwt`, jwt)
             console.log("NOKMS Data successfully signed:")
         } catch (error) {
-            console.error('KMS error', error)
+            console.error('KMS error', error.stack)
         }
 
         console.log('KMS Deleted keyUri:', keyManagedInfo)
@@ -46,7 +46,7 @@ export const kmsTestRun = async () => {
             }
         })
     } catch (e) {
-        console.error('KMS error', e)
+        console.error('KMS error', e.stack)
     }
 
 }
