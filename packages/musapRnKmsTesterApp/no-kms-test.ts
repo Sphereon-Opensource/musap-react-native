@@ -16,6 +16,7 @@ async function generateKey() {
         role: "administrator",
     }
 
+    console.log(`DIRECT keyGenRequest:`, keyGenRequest)
     const keyUri = await MusapModule.generateKey('TEE', keyGenRequest)
     console.log(`DIRECT Key successfully generated: ${keyUri}`)
 
