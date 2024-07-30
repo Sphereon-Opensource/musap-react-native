@@ -3524,6 +3524,33 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@sd-jwt/decode@npm:^0.6.1":
+  version: 0.6.1
+  resolution: "@sd-jwt/decode@npm:0.6.1"
+  dependencies:
+    "@sd-jwt/types": "npm:0.6.1"
+    "@sd-jwt/utils": "npm:0.6.1"
+  checksum: 10/9cc65c205565055d9559afab6a3dd968cddf3a80f05dd44ebce4c32f58ac34edc882bdf386efe74587dd9a2996a7b4c6870e959d61ceb81abdd3a7568ee96b1d
+  languageName: node
+  linkType: hard
+
+"@sd-jwt/types@npm:0.6.1":
+  version: 0.6.1
+  resolution: "@sd-jwt/types@npm:0.6.1"
+  checksum: 10/74971a8c4b9a4188f8b8a3f44a90e8e8ef4e5d7cd6c360e03553325237607640bd64d2fdc3894abaaa3760128a40ec71b97c1ff3d901315688a26c87dd69dbf7
+  languageName: node
+  linkType: hard
+
+"@sd-jwt/utils@npm:0.6.1":
+  version: 0.6.1
+  resolution: "@sd-jwt/utils@npm:0.6.1"
+  dependencies:
+    "@sd-jwt/types": "npm:0.6.1"
+    js-base64: "npm:^3.7.6"
+  checksum: 10/937260b7132251b504ba761ddd852571f30f32775cecb6ffdc73ddd0bdd1be9ee21408e55a632573ea414850e91612b1d0a027a96175451cece5a7e91168442b
+  languageName: node
+  linkType: hard
+
 "@sideway/address@npm:^4.1.5":
   version: 4.1.5
   resolution: "@sideway/address@npm:4.1.5"
@@ -3699,7 +3726,7 @@ __metadata:
     "@react-native/metro-config": "npm:0.74.85"
     "@react-native/typescript-config": "npm:0.74.85"
     "@sphereon/musap-react-native": "npm:^0.0.1-next.143"
-    "@sphereon/ssi-sdk-ext.musap-rn-kms": "npm:^0.23.1-unstable.33"
+    "@sphereon/ssi-sdk-ext.musap-rn-kms": "npm:0.23.1-unstable.50"
     "@testing-library/jest-native": "npm:^5.4.3"
     "@types/jest": "npm:^29.5.12"
     "@types/react": "npm:^18.2.6"
@@ -3708,14 +3735,12 @@ __metadata:
     babel-plugin-transform-class-properties: "npm:^6.24.1"
     detox: "npm:^21.0.0-rc.11"
     eslint: "npm:^8.19.0"
-    expo-crypto: "npm:^13.0.2"
     jest: "npm:^29.7.0"
     jest-cli: "npm:^29.7.0"
     metro-react-native-babel-preset: "npm:^0.77.0"
     prettier: "npm:2.8.8"
     react: "npm:18.2.0"
     react-native: "npm:0.74.3"
-    react-native-get-random-values: "npm:^1.11.0"
     react-native-uuid: "npm:^2.0.2"
     react-test-renderer: "npm:18.2.0"
     ts-jest: "npm:^29.2.2"
@@ -3723,19 +3748,29 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@sphereon/ssi-sdk-ext.musap-rn-kms@npm:^0.23.1-unstable.33":
-  version: 0.23.1-unstable.33
-  resolution: "@sphereon/ssi-sdk-ext.musap-rn-kms@npm:0.23.1-unstable.33"
+"@sphereon/ssi-sdk-ext.musap-rn-kms@npm:0.23.1-unstable.50":
+  version: 0.23.1-unstable.50
+  resolution: "@sphereon/ssi-sdk-ext.musap-rn-kms@npm:0.23.1-unstable.50"
   dependencies:
-    "@sphereon/musap-react-native": "npm:^0.0.1-unstable.129"
-    "@types/uuid": "npm:^8.3.4"
+    "@sphereon/musap-react-native": "npm:0.0.1-next.143"
+    "@sphereon/ssi-types": "npm:0.28.1-next.41"
     "@veramo/core": "npm:4.2.0"
     "@veramo/key-manager": "npm:4.2.0"
     "@veramo/kms-local": "npm:4.2.0"
-    react-native-get-random-values: "npm:1.11.0"
     text-encoding: "npm:^0.7.0"
-    uuid: "npm:^10.0.0"
-  checksum: 10/c65a66a2aefde96b18ebb58457417a74acbdc86fbd5d35859dc47ece2b7a62017075d078f9bd5a126cd24f1b4903511a139456d13eece96e650eec70ba8f5699
+  checksum: 10/9a17076d87bc0914ee348612ee4be2fc8f3d8b1caaf70dedf3449e3790327380dadf1804988b0014ce5bc92f6a37a40a448e37109571a796a70c53a8aed44fbb
+  languageName: node
+  linkType: hard
+
+"@sphereon/ssi-types@npm:0.28.1-next.41":
+  version: 0.28.1-next.41
+  resolution: "@sphereon/ssi-types@npm:0.28.1-next.41"
+  dependencies:
+    "@sd-jwt/decode": "npm:^0.6.1"
+    debug: "npm:^4.3.5"
+    events: "npm:^3.3.0"
+    jwt-decode: "npm:^3.1.2"
+  checksum: 10/54ab4742bad44a172fe6f6ce5b615e8cb6bb04d8bb8642cc06a60f6be02d82cef3cdac7a9275752c146dfc334c500656cc45589b8e1ca059980836572bbe2f44
   languageName: node
   linkType: hard
 
@@ -4175,13 +4210,6 @@ __metadata:
   version: 2.0.3
   resolution: "@types/stack-utils@npm:2.0.3"
   checksum: 10/72576cc1522090fe497337c2b99d9838e320659ac57fa5560fcbdcbafcf5d0216c6b3a0a8a4ee4fdb3b1f5e3420aa4f6223ab57b82fef3578bec3206425c6cf5
-  languageName: node
-  linkType: hard
-
-"@types/uuid@npm:^8.3.4":
-  version: 8.3.4
-  resolution: "@types/uuid@npm:8.3.4"
-  checksum: 10/6f11f3ff70f30210edaa8071422d405e9c1d4e53abbe50fdce365150d3c698fe7bbff65c1e71ae080cbfb8fded860dbb5e174da96fdbbdfcaa3fb3daa474d20f
   languageName: node
   linkType: hard
 
@@ -5222,7 +5250,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"base64-js@npm:^1.3.0, base64-js@npm:^1.3.1, base64-js@npm:^1.5.1":
+"base64-js@npm:^1.3.1, base64-js@npm:^1.5.1":
   version: 1.5.1
   resolution: "base64-js@npm:1.5.1"
   checksum: 10/669632eb3745404c2f822a18fc3a0122d2f9a7a13f7fb8b5823ee19d1d2ff9ee5b52c53367176ea4ad093c332fd5ab4bd0ebae5a8e27917a4105a4cfc86b1005
@@ -6236,6 +6264,18 @@ __metadata:
   languageName: node
   linkType: hard
 
+"debug@npm:^4.3.5":
+  version: 4.3.6
+  resolution: "debug@npm:4.3.6"
+  dependencies:
+    ms: "npm:2.1.2"
+  peerDependenciesMeta:
+    supports-color:
+      optional: true
+  checksum: 10/d3adb9af7d57a9e809a68f404490cf776122acca16e6359a2702c0f462e510e91f9765c07f707b8ab0d91e03bad57328f3256f5082631cefb5393d0394d50fb7
+  languageName: node
+  linkType: hard
+
 "decamelize-keys@npm:^1.1.0":
   version: 1.1.1
   resolution: "decamelize-keys@npm:1.1.1"
@@ -7198,7 +7238,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"events@npm:^3.2.0":
+"events@npm:^3.2.0, events@npm:^3.3.0":
   version: 3.3.0
   resolution: "events@npm:3.3.0"
   checksum: 10/a3d47e285e28d324d7180f1e493961a2bbb4cad6412090e4dec114f4db1f5b560c7696ee8e758f55e23913ede856e3689cd3aa9ae13c56b5d8314cd3b3ddd1be
@@ -7259,17 +7299,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"expo-crypto@npm:^13.0.2":
-  version: 13.0.2
-  resolution: "expo-crypto@npm:13.0.2"
-  dependencies:
-    base64-js: "npm:^1.3.0"
-  peerDependencies:
-    expo: "*"
-  checksum: 10/6e70c20a37930b5ca6eef3ad59a96ba150076d002ce2958708aa346b4e3924a3be40faffbfc1e39ff25e79429996f4193336c34c56aa76ed6cb467f19a23e304
-  languageName: node
-  linkType: hard
-
 "exponential-backoff@npm:^3.1.1":
   version: 3.1.1
   resolution: "exponential-backoff@npm:3.1.1"
@@ -7285,13 +7314,6 @@ __metadata:
     iconv-lite: "npm:^0.4.24"
     tmp: "npm:^0.0.33"
   checksum: 10/776dff1d64a1d28f77ff93e9e75421a81c062983fd1544279d0a32f563c0b18c52abbb211f31262e2827e48edef5c9dc8f960d06dd2d42d1654443b88568056b
-  languageName: node
-  linkType: hard
-
-"fast-base64-decode@npm:^1.0.0":
-  version: 1.0.0
-  resolution: "fast-base64-decode@npm:1.0.0"
-  checksum: 10/4c59eb1775a7f132333f296c5082476fdcc8f58d023c42ed6d378d2e2da4c328c7a71562f271181a725dd17cdaa8f2805346cc330cdbad3b8e4b9751508bd0a3
   languageName: node
   linkType: hard
 
@@ -9402,6 +9424,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"js-base64@npm:^3.7.6":
+  version: 3.7.7
+  resolution: "js-base64@npm:3.7.7"
+  checksum: 10/185e34c536a6b1c4e1ad8bd96d25b49a9ea4e6803e259eaaaca95f1b392a0d590b2933c5ca8580c776f7279507944b81ff1faf889d84baa5e31f026e96d676a5
+  languageName: node
+  linkType: hard
+
 "js-message@npm:1.0.7":
   version: 1.0.7
   resolution: "js-message@npm:1.0.7"
@@ -9673,6 +9702,13 @@ __metadata:
   version: 6.0.2
   resolution: "just-diff@npm:6.0.2"
   checksum: 10/4c6b14d6be2a3391b020ea2b3d1a0acf2f4c60fcb16681c7f6f76d4c0f1841fae5b00c1a2e719980992e46320e4b6c55a4713683cb1873dd41a2621f08c9f8e8
+  languageName: node
+  linkType: hard
+
+"jwt-decode@npm:^3.1.2":
+  version: 3.1.2
+  resolution: "jwt-decode@npm:3.1.2"
+  checksum: 10/20a4b072d44ce3479f42d0d2c8d3dabeb353081ba4982e40b83a779f2459a70be26441be6c160bfc8c3c6eadf9f6380a036fbb06ac5406b5674e35d8c4205eeb
   languageName: node
   linkType: hard
 
@@ -12062,17 +12098,6 @@ __metadata:
   version: 17.0.2
   resolution: "react-is@npm:17.0.2"
   checksum: 10/73b36281e58eeb27c9cc6031301b6ae19ecdc9f18ae2d518bdb39b0ac564e65c5779405d623f1df9abf378a13858b79442480244bd579968afc1faf9a2ce5e05
-  languageName: node
-  linkType: hard
-
-"react-native-get-random-values@npm:1.11.0, react-native-get-random-values@npm:^1.11.0":
-  version: 1.11.0
-  resolution: "react-native-get-random-values@npm:1.11.0"
-  dependencies:
-    fast-base64-decode: "npm:^1.0.0"
-  peerDependencies:
-    react-native: ">=0.56"
-  checksum: 10/eb04833ce2b66309d737f1447ab01ad32aca00a8d1cc4de7b4e751c23f4d9f8059a2643bb16e0b6f3e6b074a9e57e769bb2bf2afc50a912c5661d80a6ce4de34
   languageName: node
   linkType: hard
 

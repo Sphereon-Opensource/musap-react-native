@@ -2,6 +2,7 @@ import {MusapKey, MusapModule} from "@sphereon/musap-react-native";
 import {MusapKeyManagementSystem} from "@sphereon/ssi-sdk-ext.musap-rn-kms";
 import {jwtPayload} from "./common";
 import {buildJwtHeaderAndPayload} from "./jwt-functions";
+import uuid from 'react-native-uuid';
 
 export const kmsTestRun = async () => {
     MusapModule.enableSscd('TEE')
@@ -11,7 +12,8 @@ export const kmsTestRun = async () => {
      console.log(">>>>>>>>>>>>. kmsTestRun: KMS created!");
 
     try {
-        const keyManagedInfo = await kms.createKey({type: 'Secp256r1'})
+        const keyAlias:string = String(uuid.v4())
+        const keyManagedInfo = await kms.createKey({type: 'Secp256r1', keyAlias: keyAlias})
         console.log('KMS generateKey result keyUri', keyManagedInfo);
 
         const key = MusapModule.getKeyById(keyManagedInfo.kid) as MusapKey
