@@ -159,7 +159,7 @@ afterEvaluate {
                         appendNode('dependency').with {
                             appendNode('groupId', 'fi.methics.musap')
                             appendNode('artifactId', 'musap-android')
-                            appendNode('version', '0.1.0')
+                            appendNode('version', '1.0.0')
                             appendNode('scope', 'compile')
                             appendNode('exclusions').with {
                                 appendNode('exclusion').with {
