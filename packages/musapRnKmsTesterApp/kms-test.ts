@@ -1,5 +1,5 @@
 import {MusapKey, MusapModule} from "@sphereon/musap-react-native";
-import {MusapKeyManagementSystem} from "@sphereon/ssi-sdk-ext.musap-rn-kms";
+import {MusapKeyManagementSystem} from "@sphereon/ssi-sdk-ext.kms-musap-rn";
 import {jwtPayload} from "./common";
 import {buildJwtHeaderAndPayload} from "./jwt-functions";
 import uuid from 'react-native-uuid';
