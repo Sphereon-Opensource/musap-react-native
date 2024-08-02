@@ -1,14 +1,12 @@
 import {MusapKey, MusapModule} from "@sphereon/musap-react-native";
-import {MusapKeyManagementSystem} from "@sphereon/ssi-sdk-ext.musap-rn-kms";
 import {jwtPayload} from "./common";
 import {buildJwtHeaderAndPayload} from "./jwt-functions";
+import {MusapKeyManagementSystem} from "@sphereon/ssi-sdk-ext.kms-musap-rn";
 
 export const kmsTestRun = async () => {
-    MusapModule.enableSscd('TEE')
-
     console.log(">>>>>>>>>>>>. kmsTestRun started!");
-    const kms: MusapKeyManagementSystem = new MusapKeyManagementSystem(MusapModule)
-  console.log(">>>>>>>>>>>>. kmsTestRun: KMS created!");
+    const kms: MusapKeyManagementSystem = new MusapKeyManagementSystem()
+    console.log(">>>>>>>>>>>>. kmsTestRun: KMS created!");
 
     try {
         // @ts-ignore
