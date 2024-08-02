@@ -3657,10 +3657,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@sphereon/musap-native@npm:0.0.1-unstable.125+5ee6db5f":
-  version: 0.0.1-unstable.125
-  resolution: "@sphereon/musap-native@npm:0.0.1-unstable.125"
-  checksum: 10/d1f041bfd5582188f90d91c7c6001d31d7f4cd225c0c43328aaafd36d6b10063255a2026b664cd3076df5416e002acbe7508c50d18a8edd3a63c2ab6b51b03b1
+"@sphereon/musap-native@npm:0.0.1-next.152+df783e0":
+  version: 0.0.1-next.152
+  resolution: "@sphereon/musap-native@npm:0.0.1-next.152"
+  checksum: 10/a8adfdfd5688630a17d4050994a1ae1d7521a267608b5dd0d97b9fa7fdb14b4a404acb97bdc7cf59b949b56d3f3d74e867af007dcf363d950f84c05547cbd9b5
   languageName: node
   linkType: hard
 
@@ -3684,15 +3684,15 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@sphereon/musap-react-native@npm:0.0.1-unstable.125":
-  version: 0.0.1-unstable.125
-  resolution: "@sphereon/musap-react-native@npm:0.0.1-unstable.125"
+"@sphereon/musap-react-native@npm:0.0.1-next.152":
+  version: 0.0.1-next.152
+  resolution: "@sphereon/musap-react-native@npm:0.0.1-next.152"
   dependencies:
-    "@sphereon/musap-native": "npm:0.0.1-unstable.125+5ee6db5f"
-    "@sphereon/musap-react-native": "npm:0.0.1-unstable.89+5df316cc"
-    react: "npm:>=16.8.1"
-    react-native: "npm:>=0.60.0-rc.0 <1.0.x"
-  checksum: 10/e4ff56bf6b9703f08e3c53a976ff9714e06daadae0407c2064dc95385dcaa7244ee3b04a16d08e31bc032b13a71a991b3c9452ebdd6dbcf41ba48af991b0ae89
+    "@sphereon/musap-native": "npm:0.0.1-next.152+df783e0"
+  peerDependencies:
+    react: "*"
+    react-native: "*"
+  checksum: 10/b074dd2f3d49eb3b83d7024679f9e855c66f2992228b0294a2ec383053290d4997aaf394a4c0129739e48b1f346b14de8f57487c4dee368f76a908fa5e18e952
   languageName: node
   linkType: hard
 
@@ -12191,7 +12191,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"react-native@npm:*, react-native@npm:0.74.3, react-native@npm:>=0.60.0-rc.0 <1.0.x, react-native@npm:^0.74.3":
+"react-native@npm:*, react-native@npm:0.74.3, react-native@npm:^0.74.3":
   version: 0.74.3
   resolution: "react-native@npm:0.74.3"
   dependencies:
@@ -12292,7 +12292,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"react@npm:>=16.8.1, react@npm:^18.3.1":
+"react@npm:^18.3.1":
   version: 18.3.1
   resolution: "react@npm:18.3.1"
   dependencies:

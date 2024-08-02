@@ -24,7 +24,7 @@
     "yarn": ">=4.0.0"
   },
   "resolutions": {
-    "@sphereon/musap-react-native": "0.0.1-unstable.125"
+    "@sphereon/musap-react-native": "0.0.1-next.152"
   },
   "scripts": {
     "test": "lerna run test",
