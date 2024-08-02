@@ -1,5 +1,13 @@
 import {JWSAlgorithm, KeyAlgorithm, SignatureAlgorithmType} from "./types/musap-types"
 
+const signatureAlgorithms: ReadonlySet<SignatureAlgorithmType> = new Set([
+    'SHA256withECDSA', 'SHA384withECDSA', 'SHA512withECDSA', 'NONEwithECDSA', 'NONEwithEdDSA',
+    'SHA256withRSA', 'SHA384withRSA', 'SHA512withRSA', 'NONEwithRSA',
+    'SHA256withRSASSA-PSS', 'SHA384withRSASSA-PSS', 'SHA512withRSASSA-PSS', 'NONEwithRSASSA-PSS'
+]);
+
+export const isSignatureAlgorithmType = (algorithm: string): algorithm is SignatureAlgorithmType => signatureAlgorithms.has(algorithm as SignatureAlgorithmType);
+
 export const signatureAlgorithmFromKeyAlgorithm = (keyAlgorithm: KeyAlgorithm | JWSAlgorithm): SignatureAlgorithmType => {
     switch (keyAlgorithm) {
         case 'eccp256k1':

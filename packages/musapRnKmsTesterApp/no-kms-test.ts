@@ -9,7 +9,6 @@ async function generateKey() {
             {name: 'purpose', value: 'encrypt'},
             {name: 'purpose', value: 'decrypt'}
         ],
-        did: 'did:example:123456789abcdefghi',
         keyAlgorithm: "ECCP256R1",
         keyAlias: uuid.v4().toString(), // Alias must be unique, at least for iOS otherwise error code 900 is thrown
         keyUsage: "sign",

@@ -13,7 +13,7 @@ export const kmsTestRun = async () => {
 
     try {
         const keyAlias:string = String(uuid.v4())
-        const keyManagedInfo = await kms.createKey({type: 'Secp256r1', keyAlias: keyAlias})
+        const keyManagedInfo = await kms.createKey({type: 'Secp256r1', meta: {keyAlias: keyAlias}})
         console.log('KMS generateKey result keyUri', keyManagedInfo);
 
         const key = MusapModule.getKeyById(keyManagedInfo.kid) as MusapKey

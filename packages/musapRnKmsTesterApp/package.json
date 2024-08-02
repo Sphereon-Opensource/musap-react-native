@@ -13,7 +13,7 @@
     "hoistingLimits": "workspaces"
   },
   "resolutions": {
-    "@sphereon/musap-react-native": "0.0.1-next.143"
+    "@sphereon/musap-react-native": "0.0.1-next.154"
   },
   "dependencies": {
     "@react-native-community/cli-platform-android": "^13.6.9",
