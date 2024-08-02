@@ -175,9 +175,14 @@ class MusapModuleAndroid(private val context: ReactApplicationContext) : ReactCo
 
     @ReactMethod(isBlockingSynchronousMethod = true)
     fun enableSscd(sscdType: String) {
-        val sscdInstance = getSscdInstance(SscdType.valueOf(sscdType))
-        if(MusapClient.listEnabledSscds().count { musapSscd -> musapSscd.sscdId == sscdInstance.sscdInfo.sscdId } == 0) {
-            MusapClient.enableSscd(sscdInstance, sscdType)
+        try {
+            val sscdInstance = getSscdInstance(SscdType.valueOf(sscdType))
+            if(MusapClient.listEnabledSscds().count { musapSscd -> musapSscd.sscdId == sscdInstance.sscdInfo.sscdId } == 0) {
+                MusapClient.enableSscd(sscdInstance, sscdType)
+            }
+        } catch (e: Exception) {
+            Log.e("MUSAP", "enableSscd failed", e)
+            throw e
         }
     }
 

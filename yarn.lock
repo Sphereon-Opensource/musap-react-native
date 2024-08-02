@@ -3915,7 +3915,7 @@ __metadata:
     "@react-native/metro-config": "npm:0.74.85"
     "@react-native/typescript-config": "npm:0.74.85"
     "@sphereon/musap-react-native": "npm:^0.0.1-next.143"
-    "@sphereon/ssi-sdk-ext.kms-musap-rn": "npm:0.23.1-unstable.58"
+    "@sphereon/ssi-sdk-ext.kms-musap-rn": "npm:0.23.1-unstable.59"
     "@testing-library/jest-native": "npm:^5.4.3"
     "@types/jest": "npm:^29.5.12"
     "@types/react": "npm:^18.2.6"
@@ -3937,9 +3937,9 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@sphereon/ssi-sdk-ext.kms-musap-rn@npm:0.23.1-unstable.58":
-  version: 0.23.1-unstable.58
-  resolution: "@sphereon/ssi-sdk-ext.kms-musap-rn@npm:0.23.1-unstable.58"
+"@sphereon/ssi-sdk-ext.kms-musap-rn@npm:0.23.1-unstable.59":
+  version: 0.23.1-unstable.59
+  resolution: "@sphereon/ssi-sdk-ext.kms-musap-rn@npm:0.23.1-unstable.59"
   dependencies:
     "@sphereon/musap-react-native": "npm:0.0.1-next.143"
     "@sphereon/ssi-types": "npm:0.28.1-next.41"
@@ -3947,7 +3947,7 @@ __metadata:
     "@veramo/key-manager": "npm:4.2.0"
     "@veramo/kms-local": "npm:4.2.0"
     text-encoding: "npm:^0.7.0"
-  checksum: 10/77ee09642226061805e965d00bbd9bcb1906a79adf253844d112f11d819a73d9cabe000aafc823fceecbeea82d36b2f3039a2e0a05c543fe248f360041d46d28
+  checksum: 10/c9ee67683f58249d876df79df992aca9102da89ea67841df1ef15b27d050a9f77639100b45aee88f83f4e91c5a2e9b2914029c64a57f1c97bab3cbec4b431e36
   languageName: node
   linkType: hard
 

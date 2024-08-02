@@ -5,7 +5,7 @@ export type KeyAlgorithmPrimitive = 'RSA' | 'EC'
 export type SignatureAlgorithmType = 'SHA256withECDSA' | 'SHA384withECDSA' | 'SHA512withECDSA' | 'NONEwithECDSA' | 'NONEwithEdDSA' | 'SHA256withRSA' | 'SHA384withRSA'
     | 'SHA512withRSA' | 'NONEwithRSA' | 'SHA256withRSASSA-PSS' | 'SHA384withRSASSA-PSS' | 'SHA512withRSASSA-PSS' | 'NONEwithRSASSA-PSS'
 
-export type JWTAlgorithm = 'ES256' | 'ES384' | 'RS256' | 'RS384' | 'RS512'
+export type JWSAlgorithm = 'ES256' | 'ES256K' | 'ES384' | 'RS256' | 'RS384' | 'RS512' | 'EdDSA'
 
 export type KeyAlgorithmType =
     | 'RSA1K'
@@ -82,13 +82,13 @@ export interface MusapKey {
 }
 
 export interface PublicKey {
-    der: Uint8Array
+    der: Uint8Array // FIXME we can't map Uint8Array
     pem: string
 }
 
 export interface MusapCertificate {
     subject: string
-    certificate: Uint8Array
+    certificate: Uint8Array // FIXME we can't map Uint8Array
     publicKey: PublicKey
     getGivenName(): string
     getSurname(): string
