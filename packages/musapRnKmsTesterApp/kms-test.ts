@@ -8,7 +8,7 @@ export const kmsTestRun = async () => {
     MusapModule.enableSscd('TEE')
 
     console.log(">>>>>>>>>>>>. kmsTestRun started!");
-    const kms: MusapKeyManagementSystem = new MusapKeyManagementSystem(MusapModule)
+    const kms: MusapKeyManagementSystem = new MusapKeyManagementSystem()
      console.log(">>>>>>>>>>>>. kmsTestRun: KMS created!");
 
     try {
