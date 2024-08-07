@@ -3843,10 +3843,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@sphereon/musap-native@npm:0.0.1-next.143+dae481f":
-  version: 0.0.1-next.143
-  resolution: "@sphereon/musap-native@npm:0.0.1-next.143"
-  checksum: 10/ab65d597656943934091ff2b0f2c4777db37bf097807c0c992c8cec129eef3ccb31933220f7d10664e0db8fda2c470fbc7b78ef173f6fdb09b442166c6ebc74c
+"@sphereon/musap-native@npm:0.0.1-next.154+a8d7831":
+  version: 0.0.1-next.154
+  resolution: "@sphereon/musap-native@npm:0.0.1-next.154"
+  checksum: 10/b672a17700e2224fc0c8ccf11f466cd6655cb74f29a8ec2d7b46ddd04d0d48971a2c720962f9a6629de1c147df2c4994d09870282cd1ff0ff4cb0c4aac7fdc11
   languageName: node
   linkType: hard
 
@@ -3870,14 +3870,15 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@sphereon/musap-react-native@npm:0.0.1-next.143":
-  version: 0.0.1-next.143
-  resolution: "@sphereon/musap-react-native@npm:0.0.1-next.143"
+"@sphereon/musap-react-native@npm:0.0.1-next.154":
+  version: 0.0.1-next.154
+  resolution: "@sphereon/musap-react-native@npm:0.0.1-next.154"
   dependencies:
-    "@sphereon/musap-native": "npm:0.0.1-next.143+dae481f"
-    react: "npm:>=16.8.1"
-    react-native: "npm:>=0.60.0-rc.0 <1.0.x"
-  checksum: 10/057d9132e765340a1f2007db52b9af5851b324303a58e36cb6b097eacab08c255d772ebe449d643becc564e1749550a6b4107405d975729bcedbb7a580e22751
+    "@sphereon/musap-native": "npm:0.0.1-next.154+a8d7831"
+  peerDependencies:
+    react: "*"
+    react-native: "*"
+  checksum: 10/6c209e3246937b7867e55e52f3b7e2612b0dee14fe9825ecd69e79acd545b470a09a77dbe0c77215957a0411489431b01a6596c93ac10fca09688d7431a86ec5
   languageName: node
   linkType: hard
 
@@ -3914,8 +3915,8 @@ __metadata:
     "@react-native/eslint-config": "npm:0.74.85"
     "@react-native/metro-config": "npm:0.74.85"
     "@react-native/typescript-config": "npm:0.74.85"
-    "@sphereon/musap-react-native": "npm:^0.0.1-next.143"
-    "@sphereon/ssi-sdk-ext.kms-musap-rn": "npm:0.23.1-unstable.59"
+    "@sphereon/musap-react-native": "npm:^0.0.1-next.154"
+    "@sphereon/ssi-sdk-ext.kms-musap-rn": "npm:0.24.1-unstable.54"
     "@testing-library/jest-native": "npm:^5.4.3"
     "@types/jest": "npm:^29.5.12"
     "@types/react": "npm:^18.2.6"
@@ -3937,29 +3938,66 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@sphereon/ssi-sdk-ext.kms-musap-rn@npm:0.23.1-unstable.59":
-  version: 0.23.1-unstable.59
-  resolution: "@sphereon/ssi-sdk-ext.kms-musap-rn@npm:0.23.1-unstable.59"
+"@sphereon/ssi-sdk-ext.key-utils@npm:0.24.1-unstable.54+5ce83cc":
+  version: 0.24.1-unstable.54
+  resolution: "@sphereon/ssi-sdk-ext.key-utils@npm:0.24.1-unstable.54"
   dependencies:
-    "@sphereon/musap-react-native": "npm:0.0.1-next.143"
-    "@sphereon/ssi-types": "npm:0.28.1-next.41"
+    "@ethersproject/random": "npm:^5.7.0"
+    "@sphereon/ssi-types": "npm:0.29.1-next.46"
+    "@stablelib/ed25519": "npm:^1.0.3"
+    "@stablelib/sha256": "npm:^1.0.1"
+    "@stablelib/sha512": "npm:^1.0.1"
+    "@trust/keyto": "npm:^1.0.1"
+    "@veramo/core": "npm:4.2.0"
+    base64url: "npm:^3.0.1"
+    debug: "npm:^4.3.4"
+    did-resolver: "npm:^4.1.0"
+    elliptic: "npm:^6.5.4"
+    lodash.isplainobject: "npm:^4.0.6"
+    multiformats: "npm:^9.9.0"
+    uint8arrays: "npm:^3.1.1"
+    varint: "npm:^6.0.0"
+    web-encoding: "npm:^1.1.5"
+  checksum: 10/7b6e8ffad84fde97486bb52428e41b975acb49f72cfa9942a587c3ac3d85b6e607d9321f4b722914bfb2c0b9eb8730061e138dd6a811ef27fe9021cc2064d3d1
+  languageName: node
+  linkType: hard
+
+"@sphereon/ssi-sdk-ext.kms-musap-rn@npm:0.24.1-unstable.54":
+  version: 0.24.1-unstable.54
+  resolution: "@sphereon/ssi-sdk-ext.kms-musap-rn@npm:0.24.1-unstable.54"
+  dependencies:
+    "@sphereon/musap-react-native": "npm:0.0.1-next.154"
+    "@sphereon/ssi-sdk-ext.key-utils": "npm:0.24.1-unstable.54+5ce83cc"
+    "@sphereon/ssi-types": "npm:0.28.1-next.60"
     "@veramo/core": "npm:4.2.0"
     "@veramo/key-manager": "npm:4.2.0"
     "@veramo/kms-local": "npm:4.2.0"
     text-encoding: "npm:^0.7.0"
-  checksum: 10/c9ee67683f58249d876df79df992aca9102da89ea67841df1ef15b27d050a9f77639100b45aee88f83f4e91c5a2e9b2914029c64a57f1c97bab3cbec4b431e36
+  checksum: 10/d6047f52483cd10119b95ab715fb5a058dd1cc9188a181e7fbe20a0379be74852dcd51b50579076a7738fd8992e194883e53967341a470522495d39b9b8f39a5
   languageName: node
   linkType: hard
 
-"@sphereon/ssi-types@npm:0.28.1-next.41":
-  version: 0.28.1-next.41
-  resolution: "@sphereon/ssi-types@npm:0.28.1-next.41"
+"@sphereon/ssi-types@npm:0.28.1-next.60":
+  version: 0.28.1-next.60
+  resolution: "@sphereon/ssi-types@npm:0.28.1-next.60"
   dependencies:
     "@sd-jwt/decode": "npm:^0.6.1"
     debug: "npm:^4.3.5"
     events: "npm:^3.3.0"
     jwt-decode: "npm:^3.1.2"
-  checksum: 10/54ab4742bad44a172fe6f6ce5b615e8cb6bb04d8bb8642cc06a60f6be02d82cef3cdac7a9275752c146dfc334c500656cc45589b8e1ca059980836572bbe2f44
+  checksum: 10/fd240cc5c0719dad6963371ad6c6de239d24c84bcc147e6a890c2d6692386e8cbec9ab824c4e5098d0f6a884c072970593ea51fc1943cd33853babe6e778b3f2
+  languageName: node
+  linkType: hard
+
+"@sphereon/ssi-types@npm:0.29.1-next.46":
+  version: 0.29.1-next.46
+  resolution: "@sphereon/ssi-types@npm:0.29.1-next.46"
+  dependencies:
+    "@sd-jwt/decode": "npm:^0.6.1"
+    debug: "npm:^4.3.5"
+    events: "npm:^3.3.0"
+    jwt-decode: "npm:^3.1.2"
+  checksum: 10/042c44e119514f8eaac9e4e77ebfa5addd4b55e011c8ffcc8abd0bdf186f032b3a365993682cdd3a0dd1797b01554d8113e8dc795b2cea130917c6c93a77e95a
   languageName: node
   linkType: hard
 
@@ -4184,6 +4222,17 @@ __metadata:
     react-native: ">=0.59"
     react-test-renderer: ">=16.0.0"
   checksum: 10/101bb2ca016d791d817b918a6189900d115b1de07e37340099deb1c9d3754a7ee0e86ea9bbb106c24b491fd8850873ec00f4ba3d8ffde6a470fba4a7e5619857
+  languageName: node
+  linkType: hard
+
+"@trust/keyto@npm:^1.0.1":
+  version: 1.0.1
+  resolution: "@trust/keyto@npm:1.0.1"
+  dependencies:
+    asn1.js: "npm:^5.2.0"
+    base64url: "npm:^3.0.1"
+    elliptic: "npm:^6.5.2"
+  checksum: 10/b5680e5500eea63ad42c8c1c78ae39fbdbb1344bf4d8e49bfbc548541cc81a6eda3cd2f4dba77a8b70e9f7cb2028e7616af6b0aac30751a3615d8a12999ac8e1
   languageName: node
   linkType: hard
 
@@ -4728,6 +4777,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@zxing/text-encoding@npm:0.9.0":
+  version: 0.9.0
+  resolution: "@zxing/text-encoding@npm:0.9.0"
+  checksum: 10/268e4ef64b8eaa32b990240bdfd1f7b3e2b501a6ed866a565f7c9747f04ac884fbe0537fe12bb05d9241b98fb111270c0fd0023ef0a02d23a6619b4589e98f6b
+  languageName: node
+  linkType: hard
+
 "JSONStream@npm:^1.3.5":
   version: 1.3.5
   resolution: "JSONStream@npm:1.3.5"
@@ -5115,6 +5171,18 @@ __metadata:
   languageName: node
   linkType: hard
 
+"asn1.js@npm:^5.2.0":
+  version: 5.4.1
+  resolution: "asn1.js@npm:5.4.1"
+  dependencies:
+    bn.js: "npm:^4.0.0"
+    inherits: "npm:^2.0.1"
+    minimalistic-assert: "npm:^1.0.0"
+    safer-buffer: "npm:^2.1.0"
+  checksum: 10/63d57c766f6afc81ff175bbf922626b3778d770c8b91b32cbcf672d7bf73b4198aca66c60a6427bff3aebc48feff1eab4a161f2681b7300b6c5b775a1e6fd791
+  languageName: node
+  linkType: hard
+
 "ast-types@npm:0.15.2":
   version: 0.15.2
   resolution: "ast-types@npm:0.15.2"
@@ -5446,6 +5514,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"base64url@npm:^3.0.1":
+  version: 3.0.1
+  resolution: "base64url@npm:3.0.1"
+  checksum: 10/a77b2a3a526b3343e25be424de3ae0aa937d78f6af7c813ef9020ef98001c0f4e2323afcd7d8b2d2978996bf8c42445c3e9f60c218c622593e5fdfd54a3d6e18
+  languageName: node
+  linkType: hard
+
 "bech32@npm:^2.0.0":
   version: 2.0.0
   resolution: "bech32@npm:2.0.0"
@@ -5490,7 +5565,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"bn.js@npm:^4.11.9":
+"bn.js@npm:^4.0.0, bn.js@npm:^4.11.9":
   version: 4.12.0
   resolution: "bn.js@npm:4.12.0"
   checksum: 10/10f8db196d3da5adfc3207d35d0a42aa29033eb33685f20ba2c36cadfe2de63dad05df0a20ab5aae01b418d1c4b3d4d205273085262fa020d17e93ff32b67527
@@ -6845,7 +6920,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"elliptic@npm:^6.5.4":
+"elliptic@npm:^6.5.2, elliptic@npm:^6.5.4":
   version: 6.5.6
   resolution: "elliptic@npm:6.5.6"
   dependencies:
@@ -8549,7 +8624,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"inherits@npm:2, inherits@npm:2.0.4, inherits@npm:^2.0.3, inherits@npm:^2.0.4, inherits@npm:~2.0.3":
+"inherits@npm:2, inherits@npm:2.0.4, inherits@npm:^2.0.1, inherits@npm:^2.0.3, inherits@npm:^2.0.4, inherits@npm:~2.0.3":
   version: 2.0.4
   resolution: "inherits@npm:2.0.4"
   checksum: 10/cd45e923bee15186c07fa4c89db0aace24824c482fb887b528304694b2aa6ff8a898da8657046a5dcf3e46cd6db6c61629551f9215f208d7c3f157cf9b290521
@@ -8635,6 +8710,16 @@ __metadata:
     jsbn: "npm:1.1.0"
     sprintf-js: "npm:^1.1.3"
   checksum: 10/1ed81e06721af012306329b31f532b5e24e00cb537be18ddc905a84f19fe8f83a09a1699862bf3a1ec4b9dea93c55a3fa5faf8b5ea380431469df540f38b092c
+  languageName: node
+  linkType: hard
+
+"is-arguments@npm:^1.0.4":
+  version: 1.1.1
+  resolution: "is-arguments@npm:1.1.1"
+  dependencies:
+    call-bind: "npm:^1.0.2"
+    has-tostringtag: "npm:^1.0.0"
+  checksum: 10/a170c7e26082e10de9be6e96d32ae3db4d5906194051b792e85fae3393b53cf2cb5b3557863e5c8ccbab55e2fd8f2f75aa643d437613f72052cf0356615c34be
   languageName: node
   linkType: hard
 
@@ -8781,7 +8866,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"is-generator-function@npm:^1.0.10":
+"is-generator-function@npm:^1.0.10, is-generator-function@npm:^1.0.7":
   version: 1.0.10
   resolution: "is-generator-function@npm:1.0.10"
   dependencies:
@@ -8963,7 +9048,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"is-typed-array@npm:^1.1.13":
+"is-typed-array@npm:^1.1.13, is-typed-array@npm:^1.1.3":
   version: 1.1.13
   resolution: "is-typed-array@npm:1.1.13"
   dependencies:
@@ -10172,6 +10257,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"lodash.isplainobject@npm:^4.0.6":
+  version: 4.0.6
+  resolution: "lodash.isplainobject@npm:4.0.6"
+  checksum: 10/29c6351f281e0d9a1d58f1a4c8f4400924b4c79f18dfc4613624d7d54784df07efaff97c1ff2659f3e085ecf4fff493300adc4837553104cef2634110b0d5337
+  languageName: node
+  linkType: hard
+
 "lodash.memoize@npm:4.x":
   version: 4.1.2
   resolution: "lodash.memoize@npm:4.1.2"
@@ -10965,7 +11057,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"multiformats@npm:^9.4.2, multiformats@npm:^9.6.2, multiformats@npm:^9.6.5":
+"multiformats@npm:^9.4.2, multiformats@npm:^9.6.2, multiformats@npm:^9.6.5, multiformats@npm:^9.9.0":
   version: 9.9.0
   resolution: "multiformats@npm:9.9.0"
   checksum: 10/ad55c7d480d22f4258a68fd88aa2aab744fe0cb1e68d732fc886f67d858b37e3aa6c2cec12b2960ead7730d43be690931485238569952d8a3d7f90fdc726c652
@@ -12350,7 +12442,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"react-native@npm:0.74.3, react-native@npm:>=0.60.0-rc.0 <1.0.x":
+"react-native@npm:0.74.3":
   version: 0.74.3
   resolution: "react-native@npm:0.74.3"
   dependencies:
@@ -12451,7 +12543,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"react@npm:>=16.8.1, react@npm:^18.3.1":
+"react@npm:^18.3.1":
   version: 18.3.1
   resolution: "react@npm:18.3.1"
   dependencies:
@@ -12930,7 +13022,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"safer-buffer@npm:>= 2.1.2 < 3, safer-buffer@npm:>= 2.1.2 < 3.0.0":
+"safer-buffer@npm:>= 2.1.2 < 3, safer-buffer@npm:>= 2.1.2 < 3.0.0, safer-buffer@npm:^2.1.0":
   version: 2.1.2
   resolution: "safer-buffer@npm:2.1.2"
   checksum: 10/7eaf7a0cf37cc27b42fb3ef6a9b1df6e93a1c6d98c6c6702b02fe262d5fcbd89db63320793b99b21cb5348097d0a53de81bd5f4e8b86e20cc9412e3f1cfb4e83
@@ -14141,7 +14233,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"uint8arrays@npm:3.1.1, uint8arrays@npm:^3.0.0":
+"uint8arrays@npm:3.1.1, uint8arrays@npm:^3.0.0, uint8arrays@npm:^3.1.1":
   version: 3.1.1
   resolution: "uint8arrays@npm:3.1.1"
   dependencies:
@@ -14290,6 +14382,19 @@ __metadata:
   languageName: node
   linkType: hard
 
+"util@npm:^0.12.3":
+  version: 0.12.5
+  resolution: "util@npm:0.12.5"
+  dependencies:
+    inherits: "npm:^2.0.3"
+    is-arguments: "npm:^1.0.4"
+    is-generator-function: "npm:^1.0.7"
+    is-typed-array: "npm:^1.1.3"
+    which-typed-array: "npm:^1.1.2"
+  checksum: 10/61a10de7753353dd4d744c917f74cdd7d21b8b46379c1e48e1c4fd8e83f8190e6bd9978fc4e5102ab6a10ebda6019d1b36572fa4a325e175ec8b789a121f6147
+  languageName: node
+  linkType: hard
+
 "utils-merge@npm:1.0.1":
   version: 1.0.1
   resolution: "utils-merge@npm:1.0.1"
@@ -14359,6 +14464,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"varint@npm:^6.0.0":
+  version: 6.0.0
+  resolution: "varint@npm:6.0.0"
+  checksum: 10/7684113c9d497c01e40396e50169c502eb2176203219b96e1c5ac965a3e15b4892bd22b7e48d87148e10fffe638130516b6dbeedd0efde2b2d0395aa1772eea7
+  languageName: node
+  linkType: hard
+
 "vary@npm:~1.1.2":
   version: 1.1.2
   resolution: "vary@npm:1.1.2"
@@ -14395,6 +14507,19 @@ __metadata:
   dependencies:
     defaults: "npm:^1.0.3"
   checksum: 10/182ebac8ca0b96845fae6ef44afd4619df6987fe5cf552fdee8396d3daa1fb9b8ec5c6c69855acb7b3c1231571393bd1f0a4cdc4028d421575348f64bb0a8817
+  languageName: node
+  linkType: hard
+
+"web-encoding@npm:^1.1.5":
+  version: 1.1.5
+  resolution: "web-encoding@npm:1.1.5"
+  dependencies:
+    "@zxing/text-encoding": "npm:0.9.0"
+    util: "npm:^0.12.3"
+  dependenciesMeta:
+    "@zxing/text-encoding":
+      optional: true
+  checksum: 10/243518cfa8388ac05eeb4041bd330d38c599476ff9a93239b386d1ba2af130089a2fcefb0cf65b385f989105ff460ae69dca7e42236f4d98dc776b04e558cdb5
   languageName: node
   linkType: hard
 
@@ -14474,7 +14599,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"which-typed-array@npm:^1.1.14, which-typed-array@npm:^1.1.15, which-typed-array@npm:^1.1.9":
+"which-typed-array@npm:^1.1.14, which-typed-array@npm:^1.1.15, which-typed-array@npm:^1.1.2, which-typed-array@npm:^1.1.9":
   version: 1.1.15
   resolution: "which-typed-array@npm:1.1.15"
   dependencies:
