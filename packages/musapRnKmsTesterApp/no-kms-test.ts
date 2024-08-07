@@ -1,13 +1,13 @@
-import {KeyGenReq, MusapKey, MusapModule, SscdInfo} from "@sphereon/musap-react-native";
+import {KeyGenReq, MusapKey, MusapModule} from "@sphereon/musap-react-native";
 import uuid from "react-native-uuid";
-import {jwtPayload, sign} from "./common";
-import {buildJwtHeaderAndPayload, uint8ArrayToBase64} from "./jwt-functions";
+import {clearKeystore, jwtPayload, sign} from "./common";
+import {buildJwtHeaderAndPayload} from "./jwt-functions";
 
 async function generateKey() {
     const keyGenRequest: KeyGenReq = {
         attributes: [
-            {name: 'purpose', value: 'encrypt'},
-            {name: 'purpose', value: 'decrypt'}
+            {name: 'purpose', value: 'SIGN'},
+            {name: 'purpose', value: 'VERIFY'},
         ],
         keyAlgorithm: "ECCP256R1",
         keyAlias: uuid.v4().toString(), // Alias must be unique, at least for iOS otherwise error code 900 is thrown
@@ -23,14 +23,6 @@ async function generateKey() {
     return keyUri;
 }
 
-function clearKeystore() {
-    console.log('DIRECT Clearing keystore')
-    const allKeys: MusapKey[] = MusapModule.listKeys()
-    for (const key of allKeys) {
-        console.log('Removing key ', key.keyUri)
-        MusapModule.removeKey(key.keyUri)
-    }
-}
 
 export const testRunDirect = async () => {
 

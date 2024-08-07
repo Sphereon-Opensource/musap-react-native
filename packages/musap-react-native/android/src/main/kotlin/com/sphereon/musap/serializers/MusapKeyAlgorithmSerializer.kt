@@ -1,6 +1,7 @@
 package com.sphereon.musap.serializers
 
 import fi.methics.musap.sdk.internal.datatype.KeyAlgorithm
+import fi.methics.musap.sdk.internal.datatype.KeyAlgorithm.AES
 import fi.methics.musap.sdk.internal.datatype.KeyAlgorithm.ECC_ED25519
 import fi.methics.musap.sdk.internal.datatype.KeyAlgorithm.ECC_P256_K1
 import fi.methics.musap.sdk.internal.datatype.KeyAlgorithm.ECC_P256_R1
@@ -18,6 +19,7 @@ fun KeyAlgorithm.toEnumString(): String {
         this == ECC_P384_R1 -> "eccp384r1"
         this == RSA_2K -> "rsa2k"
         this == RSA_4K -> "rsa4k"
+        this == AES -> "aes"
         else -> throw IllegalStateException("Unknown KeyAlgorithm")
     }
 }

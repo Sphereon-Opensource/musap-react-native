@@ -97,3 +97,12 @@ export const jwtPayload = {
         ]
     }
 }
+
+export function clearKeystore() {
+    console.log('DIRECT Clearing keystore')
+    const allKeys: MusapKey[] = MusapModule.listKeys()
+    for (const key of allKeys) {
+        console.log('Removing key ', key.keyUri)
+        MusapModule.removeKey(key.keyUri)
+    }
+}

@@ -159,7 +159,7 @@ afterEvaluate {
                         appendNode('dependency').with {
                             appendNode('groupId', 'fi.methics.musap')
                             appendNode('artifactId', 'musap-android')
-                            appendNode('version', '1.1.1')
+                            appendNode('version', '1.1.10')
                             appendNode('scope', 'compile')
                             appendNode('exclusions').with {
                                 appendNode('exclusion').with {
@@ -219,7 +219,7 @@ dependencies {
     //noinspection GradleDynamicVersion
     implementation "com.facebook.react:react-android:+"
     implementation "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
-    implementation("fi.methics.musap:musap-android:1.1.1") {
+    implementation("fi.methics.musap:musap-android:1.1.10") {
         exclude group: "com.yubico.yubikit", module: "core" // Embedded in aar. Will get duplication errors when not excluded
         exclude group: "com.yubico.yubikit", module: "android"
         exclude group: "com.yubico.yubikit", module: "piv"

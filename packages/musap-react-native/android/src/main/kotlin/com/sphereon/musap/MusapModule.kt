@@ -12,10 +12,9 @@ import com.facebook.react.bridge.ReactMethod
 import com.facebook.react.bridge.ReadableMap
 import com.facebook.react.bridge.WritableArray
 import com.facebook.react.bridge.WritableMap
-import com.nimbusds.jose.JWSObject
-import com.nimbusds.jose.crypto.impl.ECDSA
-import com.nimbusds.jose.util.Base64URL
 import com.sphereon.musap.models.SscdType
+import com.sphereon.musap.serializers.toDecryptionReq
+import com.sphereon.musap.serializers.toEncryptionReq
 import com.sphereon.musap.serializers.toKeyGenReq
 import com.sphereon.musap.serializers.toSignatureReq
 import com.sphereon.musap.serializers.toWritableMap
@@ -108,7 +107,6 @@ class MusapModuleAndroid(private val context: ReactApplicationContext) : ReactCo
         try {
             val signatureReq = req.toSignatureReq(this.currentActivity)
 
-            val key = signatureReq.key
             CoroutineScope(Dispatchers.Default).launch {
                 try {
                     val result = suspendCancellableCoroutine<MusapSignature> { continuation ->
@@ -153,6 +151,88 @@ class MusapModuleAndroid(private val context: ReactApplicationContext) : ReactCo
         }
     }
 
+    @ReactMethod
+    fun encryptData(req: ReadableMap, promise: Promise) {
+        try {
+            Log.d("MUSAP", "encryptData called")
+            val encryptionReq = req.toEncryptionReq()
+
+            CoroutineScope(Dispatchers.Default).launch {
+                try {
+                    promise.resolve(suspendCancellableCoroutine<String> { continuation ->
+                        val musapCallback = object : MusapCallback<ByteArray?> {
+                            override fun onSuccess(encData: ByteArray?) {
+                                if (encData != null) {
+                                    continuation.resume(Base64.getEncoder().encodeToString(encData)) {
+                                        Log.w("MUSAP", "Encryption cancelled")
+                                    }
+                                } else {
+                                    continuation.resumeWithException(Exception("encData is null"))
+                                }
+                            }
+
+                            override fun onException(e: MusapException?) {
+                                continuation.resumeWithException(e ?: Exception("Encryption error"))
+                            }
+                        }
+                        MusapClient.encryptData(encryptionReq, musapCallback)
+
+                        continuation.invokeOnCancellation {
+                            Log.w("MUSAP", "Encryption cancelled")
+                        }
+                    })
+                } catch (e: Exception) {
+                    Log.e("MUSAP", "Error encrypting the data", e)
+                    promise.reject("SIGN_ERROR", "Error encrypting the data: ${e.message}", e)
+                }
+            }
+        } catch (e: Exception) {
+            Log.e("MUSAP", "Encryption failed", e)
+            promise.reject("SIGN_ERROR", "Error preparing encryption request: ${e.message}", e)
+        }
+    }
+
+    @ReactMethod
+    fun decryptData(req: ReadableMap, promise: Promise) {
+        try {
+            val decryptionReq = req.toDecryptionReq()
+
+            CoroutineScope(Dispatchers.Default).launch {
+                try {
+                    promise.resolve(suspendCancellableCoroutine<String> { continuation ->
+                        val musapCallback = object : MusapCallback<ByteArray?> {
+                            override fun onSuccess(decData: ByteArray?) {
+                                if (decData != null) {
+                                    continuation.resume(Base64.getEncoder().encodeToString(decData)) {
+                                        Log.w("MUSAP", "Decryption cancelled")
+                                    }
+                                } else {
+                                    continuation.resumeWithException(Exception("decData is null"))
+                                }
+                            }
+
+                            override fun onException(e: MusapException?) {
+                                continuation.resumeWithException(e ?: Exception("Decryption error"))
+                            }
+                        }
+                        MusapClient.decryptData(decryptionReq, musapCallback)
+
+                        continuation.invokeOnCancellation {
+                            Log.w("MUSAP", "Decryption cancelled")
+                        }
+                    })
+                } catch (e: Exception) {
+                    Log.e("MUSAP", "Error decrypting the data", e)
+                    promise.reject("SIGN_ERROR", "Error decrypting the data: ${e.message}", e)
+                }
+            }
+        } catch (e: Exception) {
+            Log.e("MUSAP", "Decryption failed", e)
+            promise.reject("SIGN_ERROR", "Error preparing decryption request: ${e.message}", e)
+        }
+    }
+
+
     // enabled = supported by device running MUSAP
     @ReactMethod(isBlockingSynchronousMethod = true)
     fun listEnabledSscds(): WritableArray {
@@ -177,7 +257,9 @@ class MusapModuleAndroid(private val context: ReactApplicationContext) : ReactCo
     fun enableSscd(sscdType: String) {
         try {
             val sscdInstance = getSscdInstance(SscdType.valueOf(sscdType))
-            if(MusapClient.listEnabledSscds().count { musapSscd -> musapSscd.sscdId == sscdInstance.sscdInfo.sscdId } == 0) {
+            if (MusapClient.listEnabledSscds()
+                    .count { musapSscd -> musapSscd.sscdId == sscdInstance.sscdInfo.sscdId } == 0
+            ) {
                 MusapClient.enableSscd(sscdInstance, sscdType)
             }
         } catch (e: Exception) {
@@ -216,10 +298,15 @@ class MusapModuleAndroid(private val context: ReactApplicationContext) : ReactCo
 
     @ReactMethod(isBlockingSynchronousMethod = true)
     fun listKeys(): WritableArray {
-        return Arguments.createArray().apply {
-            MusapClient.listKeys().forEach {
-                pushMap(it.toWritableMap())
+        try {
+            return Arguments.createArray().apply {
+                MusapClient.listKeys().forEach {
+                    pushMap(it.toWritableMap())
+                }
             }
+        } catch (e: Exception) {
+            Log.e("MUSAP", "listKeys failed", e)
+            throw e
         }
     }
 

@@ -1,6 +1,6 @@
 import {NativeModules} from "react-native"
 
-export type KeyAlgorithmPrimitive = 'RSA' | 'EC'
+export type KeyAlgorithmPrimitive = 'RSA' | 'EC' | 'AES'
 
 export type SignatureAlgorithmType = 'SHA256withECDSA' | 'SHA384withECDSA' | 'SHA512withECDSA' | 'NONEwithECDSA' | 'NONEwithEdDSA' | 'SHA256withRSA' | 'SHA384withRSA'
     | 'SHA512withRSA' | 'NONEwithRSA' | 'SHA256withRSASSA-PSS' | 'SHA384withRSASSA-PSS' | 'SHA512withRSASSA-PSS' | 'NONEwithRSASSA-PSS'
@@ -16,6 +16,7 @@ export type KeyAlgorithmType =
 //    | 'ECCP256R1'
     | 'ECCP384K1'
     | 'ECCP384R1'
+    | 'AES'
 //    | 'ECC_ED25519'
  //   | 'secp256k1'
  //   | 'SECP384K1'
@@ -43,7 +44,7 @@ export interface MusapSscd {
     settings: Map<String, String>
 }
 
-export type KeyAlgorithm = 'eccp256k1' | 'eccp256r1' | 'eccp384k1' | 'eccp384r1' | 'rsa2k' | 'rsa4k'
+export type KeyAlgorithm = 'eccp256k1' | 'eccp256r1' | 'eccp384k1' | 'eccp384r1' | 'rsa2k' | 'rsa4k' | 'aes'
 
 export interface KeyAttribute {
     name: string
@@ -71,6 +72,7 @@ export interface MusapKey {
     sscdType: SscdType
     createdDate: string | number // ISO date string
     publicKey: PublicKey
+    encryptionKeyRef: SecretKey
     certificate: MusapCertificate
     certificateChain: MusapCertificate[]
     attributes: KeyAttribute[]
@@ -84,6 +86,12 @@ export interface MusapKey {
 export interface PublicKey {
     der: Uint8Array // FIXME we can't map Uint8Array
     pem: string
+}
+
+export interface SecretKey {
+    algorithm: string
+    format: string
+    encoded: Uint8Array // FIXME we can't map Uint8Array
 }
 
 export interface MusapCertificate {
@@ -130,6 +138,17 @@ export interface SignatureReq {
     transId?: string
 }
 
+export interface EncryptionReq {
+    keyUri: string
+    base64Data: string
+    base64Salt: string
+}
+
+export interface DecryptionReq {
+    keyUri: string
+    base64Data: string
+    base64Salt: string
+}
 
 interface Comparable<T> {
     compareTo(other: T): number
@@ -147,6 +166,8 @@ export interface MusapModuleType {
     enableSscd(sscdType: SscdType): void
     generateKey (sscdType: SscdType, req: KeyGenReq): Promise<string>
     sign(req: SignatureReq): Promise<string>
+    encryptData(req: EncryptionReq): Promise<string>
+    decryptData(req: DecryptionReq): Promise<string>
     removeKey(keyIdOrUri: String): number
     listKeys(): MusapKey[]
     getKeyByUri(keyUri: string): MusapKey

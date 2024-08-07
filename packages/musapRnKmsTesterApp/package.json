@@ -19,6 +19,7 @@
     "@react-native-community/cli-platform-android": "^13.6.9",
     "@sphereon/musap-react-native": "^0.0.1-next.154",
     "@sphereon/ssi-sdk-ext.kms-musap-rn": "0.24.1-unstable.54",
+    "buffer": "^6.0.3",
     "react": "18.2.0",
     "react-native": "0.74.3",
     "react-native-uuid": "^2.0.2"

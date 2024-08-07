@@ -8,12 +8,12 @@ import fi.methics.musap.sdk.internal.datatype.KeyAttribute
 import fi.methics.musap.sdk.internal.datatype.KeyURI
 import fi.methics.musap.sdk.internal.datatype.MusapCertificate
 import fi.methics.musap.sdk.internal.datatype.MusapKey
-import fi.methics.musap.sdk.internal.datatype.MusapLoA
 import fi.methics.musap.sdk.internal.datatype.PublicKey
 import fi.methics.musap.sdk.internal.datatype.SignatureAlgorithm
 import java.security.Principal
 import java.security.cert.X509Certificate
 import java.time.format.DateTimeFormatter
+import javax.crypto.SecretKey
 import javax.security.auth.x500.X500Principal
 
 fun KeyAttribute.toWritableMap(): WritableMap {
@@ -34,6 +34,21 @@ fun PublicKey.toWritableMap(): WritableMap {
     return Arguments.createMap().apply {
         putString("pem", pem)
         putArray("der", der)
+    }
+}
+
+fun SecretKey.toWritableMap(): WritableMap {
+    val encoded = Arguments.createArray()
+    this.encoded.forEach {
+        encoded.pushInt(it.toInt())
+    }
+
+    val algorithm = this.algorithm
+    val format = this.format
+    return Arguments.createMap().apply {
+        putString("algorithm", algorithm)
+        putString("format", format)
+        putArray("encoded", encoded)
     }
 }
 
@@ -179,7 +194,9 @@ fun MusapKey.toWritableMap(): WritableMap {
         putString("keyType", keyType)
         putString("keyAlias", keyAlias)
         putMap("sscd", sscd.toWritableMap())
-        putString("algorithm", algorithm.toEnumString())
+        algorithm?.let {
+            putString("algorithm", algorithm.toEnumString())
+        }
         putArray("attributes", keyAttributes)
         certificate?.let {
             putMap("certificate", certificate.toWritableMap())
@@ -192,6 +209,8 @@ fun MusapKey.toWritableMap(): WritableMap {
         putString("keyUri", keyUri.uri)
         putArray("keyUsages", keyUsages)
         putArray("loa", loa)
-        putMap("publicKey", publicKey.toWritableMap())
+        publicKey?.let {
+            putMap("publicKey", publicKey.toWritableMap())
+        }
     }
 }

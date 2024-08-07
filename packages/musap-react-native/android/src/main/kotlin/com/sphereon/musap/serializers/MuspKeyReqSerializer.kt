@@ -32,6 +32,9 @@ fun ReadableMap.toKeyGenReq(activity: Activity?, view: View? = null): KeyGenReq 
     if (hasKey("stepUpPolicy")) {
         builder.setStepUpPolicy(StepUpPolicy())
     }
+    if (hasKey("userAuthenticationRequired")) {
+        builder.setUserAuthenticationRequired(getBoolean("userAuthenticationRequired"))
+    }
 
     if (hasKey("attributes")) {
         getArray("attributes")?.let { attributesArray ->
