@@ -28,6 +28,20 @@ export type SignatureFormatType = 'CMS' | 'RAW' | 'PKCS1'
 
 export type SignatureFormat = 'CMS' | 'RAW'
 
+export type ExternalSscdAtt = 'msisdn' | 'nospamcode' | 'eventid' | 'sscdname'
+
+export interface ExternalSscdSettings {
+    clientId: string
+    sscdName?: string
+    provider?: string
+    timeout?: number  // in minutes
+}
+
+export interface BindKeyResponse {
+    keyUri: string
+    transId?: string
+}
+
 export interface SscdInfo {
     sscdName: string
     sscdType: string
@@ -61,6 +75,16 @@ export interface KeyGenReq {
     stepUpPolicy?: StepUpPolicy
     attributes: KeyAttribute[]
     keyAlgorithm: KeyAlgorithmType
+}
+
+export interface KeyBindReq {
+    keyAlias: string
+    attributes: KeyAttribute[]
+    keyUsages: String[]
+    displayText?: string
+    did?: string
+    role?: string
+    stepUpPolicy?: boolean
 }
 
 export interface MusapKey {
@@ -158,24 +182,29 @@ export type MusapLoAScheme = 'EIDAS-2014' | 'ISO-29115'
 export const LOA_SCHEME_EIDAS: MusapLoAScheme = 'EIDAS-2014'
 export const LOA_SCHEME_ISO: MusapLoAScheme = 'ISO-29115'
 
-export type SscdType = 'TEE' | 'YUBI_KEY'
+export type SscdType = 'TEE' | 'YUBI_KEY' | 'EXTERNAL'
 
-export interface MusapModuleType {
+export interface IMusapClient {
     listEnabledSscds(): Array<MusapSscd>
     listActiveSscds(): Array<MusapSscd>
-    enableSscd(sscdType: SscdType): void
-    generateKey (sscdType: SscdType, req: KeyGenReq): Promise<string>
+    enableSscd(sscdType: SscdType, sscdId?: string, settings?: ExternalSscdSettings): void
+    generateKey(sscdId: string, req: KeyGenReq): Promise<string>
+    bindKey(sscdId: string, req: KeyBindReq): Promise<BindKeyResponse>
     sign(req: SignatureReq): Promise<string>
     encryptData(req: EncryptionReq): Promise<string>
     decryptData(req: DecryptionReq): Promise<string>
-    removeKey(keyIdOrUri: String): number
+    removeKey(keyIdOrUri: string): Promise<boolean>
     listKeys(): MusapKey[]
     getKeyByUri(keyUri: string): MusapKey
     getKeyById(keyId: string): MusapKey
     getSscdInfo(sscdId: string): SscdInfo
     getSettings(sscdId: string): Map<string, string>
+    getLink(): string
+    enableLink(url: string, fcmToken?: string): Promise<string>
+    disconnectLink(): void
+    coupleWithRelyingParty(couplingCode: string): Promise<string>
 }
 
 
-export const MusapModule: MusapModuleType = NativeModules.MusapModule as MusapModuleType
+export const MusapClient: IMusapClient = NativeModules.MusapBridge as IMusapClient
 

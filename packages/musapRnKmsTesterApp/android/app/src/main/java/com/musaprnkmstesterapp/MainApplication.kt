@@ -10,7 +10,7 @@ import com.facebook.react.defaults.DefaultNewArchitectureEntryPoint.load
 import com.facebook.react.defaults.DefaultReactHost.getDefaultReactHost
 import com.facebook.react.defaults.DefaultReactNativeHost
 import com.facebook.soloader.SoLoader
-import com.sphereon.musap.MusapModuleAndroid
+import com.sphereon.musap.MusapBridgeAndroid
 import com.sphereon.musap.MusapPackage
 import android.util.Log
 
@@ -42,9 +42,9 @@ class MainApplication : Application(), ReactApplication {
             load()
         }
         try {
-            MusapModuleAndroid.init(this)
+            MusapBridgeAndroid.initializeMusap(this)
         } catch (e: Throwable) {
-            Log.e("MUSAP", "init failed", e) // To logcat
+            Log.e("MUSAP", "initializeMusap failed", e) // To logcat
             throw e
         }
     }

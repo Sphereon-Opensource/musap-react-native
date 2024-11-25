@@ -18,9 +18,9 @@ fun ReadableMap.toSignatureReq(activity: Activity?): SignatureReq {
 
     if (hasKey("keyUri")) {
         getString("keyUri")?.let { keyUri ->
-            Log.i("MUSAP", "SignatureReq found keyUri ${keyUri}")
+            Log.i("MUSAP_BRIDGE", "SignatureReq found keyUri ${keyUri}")
             val keyByUri = MusapClient.getKeyByUri(keyUri) ?: throw Exception("Key not found for $keyUri")
-            Log.i("MUSAP", "SignatureReq key ${keyByUri.keyAlias}")
+            Log.i("MUSAP_BRIDGE", "SignatureReq key ${keyByUri.keyAlias}")
             builder.setKey(keyByUri)
         }
     }

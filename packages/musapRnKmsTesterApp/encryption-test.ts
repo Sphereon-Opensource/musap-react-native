@@ -2,13 +2,13 @@ import {
   DecryptionReq,
   EncryptionReq,
   KeyGenReq,
-  MusapModule,
+  MusapClient,
 } from '@sphereon/musap-react-native';
 import {clearKeystore} from './common';
 import uuid from 'react-native-uuid';
 
 export const encryptionTestRun = async () => {
-  MusapModule.enableSscd('TEE');
+  MusapClient.enableSscd('TEE');
 
   const generateKey = async () => {
     const keyGenRequest: KeyGenReq = {
@@ -20,10 +20,10 @@ export const encryptionTestRun = async () => {
     };
 
     console.log('ENC/DEC keyGenRequest:', keyGenRequest);
-    const keyUri = await MusapModule.generateKey('TEE', keyGenRequest);
+    const keyUri = await MusapClient.generateKey('TEE', keyGenRequest);
     console.log(`ENC/DEC Key successfully generated: ${keyUri}`);
 
-    console.log('ENC/DEC ListKeys', MusapModule.listKeys());
+    console.log('ENC/DEC ListKeys', MusapClient.listKeys());
     return keyUri;
   };
 
@@ -41,7 +41,7 @@ export const encryptionTestRun = async () => {
     } satisfies EncryptionReq;
 
     console.log('calling encryptData', encryptReq);
-    const encDataBase64: string = await MusapModule.encryptData(encryptReq);
+    const encDataBase64: string = await MusapClient.encryptData(encryptReq);
     const encData = toByteArray(encDataBase64);
     console.log('encryptedData', encData);
 
@@ -51,7 +51,7 @@ export const encryptionTestRun = async () => {
       base64Salt: salt,
     } satisfies DecryptionReq;
     console.log('calling decryptData', decryptReq);
-    const decDataBase64 = await MusapModule.decryptData(decryptReq);
+    const decDataBase64 = await MusapClient.decryptData(decryptReq);
     const decData = toByteArray(decDataBase64);
     const decText = decodeUTF8(decData); // TextDecoder is unavailable
     console.log('decText', decText);

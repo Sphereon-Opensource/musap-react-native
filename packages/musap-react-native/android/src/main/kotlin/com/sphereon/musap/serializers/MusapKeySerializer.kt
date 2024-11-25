@@ -90,22 +90,22 @@ fun X500Principal.toWritableMap(): WritableMap {
 fun X509Certificate.toWritableMap(): WritableMap {
 
     val extendedKeyUsage = Arguments.createArray()
-    this.extendedKeyUsage.forEach {
+    this.extendedKeyUsage?.forEach {
         extendedKeyUsage.pushString(it)
     }
 
     val issuerAlternativeNames = Arguments.createArray()
-    this.issuerAlternativeNames.forEach {
+    this.issuerAlternativeNames?.forEach {
         issuerAlternativeNames.pushString(it.toString())
     }
 
     val issuerUniqueID = Arguments.createArray()
-    this.issuerUniqueID.forEach {
+    this.issuerUniqueID?.forEach {
         issuerUniqueID.pushBoolean(it)
     }
 
     val keyUsage = Arguments.createArray()
-    this.keyUsage.forEach {
+    this.keyUsage?.forEach {
         keyUsage.pushBoolean(it)
     }
 

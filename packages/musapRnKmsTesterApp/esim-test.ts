@@ -1,0 +1,89 @@
+import {
+  ExternalSscdSettings,
+  MusapClient,
+  SscdInfo,
+} from '@sphereon/musap-react-native';
+import {jwtPayload, sign} from './common';
+import {buildJwtHeaderAndPayload} from './jwt-functions';
+
+export const testRunEsim = async () => {
+  try {
+    const sscdId = 'eSim Swisscom';
+    const msisdn = '+41796861241';
+    const couplingCode = '9682SC';
+
+    const msIsdnAttrs = [{name: 'msisdn', value: msisdn}];
+
+    console.log('eSIM start');
+
+    const sscds1 = MusapClient.listEnabledSscds();
+    console.log('eSIM listEnabledSscds1', sscds1);
+
+    const activeSscds = MusapClient.listActiveSscds();
+    console.log('eSIM listActiveSscds', activeSscds);
+
+    const linkId = MusapClient.getLink();
+    const mustActivate = linkId == null;
+    if (linkId == null) {
+      const musapId = await MusapClient.enableLink(
+        'https://demo.methics.fi/sphereon/musaplink/musap?',
+        null,
+      );
+      console.log('eSIM enabled link, musapId=', musapId);
+    } else {
+      console.log('eSIM Found existing link', linkId);
+    }
+
+    let sscdInfo: SscdInfo;
+    if (sscds1.length === 0) {
+      const settings: ExternalSscdSettings = {
+        clientId: 'SCO',
+        sscdName: sscdId,
+        provider: 'eSim',
+      };
+      MusapClient.enableSscd('EXTERNAL', sscdId, settings);
+      const sscds2 = MusapClient.listEnabledSscds();
+      console.log('eSIM listEnabledSscds2', sscds2);
+      sscdInfo = sscds2[0].sscdInfo;
+    } else {
+      sscdInfo = sscds1[0].sscdInfo;
+    }
+
+    const existingKeys = MusapClient.listKeys();
+    console.log(`Found ${existingKeys.length} existing keys`);
+    if (mustActivate || !existingKeys || existingKeys.length === 0) {
+      console.log('eSIM cleaning up old keys');
+      existingKeys
+        .filter(value => value.keyAlias.startsWith('eSim-'))
+        .forEach(value => {
+          MusapClient.removeKey(value.keyUri);
+        });
+
+      const newLinkId = await MusapClient.coupleWithRelyingParty(couplingCode);
+      console.log('eSIM Coupled with RP, linkId=', newLinkId);
+
+      console.log('eSIM before bindKey()');
+      const bindKeyResponse = await MusapClient.bindKey(sscdId, {
+        keyAlias: `eSim-${Date.now()}`,
+        attributes: msIsdnAttrs,
+        keyUsages: ['personal'],
+      });
+      console.log('eSIM bindKey():', bindKeyResponse);
+    }
+
+    console.log('eSIM listKeys()');
+    const keys = MusapClient.listKeys();
+    keys.forEach(value =>
+      console.log(
+        `eSIM listKeys() result: keyUri=${value.keyUri}, keyAlias=${value.keyAlias}, keyId=${value.keyId}, attributes=${value.attributes}`,
+      ),
+    );
+
+    const jwtHeaderAndPayload = buildJwtHeaderAndPayload(keys[0], jwtPayload);
+    console.log('eSIM jwtHeaderAndPayload', jwtHeaderAndPayload);
+    console.log('eSIM sign');
+    await sign(keys[0], jwtHeaderAndPayload, sscdInfo, msIsdnAttrs);
+  } catch (e) {
+    console.error('eSim test failed', e);
+  }
+};

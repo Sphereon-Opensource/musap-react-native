@@ -1,3 +1,5 @@
+
+
 buildscript {
     // Buildscript is evaluated before everything else so we can't use getExtOrDefault
     def kotlin_version = rootProject.ext.has("kotlinVersion") ? rootProject.ext.get("kotlinVersion") : project.properties["MusapRn_kotlinVersion"]
@@ -22,6 +24,9 @@ def reactNativeArchitectures() {
 def isNewArchitectureEnabled() {
     return rootProject.hasProperty("newArchEnabled") && rootProject.getProperty("newArchEnabled") == "true"
 }
+
+
+def artifactVersion = "0.2.0"
 
 apply plugin: "com.android.library"
 apply plugin: "kotlin-android"
@@ -66,8 +71,8 @@ android {
     defaultConfig {
         minSdkVersion getExtOrIntegerDefault("minSdkVersion")
         targetSdkVersion getExtOrIntegerDefault("targetSdkVersion")
-        versionCode 1
-        versionName "0.1.1"
+        versionCode 2
+        versionName artifactVersion
     }
 
     buildTypes {
@@ -108,7 +113,7 @@ afterEvaluate {
             aar(MavenPublication) {
                 groupId 'com.sphereon.musap'
                 artifactId 'musap-react-native'
-                version '0.1.1'
+                version artifactVersion
 
                 artifact("$buildDir/outputs/aar/musap-react-native-release.aar") {
                     builtBy tasks.bundleReleaseAar
@@ -225,6 +230,7 @@ dependencies {
         exclude group: "com.yubico.yubikit", module: "piv"
     }
     implementation("com.nimbusds:nimbus-jose-jwt:9.40")
+    implementation("org.bouncycastle:bcpkix-jdk15to18:1.71")
 }
 
 
