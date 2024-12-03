@@ -40,7 +40,7 @@ fun ReadableMap.toKeyGenReq(activity: Activity?, view: View? = null): KeyGenReq 
         getArray("attributes")?.let { attributesArray ->
             for (i in 0 until attributesArray.size()) {
                 val attributeMap = attributesArray.getMap(i)
-                val keyAttribute = KeyAttribute(attributeMap.getString("name"), attributeMap.getString("value"))
+                val keyAttribute = KeyAttribute(attributeMap?.getString("name"), attributeMap?.getString("value"))
                 builder.addAttribute(keyAttribute)
             }
         }

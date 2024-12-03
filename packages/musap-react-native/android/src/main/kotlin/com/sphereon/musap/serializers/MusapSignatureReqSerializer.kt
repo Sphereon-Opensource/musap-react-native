@@ -45,9 +45,11 @@ fun ReadableMap.toSignatureReq(activity: Activity?): SignatureReq {
         getArray("attributes")?.let { attributesArray ->
             for (i in 0 until attributesArray.size()) {
                 val attributeMap = attributesArray.getMap(i)
-                val signatureAttribute =
-                    SignatureAttribute(attributeMap.getString("name"), attributeMap.getString("value"))
-                builder.addAttribute(signatureAttribute)
+                if (attributeMap !== null) {
+                    val signatureAttribute =
+                        SignatureAttribute(attributeMap.getString("name"), attributeMap.getString("value"))
+                    builder.addAttribute(signatureAttribute)
+                }
             }
         }
     }
@@ -66,7 +68,7 @@ fun ReadableArray.toByteArray(): ByteArray {
 }
 
 fun ReadableArray.toStringList(): List<String> {
-    return (0 until size()).map { getString(it) }
+    return (0 until size()).map { getString(it) ?: ""} // FIXME
 }
 
 

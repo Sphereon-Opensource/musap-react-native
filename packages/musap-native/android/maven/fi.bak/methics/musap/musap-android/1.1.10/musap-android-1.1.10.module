@@ -1,0 +1,150 @@
+{
+  "formatVersion": "1.1",
+  "component": {
+    "group": "fi.methics.musap",
+    "module": "musap-android",
+    "version": "1.1.10",
+    "attributes": {
+      "org.gradle.status": "release"
+    }
+  },
+  "createdBy": {
+    "gradle": {
+      "version": "8.0"
+    }
+  },
+  "variants": [
+    {
+      "name": "releaseVariantReleaseApiPublication",
+      "attributes": {
+        "org.gradle.category": "library",
+        "org.gradle.dependency.bundling": "external",
+        "org.gradle.libraryelements": "aar",
+        "org.gradle.usage": "java-api"
+      },
+      "files": [
+        {
+          "name": "musap-android-1.1.10.aar",
+          "url": "musap-android-1.1.10.aar",
+          "size": 489210,
+          "sha512": "8885b79dbe13a4e6389f4a16709e105aece98c084b6f8089e0e7fb6b782a8295ffbae3f9c47b5af9cd1db27ecb84c974c1aa4bde0a6bb66e90633cfc318b3779",
+          "sha256": "994da184931b7167d665a8575f0e9caef7a7f17efc5af48d0e88e959018f2de4",
+          "sha1": "26050be31c9dec39217db5c8273be9a51b0444f4",
+          "md5": "79c49144fd45e4884df78733efd1ece7"
+        }
+      ]
+    },
+    {
+      "name": "releaseVariantReleaseRuntimePublication",
+      "attributes": {
+        "org.gradle.category": "library",
+        "org.gradle.dependency.bundling": "external",
+        "org.gradle.libraryelements": "aar",
+        "org.gradle.usage": "java-runtime"
+      },
+      "dependencies": [
+        {
+          "group": "androidx.appcompat",
+          "module": "appcompat",
+          "version": {
+            "requires": "1.6.1"
+          }
+        },
+        {
+          "group": "com.google.android.material",
+          "module": "material",
+          "version": {
+            "requires": "1.10.0"
+          }
+        },
+        {
+          "group": "com.yubico.yubikit",
+          "module": "piv",
+          "version": {
+            "requires": "2.3.0"
+          }
+        },
+        {
+          "group": "com.yubico.yubikit",
+          "module": "android",
+          "version": {
+            "requires": "2.3.0"
+          }
+        },
+        {
+          "group": "com.google.code.gson",
+          "module": "gson",
+          "version": {
+            "requires": "2.8.8"
+          }
+        },
+        {
+          "group": "org.bouncycastle",
+          "module": "bcpkix-jdk15to18",
+          "version": {
+            "requires": "1.71"
+          }
+        },
+        {
+          "group": "com.squareup.okhttp3",
+          "module": "okhttp",
+          "version": {
+            "requires": "4.10.0"
+          }
+        },
+        {
+          "group": "androidx.navigation",
+          "module": "navigation-fragment",
+          "version": {
+            "requires": "2.7.5"
+          }
+        },
+        {
+          "group": "androidx.navigation",
+          "module": "navigation-ui",
+          "version": {
+            "requires": "2.7.5"
+          }
+        },
+        {
+          "group": "com.github.tony19",
+          "module": "logback-android",
+          "version": {
+            "requires": "3.0.0"
+          }
+        }
+      ],
+      "files": [
+        {
+          "name": "musap-android-1.1.10.aar",
+          "url": "musap-android-1.1.10.aar",
+          "size": 489210,
+          "sha512": "8885b79dbe13a4e6389f4a16709e105aece98c084b6f8089e0e7fb6b782a8295ffbae3f9c47b5af9cd1db27ecb84c974c1aa4bde0a6bb66e90633cfc318b3779",
+          "sha256": "994da184931b7167d665a8575f0e9caef7a7f17efc5af48d0e88e959018f2de4",
+          "sha1": "26050be31c9dec39217db5c8273be9a51b0444f4",
+          "md5": "79c49144fd45e4884df78733efd1ece7"
+        }
+      ]
+    },
+    {
+      "name": "releaseVariantReleaseSourcePublication",
+      "attributes": {
+        "org.gradle.category": "documentation",
+        "org.gradle.dependency.bundling": "external",
+        "org.gradle.docstype": "sources",
+        "org.gradle.usage": "java-runtime"
+      },
+      "files": [
+        {
+          "name": "musap-android-1.1.10-sources.jar",
+          "url": "musap-android-1.1.10-sources.jar",
+          "size": 316512,
+          "sha512": "76c2205fdd7a02cc6cadd11abadffd4efb37d2454879020ee69570f3f8d09276e24961a9f2cf9466ff51152e291ef4c369ed8a1816d4fde83680c6478438a112",
+          "sha256": "78eb7351205197f7d0b7e040acc40560e440a54a7b3102d5fe19f43c8d790ac8",
+          "sha1": "454c33e413abd41f9462cf7ee8cae3d1937568fc",
+          "md5": "43580e527f3221384638e0dc0cb40a7b"
+        }
+      ]
+    }
+  ]
+}

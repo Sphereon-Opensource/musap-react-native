@@ -1,0 +1,10 @@
+#NOTE: This is a Maven Resolver internal implementation file, its format can be changed without prior notice.
+#Tue Dec 03 12:02:22 CET 2024
+https\://nexus.sphereon.com/content/groups/public/.error=
+https\://nexus.sphereon.com/content/groups/public/.lastUpdated=1733223460557
+https\://nexus.sphereon.com/repository/sphereon-opensource-releases/.error=
+https\://nexus.sphereon.com/repository/sphereon-opensource-releases/.lastUpdated=1733223742943
+https\://repo1.maven.org/maven2/.error=
+https\://repo1.maven.org/maven2/.lastUpdated=1733223460681
+https\://vaadin.com/nexus/content/repositories/vaadin-addons/.error=
+https\://vaadin.com/nexus/content/repositories/vaadin-addons/.lastUpdated=1733223461177
