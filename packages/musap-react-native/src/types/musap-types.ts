@@ -58,7 +58,7 @@ export interface MusapSscd {
     settings: Map<String, String>
 }
 
-export type KeyAlgorithm = 'eccp256k1' | 'eccp256r1' | 'eccp384k1' | 'eccp384r1' | 'rsa2k' | 'rsa4k' | 'aes'
+export type KeyAlgorithm = 'eccp256k1' | 'eccp256r1' | 'eccp384k1' | 'eccp384r1' | 'rsa2k' | 'rsa4k' | 'aes' | 'ecc_ed25519'
 
 export interface KeyAttribute {
     name: string

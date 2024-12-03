@@ -33,7 +33,6 @@ import fi.methics.musap.sdk.sscd.yubikey.YubiKeySscd
 import java.util.*
 
 @OptIn(ExperimentalStdlibApi::class)
-@kotlinx.coroutines.ExperimentalCoroutinesApi
 class MusapBridgeAndroid(private val reactContext: ReactApplicationContext) : ReactContextBaseJavaModule(reactContext) {
 
     override fun getName(): String = "MusapBridge"
@@ -239,7 +238,7 @@ class MusapBridgeAndroid(private val reactContext: ReactApplicationContext) : Re
                 MusapClient.listEnabledSscds()
                     .filter { sscd -> sscd.sscdId == sscdId }
                     .forEach { sscd -> MusapClient.removeSscd(sscd.sscdInfo) }
-                val sscdInstance = createSscdInstance(SscdType.valueOf(sscdType), settings?.toExternalSscdSettings())
+                val sscdInstance = createSscdInstance(SscdType.valueOf(sscdType), settings?.toExternalSscdSettings()) // FIXME ExternalSscdSettings is mandatory 
                 MusapClient.enableSscd(sscdInstance, selectedSscdId)
             } else {
                 if (MusapClient.listEnabledSscds()
