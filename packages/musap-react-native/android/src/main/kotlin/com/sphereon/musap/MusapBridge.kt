@@ -143,7 +143,7 @@ class MusapBridgeAndroid(private val reactContext: ReactApplicationContext) : Re
                     promise.reject("SIGN_ERROR", e?.message, e)
                 }
             }
-
+            
             MusapClient.sign(signatureReq, callback)
         } catch (e: Throwable) {
             Log.e("MUSAP_BRIDGE", "sign failed", e)
@@ -355,7 +355,7 @@ class MusapBridgeAndroid(private val reactContext: ReactApplicationContext) : Re
         }
     }
 
-
+    @ReactMethod
     fun createSscdInstance(type: SscdType, settings: ExternalSscdSettings?): MusapSscdInterface<*> {
         return when (type) {
             SscdType.TEE -> AndroidKeystoreSscd(reactContext)

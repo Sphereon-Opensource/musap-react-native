@@ -10,9 +10,14 @@ export const testRunEsim = async () => {
   try {
     const sscdId = 'eSim Swisscom';
     const msisdn = '+41796861241';
-    const couplingCode = '2B2S4U';
+    const couplingCode = 'URVTUD';
 
-    const msIsdnAttrs = [{name: 'msisdn', value: msisdn}];
+    const bindAttrs = [{name: 'msisdn', value: msisdn}];
+    const signAttrs = [
+      {name: 'msisdn', value: msisdn},
+      {name: 'mimetype', value: 'application/x-sha256'},
+      {name: 'signaturetype', value: 'pkcs1'},
+    ];
 
     console.log('eSIM start');
 
@@ -81,7 +86,7 @@ export const testRunEsim = async () => {
       console.log('eSIM before bindKey()');
       const bindKeyResponse = await MusapClient.bindKey(sscdId, {
         keyAlias: `eSim-${Date.now()}`,
-        attributes: msIsdnAttrs,
+        attributes: bindAttrs,
         keyUsages: ['personal'],
       });
       console.log('eSIM bindKey():', bindKeyResponse);
@@ -101,7 +106,7 @@ export const testRunEsim = async () => {
     );
     console.log('eSIM jwtHeaderAndPayload', jwtHeaderAndPayload);
     console.log('eSIM sign');
-    await sign(keys[0], jwtHeaderAndPayload, sscdInfo, msIsdnAttrs);
+    await sign(keys[0], jwtHeaderAndPayload, sscdInfo, signAttrs);
   } catch (e) {
     console.error('eSim test failed', e);
   }

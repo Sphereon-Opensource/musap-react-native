@@ -7,6 +7,7 @@
 
 import Foundation
 import musap_ios
+import CommonCrypto
 
 extension SscdInfo {
   func toNSDictionary() -> NSDictionary {
@@ -184,6 +185,48 @@ extension MusapKey {
 
 
 extension NSDictionary {
+func toKeyBindReq() throws -> KeyBindReq {
+        let builder = KeyBindReq.Builder()
+        
+        if let keyAlias = self["keyAlias"] as? String {
+            builder.setKeyAlias(keyAlias)
+        }
+        
+        if let displayText = self["displayText"] as? String {
+            builder.setDisplayText(displayText)
+        }
+        
+        if let did = self["did"] as? String {
+            builder.setDid(did)
+        }
+        
+        if let role = self["role"] as? String {
+            builder.setRole(role)
+        }
+        
+        if self["stepUpPolicy"] != nil {
+            builder.setStepUpPolicy(StepUpPolicy())
+        }
+        
+        if let attributesArray = self["attributes"] as? [[String: Any]] {
+            for attributeMap in attributesArray {
+                if let name = attributeMap["name"] as? String,
+                   let value = attributeMap["value"] as? String {
+                    let keyAttribute = KeyAttribute(name: name, value: value)
+                    builder.addAttribute(keyAttribute)
+                }
+            }
+        }
+        
+        if let keyUsages = self["keyUsages"] as? [String] {
+            for usage in keyUsages {
+                builder.addKeyUsage(usage)
+            }
+        }
+        
+        return builder.createKeyBindReq()
+    }
+    
   func toKeyGenReq() throws -> KeyGenReq {
     let keyAlias = self["keyAlias"] as? String ?? ""
     let did = self["did"] as? String
@@ -224,22 +267,37 @@ extension NSDictionary {
             throw SignatureReqError.missingKeyUri
         }
 
+    // Get the key first so we can use it for data processing
+    guard let key = MusapClient.getKeyByUri(keyUri: keyUriString) else {
+        throw SignatureReqError.invalidKey
+    }
 
         guard let dataValue = self["data"] else {
             throw SignatureReqError.missingData
         }
 
-        let keyUri = KeyURI(keyUri: keyUriString)
-        guard let key = MusapClient.getKeyByUri(keyUri: keyUriString) else {
-            throw SignatureReqError.invalidKey
+    guard let sscdType = key.getSscdType()?.lowercased()
+    
+    // Process data based on SSCD type
+    let processedData: Data
+    if let stringData = dataValue as? String {
+        let rawData = stringData.data(using: .utf8) ?? Data()
+        if sscdType == "external" || sscdType == "external signature" {
+            // Use SHA256 for external SSCD type
+            let sha256Data = SHA256.hash(data: rawData)
+            processedData = Data(sha256Data)
+        } else {
+            processedData = rawData
         }
-
-
-        let data: [UInt8]
-        if let intArray = dataValue as? [Int] {
-            data = intArray.map { UInt8($0) }
-        } else if let stringData = dataValue as? String, let utf8Data = stringData.data(using: .utf8) {
-            data = [UInt8](utf8Data)
+    } else if let intArray = dataValue as? [Int] {
+        let rawData = Data(intArray.map { UInt8($0) })
+        if sscdType == "external" || sscdType == "external signature" {
+            // Use SHA256 for external SSCD type
+            let sha256Data = SHA256.hash(data: rawData)
+            processedData = Data(sha256Data)
+        } else {
+            processedData = rawData
+        }
         } else {
             throw SignatureReqError.invalidDataFormat
         }
@@ -264,7 +322,7 @@ extension NSDictionary {
 
         return SignatureReq(
             key: key,
-            data: Data(data),
+        data: processedData,
             algorithm: algorithmString.toSignatureAlgorithm,
             format: SignatureFormat.fromString(format: format),
             displayText: displayText ?? "",
@@ -521,6 +579,34 @@ extension KeyAlgorithm {
   }
 }
 
+extension NSDictionary {
+    func toExternalSscdSettings() throws -> ExternalSscdSettings {
+        guard let clientId = self["clientId"] as? String else {
+            throw SSCDError.missingClientId
+        }
+        
+        let settings = ExternalSscdSettings(clientId: clientId)
+        
+        if let sscdName = self["sscdName"] as? String {
+            settings.sscdName = sscdName
+        }
+        
+        if let provider = self["provider"] as? String {
+            settings.provider = provider
+        }
+        
+        if let timeout = self["timeout"] as? Double {
+            let timeoutMillis = Int64(timeout * 60 * 1000) // Convert minutes to milliseconds
+            settings.settings[ExternalSscdSettings.SETTINGS_TIMEOUT] = String(timeoutMillis)
+        }
+        
+        return settings
+    }
+}
+
+enum SSCDError: Error {
+    case missingClientId
+}
 
 enum SignatureReqError: Error {
     case invalidPublicKey
@@ -544,4 +630,15 @@ func stringify(_ object: Any) -> String {
     }
     output += "}"
     return output
+}
+
+
+struct SHA256 {
+    static func hash(data: Data) -> [UInt8] {
+        var hash = [UInt8](repeating: 0, count: Int(CC_SHA256_DIGEST_LENGTH))
+        data.withUnsafeBytes { buffer in
+            _ = CC_SHA256(buffer.baseAddress, CC_LONG(buffer.count), &hash)
+        }
+        return hash
+    }
 }
