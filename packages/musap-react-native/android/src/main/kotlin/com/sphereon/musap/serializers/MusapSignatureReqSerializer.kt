@@ -4,30 +4,39 @@ import android.app.Activity
 import android.util.Log
 import com.facebook.react.bridge.ReadableArray
 import com.facebook.react.bridge.ReadableMap
+import com.sphereon.musap.models.SscdType
 import fi.methics.musap.sdk.api.MusapClient
+import fi.methics.musap.sdk.internal.datatype.MusapKey
 import fi.methics.musap.sdk.internal.datatype.MusapLoA
 import fi.methics.musap.sdk.internal.datatype.SignatureAlgorithm
 import fi.methics.musap.sdk.internal.datatype.SignatureAttribute
 import fi.methics.musap.sdk.internal.datatype.SignatureFormat
 import fi.methics.musap.sdk.internal.sign.SignatureReq
+import java.security.MessageDigest
 
 fun ReadableMap.toSignatureReq(activity: Activity?): SignatureReq {
     val algorithmString = getString("algorithm")
     val algorithm = SignatureAlgorithm(algorithmString ?: "SHA256withECDSA")
     val builder = SignatureReq.Builder(algorithm)
-
+    var key: MusapKey? = null
     if (hasKey("keyUri")) {
         getString("keyUri")?.let { keyUri ->
-            Log.i("MUSAP_BRIDGE", "SignatureReq found keyUri ${keyUri}")
             val keyByUri = MusapClient.getKeyByUri(keyUri) ?: throw Exception("Key not found for $keyUri")
-            Log.i("MUSAP_BRIDGE", "SignatureReq key ${keyByUri.keyAlias}")
+            Log.d("MUSAP_BRIDGE", "SignatureReq key ${keyByUri.keyAlias}")
             builder.setKey(keyByUri)
+            key = keyByUri
         }
     }
 
     if (hasKey("data")) {
         getString("data")?.let { dataString ->
-            builder.setData(dataString.toByteArray())
+            val keyByUri = key
+            if (keyByUri != null && (keyByUri.sscdType == SscdType.EXTERNAL.value || keyByUri.sscdType == SscdType.EXTERNAL.name)) {
+                Log.d("MUSAP_BRIDGE", "The target sscd is of type: ${keyByUri.sscdType}, taking SHA256")
+                builder.setData(dataString.toByteArray().sha256())
+            } else {
+                builder.setData(dataString.toByteArray())
+            }
         }
     }
 
@@ -68,7 +77,7 @@ fun ReadableArray.toByteArray(): ByteArray {
 }
 
 fun ReadableArray.toStringList(): List<String> {
-    return (0 until size()).map { getString(it) ?: ""} // FIXME
+    return (0 until size()).map { getString(it) ?: "" } // FIXME
 }
 
 
@@ -89,4 +98,9 @@ fun String.toMusapLoA(): MusapLoA {
         "aal3" -> MusapLoA.NIST_AAL3
         else -> throw IllegalArgumentException("Unknown LoA: $this")
     }
+}
+
+fun ByteArray.sha256(): ByteArray {
+    val digest = MessageDigest.getInstance("SHA-256")
+    return digest.digest(this)
 }

@@ -14,8 +14,8 @@ import com.sphereon.musap.models.SscdType
 import com.sphereon.musap.serializers.toDecryptionReq
 import com.sphereon.musap.serializers.toEncryptionReq
 import com.sphereon.musap.serializers.toExternalSscdSettings
-import com.sphereon.musap.serializers.toKeyGenReq
 import com.sphereon.musap.serializers.toKeyBindReq
+import com.sphereon.musap.serializers.toKeyGenReq
 import com.sphereon.musap.serializers.toSignatureReq
 import com.sphereon.musap.serializers.toWritableMap
 import fi.methics.musap.sdk.api.MusapCallback
@@ -77,11 +77,9 @@ class MusapBridgeAndroid(private val reactContext: ReactApplicationContext) : Re
             val callback = object : MusapCallback<MusapKey> {
                 override fun onSuccess(musapKey: MusapKey?) {
                     if (musapKey != null) {
-                        Log.i("MUSAP_BRIDGE", "bindKey successful " + musapKey.keyUri)
                         val result = Arguments.createMap().apply {
                             putString("keyUri", musapKey.keyUri.uri)
                         }
-                        Log.i("MUSAP_BRIDGE", "bindKey resolve result")
                         promise.resolve(result)
                     } else {
                         promise.reject("GENERATE_KEY_ERROR", "MusapKey is null")
@@ -94,7 +92,6 @@ class MusapBridgeAndroid(private val reactContext: ReactApplicationContext) : Re
                 }
             }
 
-            Log.i("MUSAP_BRIDGE", "bindKey for ${sscd.sscdId}, musapId= ${MusapClient.getMusapLink().musapId}, bridge instance id=${System.identityHashCode(this)}")
             MusapClient.bindKey(sscd, reqObj, callback)
         } catch (e: Exception) {
             Log.e("MUSAP_BRIDGE", "generateKey failed", e)
@@ -124,12 +121,11 @@ class MusapBridgeAndroid(private val reactContext: ReactApplicationContext) : Re
     @ReactMethod
     fun sign(req: ReadableMap, promise: Promise) {
         try {
-            val signatureReq = req.toSignatureReq(this.currentActivity)
+            var signatureReq = req.toSignatureReq(this.currentActivity)
 
             val callback = object : MusapCallback<MusapSignature> {
                 override fun onSuccess(signature: MusapSignature?) {
                     if (signature != null) {
-                        Log.i("MUSAP_BRIDGE", "sign successful, rawSignature: " + signature.rawSignature.toHexString())
                         val convertToRS = true // FIXME to req
                         if (convertToRS) {
                             val rsSignature = SignatureConverter.convertToRS(signature.rawSignature)
@@ -148,7 +144,6 @@ class MusapBridgeAndroid(private val reactContext: ReactApplicationContext) : Re
                 }
             }
 
-            Log.d("MUSAP_BRIDGE", "Calling MusapClient.sign")
             MusapClient.sign(signatureReq, callback)
         } catch (e: Throwable) {
             Log.e("MUSAP_BRIDGE", "sign failed", e)
@@ -256,16 +251,13 @@ class MusapBridgeAndroid(private val reactContext: ReactApplicationContext) : Re
 
     @ReactMethod(isBlockingSynchronousMethod = true)
     fun getKeyByUri(keyUri: String): WritableMap {
-        Log.i("MUSAP_BRIDGE", "keyUri called with keyUri ${keyUri}")
         val keyByUri = MusapClient.getKeyByUri(keyUri) ?: throw Exception("Key not found by keyUri for $keyUri")
         return keyByUri.toWritableMap()
     }
 
     @ReactMethod(isBlockingSynchronousMethod = true)
     fun getKeyById(keyId: String): WritableMap {
-        Log.i("MUSAP_BRIDGE", "getKeyById called with id ${keyId}")
         val key = MusapClient.getKeyByKeyID(keyId) ?: throw Exception("Key not found by id for $keyId")
-        Log.i("MUSAP_BRIDGE", "found key ${key.keyUri}")
         return key.toWritableMap()
     }
 
@@ -309,7 +301,7 @@ class MusapBridgeAndroid(private val reactContext: ReactApplicationContext) : Re
             val callback = object : MusapCallback<MusapLink> {
                 override fun onSuccess(musapLink: MusapLink?) {
                     if (musapLink != null) {
-                        Log.i("MUSAP_BRIDGE", "enableLink.musapId=${MusapClient.getMusapLink().musapId}, bridge instance id=${System.identityHashCode(this)}")
+                        Log.d("MUSAP_BRIDGE", "enableLink.musapId=${MusapClient.getMusapLink().musapId}")
                         promise.resolve(musapLink.musapId)
                     } else {
                         promise.reject("ENABLE_LINK_ERROR", "MusapLink is null")
@@ -322,10 +314,10 @@ class MusapBridgeAndroid(private val reactContext: ReactApplicationContext) : Re
             }
             val musapLink = MusapClient.getMusapLink()
             if(musapLink == null) {
-                Log.i("MUSAP_BRIDGE", "calling enableLink")
+                Log.d("MUSAP_BRIDGE", "calling enableLink")
                 MusapClient.enableLink(url, fcmToken, callback)
             } else {
-                Log.i("MUSAP_BRIDGE", "link already enabled, musapId=${musapLink.musapId}")
+                Log.d("MUSAP_BRIDGE", "link already enabled, musapId=${musapLink.musapId}")
                 promise.resolve(musapLink.musapId)
             }
         } catch (e: Exception) {
@@ -355,7 +347,7 @@ class MusapBridgeAndroid(private val reactContext: ReactApplicationContext) : Re
                     promise.reject("COUPLE_RP_ERROR", e?.message, e)
                 }
             }
-            Log.i("MUSAP_BRIDGE", "coupleWithRelyingParty.musapId=${MusapClient.getMusapLink().musapId}, bridge instance id=${System.identityHashCode(this)}")
+            Log.d("MUSAP_BRIDGE", "coupleWithRelyingParty.musapId=${MusapClient.getMusapLink().musapId}")
             MusapClient.coupleWithRelyingParty(couplingCode, callback)
         } catch (e: Exception) {
             Log.e("MUSAP_BRIDGE", "Coupling failed", e)
@@ -393,10 +385,10 @@ class MusapBridgeAndroid(private val reactContext: ReactApplicationContext) : Re
             if (!isInitialized) {
                 synchronized(initializationLock) {
                     if (!isInitialized) {
-                        Log.i("MUSAP_BRIDGE", "Initializing MusapClient")
+                        Log.d("MUSAP_BRIDGE", "Initializing MusapClient")
                         MusapClient.init(context)
                         isInitialized = true
-                        Log.i("MUSAP_BRIDGE", "MusapClient initialization complete")
+                        Log.d("MUSAP_BRIDGE", "MusapClient initialization complete")
                     }
                 }
             }

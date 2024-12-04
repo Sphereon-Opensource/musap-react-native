@@ -193,7 +193,9 @@ fun MusapKey.toWritableMap(): WritableMap {
         putString("keyId", keyId)
         putString("keyType", keyType)
         putString("keyAlias", keyAlias)
-        putMap("sscd", sscd.toWritableMap())
+        sscd?.let {
+            putMap("sscd", sscd.toWritableMap())
+        }
         algorithm?.let {
             putString("algorithm", algorithm.toEnumString())
         }

@@ -33,6 +33,10 @@ export const sign = async (
   }
 };
 
+export const jwtPayloadTiny = {
+  iss: 'test_issuer',
+};
+
 export const jwtPayload = {
   iss: 'test_issuer',
   sub: 'test_subject',

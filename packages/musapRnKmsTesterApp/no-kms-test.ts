@@ -1,6 +1,6 @@
 import {KeyGenReq, MusapKey, MusapClient} from '@sphereon/musap-react-native';
 import uuid from 'react-native-uuid';
-import {clearKeystore, jwtPayload, sign} from './common';
+import {clearKeystore, jwtPayload, jwtPayloadTiny, sign} from './common';
 import {buildJwtHeaderAndPayload} from './jwt-functions';
 
 async function generateKey() {
@@ -24,18 +24,22 @@ async function generateKey() {
 }
 
 export const testRunDirect = async () => {
-  MusapClient.enableSscd('TEE');
-  const sscds = MusapClient.listEnabledSscds();
-  console.log('DIRECT listEnabledSscds', sscds);
-  const sscdInfo = sscds[0].sscdInfo;
+  console.log('DIRECT testRunDirect');
 
   try {
+    MusapClient.enableSscd('TEE', 'TEE', undefined);
+    console.log('DIRECT enabledSscd');
+    const sscds = MusapClient.listEnabledSscds();
+    console.log('DIRECT listEnabledSscds', sscds);
+    const sscdInfo = sscds[0].sscdInfo;
+
     clearKeystore();
+    console.log('DIRECT generateKey');
     const keyUri = await generateKey();
 
     const key = MusapClient.getKeyByUri(keyUri) as MusapKey;
     console.log(`DIRECT GetKeyByUri(): ${JSON.stringify(key)}`);
-    const jwtHeaderAndPayload = buildJwtHeaderAndPayload(key, jwtPayload);
+    const jwtHeaderAndPayload = buildJwtHeaderAndPayload(key, jwtPayloadTiny);
     console.log('DIRECT jwtHeaderAndPayload', jwtHeaderAndPayload);
     await sign(key, jwtHeaderAndPayload, sscdInfo);
   } catch (e) {
