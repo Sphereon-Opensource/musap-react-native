@@ -10,7 +10,7 @@ export const testRunEsim = async () => {
   try {
     const sscdId = 'eSim Swisscom';
     const msisdn = '+41796861241';
-    const couplingCode = 'URVTUD';
+    const couplingCode = '9QNZM8';
 
     const bindAttrs = [{name: 'msisdn', value: msisdn}];
     const signAttrs = [
