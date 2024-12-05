@@ -10,78 +10,78 @@ import musap_ios
 import CommonCrypto
 
 extension SscdInfo {
-  func toNSDictionary() -> NSDictionary {
-
-    let supportedAlgorithms = NSMutableArray()
-    self.getSupportedAlgorithms().forEach {
-      let algorithm = NSMutableDictionary()
-      algorithm["curve"] = $0.curve
-      algorithm["primitive"] = $0.primitive
-      algorithm["bits"] = $0.bits
-      algorithm["isRsa"] = $0.isRsa
-      algorithm["isEc"] = $0.isEc
-      supportedAlgorithms.add(algorithm)
+    func toNSDictionary() -> NSDictionary {
+        
+        let supportedAlgorithms = NSMutableArray()
+        self.getSupportedAlgorithms().forEach {
+            let algorithm = NSMutableDictionary()
+            algorithm["curve"] = $0.curve
+            algorithm["primitive"] = $0.primitive
+            algorithm["bits"] = $0.bits
+            algorithm["isRsa"] = $0.isRsa
+            algorithm["isEc"] = $0.isEc
+            supportedAlgorithms.add(algorithm)
+        }
+        
+        let writableMap = NSMutableDictionary()
+        writableMap["sscdName"] = self.getSscdName()
+        writableMap["sscdType"] = self.getSscdType()
+        writableMap["sscdId"] = self.getSscdId()
+        writableMap["country"] = self.getCountry()
+        writableMap["provider"] = self.getProvider()
+        writableMap["keygenSupported"] = self.isKeygenSupported()
+        writableMap["algorithms"] = supportedAlgorithms
+        //writableMap["formats"] = nil //There is no accessor for formats
+        return writableMap
     }
-
-    let writableMap = NSMutableDictionary()
-    writableMap["sscdName"] = self.getSscdName()
-    writableMap["sscdType"] = self.getSscdType()
-    writableMap["sscdId"] = self.getSscdId()
-    writableMap["country"] = self.getCountry()
-    writableMap["provider"] = self.getProvider()
-    writableMap["keygenSupported"] = self.isKeygenSupported()
-    writableMap["algorithms"] = supportedAlgorithms
-    //writableMap["formats"] = nil //There is no accessor for formats
-    return writableMap
-  }
 }
 
 extension PublicKey {
-  func toNSDictionary() -> NSDictionary {
-    let writableMap = NSMutableDictionary()
-    writableMap["publicKeyDer"] = self.getDER()
-    return writableMap
-  }
+    func toNSDictionary() -> NSDictionary {
+        let writableMap = NSMutableDictionary()
+        writableMap["publicKeyDer"] = self.getDER()
+        return writableMap
+    }
 }
 
 extension MusapCertificate {
-  func toNSDictionary() -> NSDictionary {
-    let writableMap = NSMutableDictionary()
-    writableMap["subject"] = self.getSubject()
-    writableMap["certificate"] = self.getCertificate()
-    writableMap["publicKey"] = self.getPublicKey().toNSDictionary()
-    return writableMap
-  }
+    func toNSDictionary() -> NSDictionary {
+        let writableMap = NSMutableDictionary()
+        writableMap["subject"] = self.getSubject()
+        writableMap["certificate"] = self.getCertificate()
+        writableMap["publicKey"] = self.getPublicKey().toNSDictionary()
+        return writableMap
+    }
 }
 
 extension KeyAttribute {
-  func toNSDictionary() -> NSDictionary {
-    let writableMap = NSMutableDictionary()
-    writableMap["name"] = self.getName()
-    writableMap["value"] = self.getValue()
-    return writableMap
-  }
+    func toNSDictionary() -> NSDictionary {
+        let writableMap = NSMutableDictionary()
+        writableMap["name"] = self.getName()
+        writableMap["value"] = self.getValue()
+        return writableMap
+    }
 }
 
 extension MusapLoa {
-  func toNSDictionary() -> NSDictionary {
-    let writableMap = NSMutableDictionary()
-    writableMap["loa"] = self.getLoa()
-    writableMap["scheme"] = self.getScheme()
-    switch(self.getLoa()) {
-    case "low", "loa1", "ial1", "aal1":
-      writableMap["number"] = 1
-    case "loa2", "ial2", "aal2":
-      writableMap["number"] = 2
-    case "substantial", "loa3", "ial3", "aal3":
-      writableMap["number"] = 3
-    case "high":
-      writableMap["number"] = 4
-    default:
-      writableMap["number"] = nil
+    func toNSDictionary() -> NSDictionary {
+        let writableMap = NSMutableDictionary()
+        writableMap["loa"] = self.getLoa()
+        writableMap["scheme"] = self.getScheme()
+        switch(self.getLoa()) {
+        case "low", "loa1", "ial1", "aal1":
+            writableMap["number"] = 1
+        case "loa2", "ial2", "aal2":
+            writableMap["number"] = 2
+        case "substantial", "loa3", "ial3", "aal3":
+            writableMap["number"] = 3
+        case "high":
+            writableMap["number"] = 4
+        default:
+            writableMap["number"] = nil
+        }
+        return writableMap
     }
-    return writableMap
-  }
 }
 
 
@@ -116,7 +116,7 @@ extension String {
 extension MusapKey {
     func toNSDictionary() -> NSDictionary {
         let writableMap = NSMutableDictionary()
-
+        
         if let publicKey = self.getPublicKey() {
             let publicKeyMap = NSMutableDictionary()
             let derData = publicKey.getDER()
@@ -124,7 +124,7 @@ extension MusapKey {
             publicKeyMap["pem"] = publicKey.getPEM()
             writableMap["publicKey"] = publicKeyMap
         }
-
+        
         writableMap["keyAlias"] = self.getKeyAlias()
         writableMap["keyType"] = self.getKeyType()
         writableMap["keyId"] = self.getKeyId()
@@ -136,10 +136,10 @@ extension MusapKey {
         writableMap["attributes"] = self.getAttributes()?.map{ $0.toNSDictionary() } as NSArray?
         writableMap["keyUsages"] = self.getKeyUsages()
         writableMap["loa"] = self.getLoa()?.map { $0.getLoa() }
-
+        
         if let algorithm = self.getAlgorithm() {
             writableMap["algorithm"] = algorithm.toEnumString()
-
+            
             let defaultSignatureAlgorithm = NSMutableDictionary()
             defaultSignatureAlgorithm["javaAlgorithm"] = algorithm.isEc() ? "ES256" : "RS256"
             defaultSignatureAlgorithm["hashAlgorithm"] = "SHA256"
@@ -149,19 +149,19 @@ extension MusapKey {
             defaultSignatureAlgorithm["isEc"] = algorithm.isEc()
             writableMap["defaultsignatureAlgorithm"] = defaultSignatureAlgorithm
         }
-
+        
         if let keyUri = self.getKeyUri() {
             writableMap["keyUri"] = keyUri.getUri()
         }
-
+        
         writableMap["isBiometricRequired"] = self.getIsBiometricRequired()
         writableMap["did"] = self.getDid()
         writableMap["state"] = self.getState()
-
+        
         let sscdMap = NSMutableDictionary()
         if let sscdInfo = self.getSscdInfo() {
             sscdMap["sscdId"] = sscdInfo.getSscdId()
-
+            
             let sscdInfoMap = NSMutableDictionary()
             sscdInfoMap["country"] = sscdInfo.getCountry()
             sscdInfoMap["provider"] = sscdInfo.getProvider()
@@ -170,144 +170,135 @@ extension MusapKey {
             sscdInfoMap["isKeyGenSupported"] = sscdInfo.isKeygenSupported()
             sscdInfoMap["sscdType"] = sscdInfo.getSscdType()
             sscdInfoMap["sscdId"] = sscdInfo.getSscdId()
-
+            
             sscdMap["sscdInfo"] = sscdInfoMap
-
+            
             let settingsMap = NSMutableDictionary()
             settingsMap["id"] = sscdInfo.getSscdId()
             sscdMap["settings"] = settingsMap
         }
         writableMap["sscd"] = sscdMap
-
+        
         return writableMap
     }
 }
 
 
 extension NSDictionary {
-func toKeyBindReq() throws -> KeyBindReq {
-        let builder = KeyBindReq.Builder()
+    func toKeyBindReq() throws -> KeyBindReq {
+        let keyAlias = self["keyAlias"] as? String ?? ""
+        let displayText = self["displayText"] as? String ?? ""
+        let did = self["did"] as? String ?? ""
+        let role = self["role"] as? String ?? ""
+        let stepUpPolicy = self["stepUpPolicy"] != nil ? StepUpPolicy() : StepUpPolicy()
         
-        if let keyAlias = self["keyAlias"] as? String {
-            builder.setKeyAlias(keyAlias)
-        }
-        
-        if let displayText = self["displayText"] as? String {
-            builder.setDisplayText(displayText)
-        }
-        
-        if let did = self["did"] as? String {
-            builder.setDid(did)
-        }
-        
-        if let role = self["role"] as? String {
-            builder.setRole(role)
-        }
-        
-        if self["stepUpPolicy"] != nil {
-            builder.setStepUpPolicy(StepUpPolicy())
-        }
-        
+        var attributes: [KeyAttribute] = []
         if let attributesArray = self["attributes"] as? [[String: Any]] {
-            for attributeMap in attributesArray {
+            attributes = attributesArray.compactMap { attributeMap in
                 if let name = attributeMap["name"] as? String,
-                   let value = attributeMap["value"] as? String {
-                    let keyAttribute = KeyAttribute(name: name, value: value)
-                    builder.addAttribute(keyAttribute)
+                   let certDataBase64 = attributeMap["value"] as? String,
+                   let certData = Data(base64Encoded: certDataBase64),
+                   let cert = SecCertificateCreateWithData(nil, certData as CFData) {
+                    return KeyAttribute(name: name, cert: cert)
                 }
+                return nil
             }
         }
         
-        if let keyUsages = self["keyUsages"] as? [String] {
-            for usage in keyUsages {
-                builder.addKeyUsage(usage)
-            }
-        }
-        
-        return builder.createKeyBindReq()
+        return KeyBindReq(
+            keyAlias: keyAlias,
+            did: did,
+            role: role,
+            stepUpPolicy: stepUpPolicy,
+            attributes: attributes,
+            generateNewKey: false,  // Using default value
+            displayText: displayText
+        )
     }
     
-  func toKeyGenReq() throws -> KeyGenReq {
-    let keyAlias = self["keyAlias"] as? String ?? ""
-    let did = self["did"] as? String
-    let role = self["role"] as? String ?? ""
-    let stepUpPolicy = self["stepUpPolicy"] != nil ? StepUpPolicy() : nil
-
-    var attributes: [KeyAttribute]?
-    if let attributesArray = self["attributes"] as? [[String: Any]] {
-      attributes = attributesArray.compactMap { attributeMap in
-        if let name = attributeMap["name"] as? String, let certDataBase64 = attributeMap["value"] as? String {
-          if let certData = Data(base64Encoded: certDataBase64),
-             let cert = SecCertificateCreateWithData(nil, certData as CFData) {
-              return KeyAttribute(name: name, cert: cert)
-          }
+    func toKeyGenReq() throws -> KeyGenReq {
+        let keyAlias = self["keyAlias"] as? String ?? ""
+        let did = self["did"] as? String
+        let role = self["role"] as? String ?? ""
+        let stepUpPolicy = self["stepUpPolicy"] != nil ? StepUpPolicy() : nil
+        
+        var attributes: [KeyAttribute]?
+        if let attributesArray = self["attributes"] as? [[String: Any]] {
+            attributes = attributesArray.compactMap { attributeMap in
+                if let name = attributeMap["name"] as? String, let certDataBase64 = attributeMap["value"] as? String {
+                    if let certData = Data(base64Encoded: certDataBase64),
+                       let cert = SecCertificateCreateWithData(nil, certData as CFData) {
+                        return KeyAttribute(name: name, cert: cert)
+                    }
+                }
+                return nil
+            }
         }
-        return nil
-      }
+        
+        var keyAlgorithm: KeyAlgorithm?
+        
+        if let keyAlgorithmString = self["keyAlgorithm"] as? String {
+            keyAlgorithm = KeyAlgorithm.fromString(keyAlgorithmString)
+        }
+        
+        return KeyGenReq(
+            keyAlias: keyAlias,
+            did: did,
+            role: role,
+            stepUpPolicy: stepUpPolicy,
+            attributes: attributes,
+            keyAlgorithm: keyAlgorithm
+        )
     }
-
-    var keyAlgorithm: KeyAlgorithm?
-
-    if let keyAlgorithmString = self["keyAlgorithm"] as? String {
-      keyAlgorithm = KeyAlgorithm.fromString(keyAlgorithmString)
-    }
-
-    return KeyGenReq(
-      keyAlias: keyAlias,
-      did: did,
-      role: role,
-      stepUpPolicy: stepUpPolicy,
-      attributes: attributes,
-      keyAlgorithm: keyAlgorithm
-    )
-  }
-
+    
     func toSignatureReq() throws -> SignatureReq {
         guard let keyUriString = self["keyUri"] as? String else {
             throw SignatureReqError.missingKeyUri
         }
-
-    // Get the key first so we can use it for data processing
-    guard let key = MusapClient.getKeyByUri(keyUri: keyUriString) else {
-        throw SignatureReqError.invalidKey
-    }
-
+        
+        // Get the key first so we can use it for data processing
+        guard let key = MusapClient.getKeyByUri(keyUri: keyUriString) else {
+            throw SignatureReqError.invalidKey
+        }
+        
         guard let dataValue = self["data"] else {
             throw SignatureReqError.missingData
         }
-
-    guard let sscdType = key.getSscdType()?.lowercased()
-    
-    // Process data based on SSCD type
-    let processedData: Data
-    if let stringData = dataValue as? String {
-        let rawData = stringData.data(using: .utf8) ?? Data()
-        if sscdType == "external" || sscdType == "external signature" {
-            // Use SHA256 for external SSCD type
-            let sha256Data = SHA256.hash(data: rawData)
-            processedData = Data(sha256Data)
-        } else {
-            processedData = rawData
-        }
-    } else if let intArray = dataValue as? [Int] {
-        let rawData = Data(intArray.map { UInt8($0) })
-        if sscdType == "external" || sscdType == "external signature" {
-            // Use SHA256 for external SSCD type
-            let sha256Data = SHA256.hash(data: rawData)
-            processedData = Data(sha256Data)
-        } else {
-            processedData = rawData
-        }
-        } else {
-            throw SignatureReqError.invalidDataFormat
-        }
-
+        
+        guard let sscdType = key.getSscdType()?.lowercased() else {
+               throw SignatureReqError.invalidKey
+           }
+                
+                // Process data based on SSCD type
+                let processedData: Data
+                if let stringData = dataValue as? String {
+                    let rawData = stringData.data(using: .utf8) ?? Data()
+                    if sscdType == "external" || sscdType == "external signature" {
+                        // Use SHA256 for external SSCD type
+                        let sha256Data = SHA256.hash(data: rawData)
+                        processedData = Data(sha256Data)
+                    } else {
+                        processedData = rawData
+                    }
+                } else if let intArray = dataValue as? [Int] {
+                    let rawData = Data(intArray.map { UInt8($0) })
+                    if sscdType == "external" || sscdType == "external signature" {
+                        // Use SHA256 for external SSCD type
+                        let sha256Data = SHA256.hash(data: rawData)
+                        processedData = Data(sha256Data)
+                    } else {
+                        processedData = rawData
+                    }
+                } else {
+                    throw SignatureReqError.invalidDataFormat
+                }
+        
         let displayText = self["displayText"] as? String ?? self["display"] as? String
-
+        
         guard let format = self["format"] as? String else {
             throw SignatureReqError.invalidFormat
         }
-
+        
         var sigAttributes: [SignatureAttribute]?
         if let attributesArray = self["attributes"] as? [[String: Any]] {
             sigAttributes = attributesArray.compactMap { attributeMap in
@@ -317,19 +308,19 @@ func toKeyBindReq() throws -> KeyBindReq {
                 return nil
             }
         }
-
+        
         let algorithmString = self["algorithm"] as? String ?? "SHA256withECDSA"
-
+        
         return SignatureReq(
             key: key,
-        data: processedData,
+            data: processedData,
             algorithm: algorithmString.toSignatureAlgorithm,
             format: SignatureFormat.fromString(format: format),
             displayText: displayText ?? "",
             attributes: sigAttributes ?? []
         )
     }
-
+    
     enum SignatureReqError: Error {
         case missingKeyUri
         case missingData
@@ -341,43 +332,43 @@ func toKeyBindReq() throws -> KeyBindReq {
 
 
 extension String {
-      func toMusapLoA() throws -> MusapLoa {
-          switch self.lowercased() {
-          case "low":
-              return MusapLoa.EIDAS_LOW
-          case "substantial":
-              return MusapLoa.EIDAS_SUBSTANTIAL
-          case "high":
-              return MusapLoa.EIDAS_HIGH
-          case "loa1":
-              return MusapLoa.ISO_LOA1
-          case "loa2":
-              return MusapLoa.ISO_LOA2
-          case "loa3":
-              return MusapLoa.ISO_LOA3
-          case "loa4":
-              return MusapLoa.ISO_LOA4
-          case "ial1":
-              return MusapLoa.NIST_IAL1
-          case "ial2":
-              return MusapLoa.NIST_IAL2
-          case "ial3":
-              return MusapLoa.NIST_IAL3
-          case "aal1":
-              return MusapLoa.NIST_AAL1
-          case "aal2":
-              return MusapLoa.NIST_AAL2
-          case "aal3":
-              return MusapLoa.NIST_AAL3
-          default:
-              throw NSError(domain: "MusapLoaError", code: 1, userInfo: [NSLocalizedDescriptionKey: "Unknown LoA: \(self)"])
-          }
-      }
-
+    func toMusapLoA() throws -> MusapLoa {
+        switch self.lowercased() {
+        case "low":
+            return MusapLoa.EIDAS_LOW
+        case "substantial":
+            return MusapLoa.EIDAS_SUBSTANTIAL
+        case "high":
+            return MusapLoa.EIDAS_HIGH
+        case "loa1":
+            return MusapLoa.ISO_LOA1
+        case "loa2":
+            return MusapLoa.ISO_LOA2
+        case "loa3":
+            return MusapLoa.ISO_LOA3
+        case "loa4":
+            return MusapLoa.ISO_LOA4
+        case "ial1":
+            return MusapLoa.NIST_IAL1
+        case "ial2":
+            return MusapLoa.NIST_IAL2
+        case "ial3":
+            return MusapLoa.NIST_IAL3
+        case "aal1":
+            return MusapLoa.NIST_AAL1
+        case "aal2":
+            return MusapLoa.NIST_AAL2
+        case "aal3":
+            return MusapLoa.NIST_AAL3
+        default:
+            throw NSError(domain: "MusapLoaError", code: 1, userInfo: [NSLocalizedDescriptionKey: "Unknown LoA: \(self)"])
+        }
+    }
+    
     var toSignatureAlgorithm: SignatureAlgorithm {
         switch self {
         case "SHA256withECDSA":
-          return SignatureAlgorithm(algorithm: SignatureAlgorithm.SHA256withECDSA)
+            return SignatureAlgorithm(algorithm: SignatureAlgorithm.SHA256withECDSA)
         case "SHA384withECDSA":
             return SignatureAlgorithm(algorithm: SignatureAlgorithm.SHA384withECDSA)
         case "SHA512withECDSA":
@@ -398,11 +389,11 @@ extension String {
             return SignatureAlgorithm(algorithm: SignatureAlgorithm.SHA256withECDSA)
         }
     }
-
+    
     var toDate: Date? {
-           let formatter = ISO8601DateFormatter()
-           formatter.formatOptions = [.withInternetDateTime, .withFractionalSeconds]
-           return formatter.date(from: self)
+        let formatter = ISO8601DateFormatter()
+        formatter.formatOptions = [.withInternetDateTime, .withFractionalSeconds]
+        return formatter.date(from: self)
     }
 }
 
@@ -418,10 +409,10 @@ extension Date {
 extension Data {
     func base64URLEncodedStringNoPadding() -> String {
         let base64String = self.base64EncodedString()
-
+        
         // Remove padding characters
         let unpaddedString = base64String.trimmingCharacters(in: ["="])
-
+        
         // Replace characters for URL-safe base64
         return unpaddedString
             .replacingOccurrences(of: "+", with: "-")
@@ -460,49 +451,49 @@ extension SecKeyAlgorithm {
 
 
 extension MusapSscd {
-  func toNSDictionary() -> NSDictionary {
-    let writableMap = NSMutableDictionary()
-
-    guard let sscdInfo = self.getSscdInfo() else {
-      return writableMap
+    func toNSDictionary() -> NSDictionary {
+        let writableMap = NSMutableDictionary()
+        
+        guard let sscdInfo = self.getSscdInfo() else {
+            return writableMap
+        }
+        
+        let supportedAlgorithms = NSMutableArray()
+        sscdInfo.getSupportedAlgorithms().forEach {
+            let algorithm = NSMutableDictionary()
+            algorithm["curve"] = $0.curve
+            algorithm["primitive"] = $0.primitive
+            algorithm["bits"] = $0.bits
+            algorithm["isRsa"] = $0.isRsa
+            algorithm["isEc"] = $0.isEc
+            supportedAlgorithms.add(algorithm)
+        }
+        
+        let sscdInfoMap = NSMutableDictionary()
+        sscdInfoMap["sscdId"] = sscdInfo.getSscdId()
+        sscdInfoMap["sscdType"] = sscdInfo.getSscdType()
+        sscdInfoMap["sscdName"] = sscdInfo.getSscdName()
+        sscdInfoMap["country"] = sscdInfo.getCountry()
+        sscdInfoMap["provider"] = sscdInfo.getProvider()
+        sscdInfoMap["isKeyGenSupported"] = sscdInfo.isKeygenSupported()
+        sscdInfoMap["supportedAlgorithms"] = supportedAlgorithms
+        
+        writableMap["sscdId"] = self.getSscdId()
+        writableMap["sscdInfo"] = sscdInfoMap
+        
+        // Uncomment and adjust this block if you have settings to include
+        // let settings = NSMutableDictionary()
+        // self.getSettings()?.settings?.forEach {
+        //   settings[$0.key] = $0.value
+        // }
+        // writableMap["settings"] = settings
+        
+        return writableMap
     }
-
-    let supportedAlgorithms = NSMutableArray()
-    sscdInfo.getSupportedAlgorithms().forEach {
-      let algorithm = NSMutableDictionary()
-      algorithm["curve"] = $0.curve
-      algorithm["primitive"] = $0.primitive
-      algorithm["bits"] = $0.bits
-      algorithm["isRsa"] = $0.isRsa
-      algorithm["isEc"] = $0.isEc
-      supportedAlgorithms.add(algorithm)
-    }
-
-    let sscdInfoMap = NSMutableDictionary()
-    sscdInfoMap["sscdId"] = sscdInfo.getSscdId()
-    sscdInfoMap["sscdType"] = sscdInfo.getSscdType()
-    sscdInfoMap["sscdName"] = sscdInfo.getSscdName()
-    sscdInfoMap["country"] = sscdInfo.getCountry()
-    sscdInfoMap["provider"] = sscdInfo.getProvider()
-    sscdInfoMap["isKeyGenSupported"] = sscdInfo.isKeygenSupported()
-    sscdInfoMap["supportedAlgorithms"] = supportedAlgorithms
-
-    writableMap["sscdId"] = self.getSscdId()
-    writableMap["sscdInfo"] = sscdInfoMap
-
-    // Uncomment and adjust this block if you have settings to include
-    // let settings = NSMutableDictionary()
-    // self.getSettings()?.settings?.forEach {
-    //   settings[$0.key] = $0.value
-    // }
-    // writableMap["settings"] = settings
-
-    return writableMap
-  }
 }
 
 extension KeyAlgorithm {
-  func toNSDictionary() -> NSDictionary {
+    func toNSDictionary() -> NSDictionary {
         let writableMap = NSMutableDictionary()
         let description = self.description().split(separator: "/")
         writableMap["primitive"] = description[0].replacingOccurrences(of: "[", with: "")
@@ -511,72 +502,72 @@ extension KeyAlgorithm {
         writableMap["isEc"] = self.isEc()
         writableMap["isRSA"] = self.isRsa()
         return writableMap
-      }
-
+    }
+    
     public static func fromString(_ string: String) -> KeyAlgorithm? {
         switch string.lowercased() {
         case "rsa1k":
-          return KeyAlgorithm.RSA_1K
+            return KeyAlgorithm.RSA_1K
         case "rsa2k":
-          return KeyAlgorithm.RSA_2K
+            return KeyAlgorithm.RSA_2K
         case "rsa4k":
-          return KeyAlgorithm.RSA_4K
+            return KeyAlgorithm.RSA_4K
         case "eccp256k1":
-          return KeyAlgorithm.ECC_P256_K1
+            return KeyAlgorithm.ECC_P256_K1
         case "eccp384k1":
-          return KeyAlgorithm.ECC_P384_K1
+            return KeyAlgorithm.ECC_P384_K1
         case "eccp256r1":
-          return KeyAlgorithm.ECC_P256_R1
+            return KeyAlgorithm.ECC_P256_R1
         case "eccp384r1":
-          return KeyAlgorithm.ECC_P384_R1
+            return KeyAlgorithm.ECC_P384_R1
         default:
             return nil
         }
     }
-
-
-  enum InvalidKeyAlgorithm: Error {
-    case invalidPrimitiveArg(message: String)
-    case invalidBitsArg(message: String)
-    case invalidCurveArg(message: String)
-  }
-
-  public static func stringToPrimitive(string: String?) throws -> String {
-    switch string?.uppercased() {
-    case "EC":
-      return KeyAlgorithm.PRIMITIVE_EC
-    case "RSA":
-      return KeyAlgorithm.PRIMITIVE_RSA
-    default:
-      throw InvalidKeyAlgorithm.invalidPrimitiveArg(message: "Primitive must be EC or RSA")
+    
+    
+    enum InvalidKeyAlgorithm: Error {
+        case invalidPrimitiveArg(message: String)
+        case invalidBitsArg(message: String)
+        case invalidCurveArg(message: String)
     }
-  }
-
-  public static func validateNumBits(bits: Int) throws -> Int {
-    let validNumBits: Set<Int> = [256, 384, 1024, 2048, 4096]
-    if !validNumBits.contains(bits) {
-      throw InvalidKeyAlgorithm.invalidBitsArg(message: "Bits must be the one of: \(validNumBits)")
+    
+    public static func stringToPrimitive(string: String?) throws -> String {
+        switch string?.uppercased() {
+        case "EC":
+            return KeyAlgorithm.PRIMITIVE_EC
+        case "RSA":
+            return KeyAlgorithm.PRIMITIVE_RSA
+        default:
+            throw InvalidKeyAlgorithm.invalidPrimitiveArg(message: "Primitive must be EC or RSA")
+        }
     }
-    return bits
-  }
-
-  public static func curveMapper(curve: String?) throws -> String? {
-    if (curve != nil) {
-      switch(curve) {
-        case "secp256r1":
-          return "ecc_p256_r1"
-        case "secp384r1":
-          return "ecc_p384_r1"
-        case "secp256k1":
-          return "ecc_p256_k1"
-        case "secp384k1":
-          return "ecc_p384_k1"
-      default:
-        throw InvalidKeyAlgorithm.invalidCurveArg(message: "Elliptic curve not supported.")
-      }
+    
+    public static func validateNumBits(bits: Int) throws -> Int {
+        let validNumBits: Set<Int> = [256, 384, 1024, 2048, 4096]
+        if !validNumBits.contains(bits) {
+            throw InvalidKeyAlgorithm.invalidBitsArg(message: "Bits must be the one of: \(validNumBits)")
+        }
+        return bits
     }
-    return curve
-  }
+    
+    public static func curveMapper(curve: String?) throws -> String? {
+        if (curve != nil) {
+            switch(curve) {
+            case "secp256r1":
+                return "ecc_p256_r1"
+            case "secp384r1":
+                return "ecc_p384_r1"
+            case "secp256k1":
+                return "ecc_p256_k1"
+            case "secp384k1":
+                return "ecc_p384_k1"
+            default:
+                throw InvalidKeyAlgorithm.invalidCurveArg(message: "Elliptic curve not supported.")
+            }
+        }
+        return curve
+    }
 }
 
 extension NSDictionary {
@@ -588,16 +579,12 @@ extension NSDictionary {
         let settings = ExternalSscdSettings(clientId: clientId)
         
         if let sscdName = self["sscdName"] as? String {
-            settings.sscdName = sscdName
-        }
-        
-        if let provider = self["provider"] as? String {
-            settings.provider = provider
+            settings.setSscdName(name: sscdName)
         }
         
         if let timeout = self["timeout"] as? Double {
-            let timeoutMillis = Int64(timeout * 60 * 1000) // Convert minutes to milliseconds
-            settings.settings[ExternalSscdSettings.SETTINGS_TIMEOUT] = String(timeoutMillis)
+            let timeoutMillis = Int64(timeout * 60 * 1000)
+            settings.setSetting(key: ExternalSscdSettings.SETTINGS_TIMEOUT, value: String(timeoutMillis))
         }
         
         return settings

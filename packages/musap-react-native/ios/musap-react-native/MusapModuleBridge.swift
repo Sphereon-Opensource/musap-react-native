@@ -15,12 +15,12 @@ let logger = Logger(subsystem: "com.sphereon.musaprn", category: "debugging")
 
 @objc(MusapModule)
 class MusapModule: NSObject {
-
+    
     @objc
     static func requiresMainQueueSetup() -> Bool {
         return false
     }
-
+    
     override init() {
         super.init()
     }
@@ -33,19 +33,19 @@ class MusapModule: NSObject {
             rejecter("BIND_KEY_ERROR", "Error: SSCD not found", nil)
             return
         }
-
+        
         do {
             let reqObj = try req.toKeyBindReq()
             logger.debug("bindKey request \(stringify(reqObj))")
             let queue = DispatchQueue(label: "com.sphereon.bindKey")
             var isResolved = false
-
+            
             Task {
                 await MusapClient.bindKey(sscd: sscd, req: reqObj) { result in
                     queue.sync {
                         guard !isResolved else { return }
                         isResolved = true
-
+                        
                         switch result {
                         case .success(let musapKey):
                             if let keyUri = musapKey.getKeyUri()?.getUri() {
@@ -73,13 +73,13 @@ class MusapModule: NSObject {
             logger.debug("encryptData called")
             let queue = DispatchQueue(label: "com.sphereon.encrypt")
             var isResolved = false
-
+            
             Task {
                 await MusapClient.encryptData(req: encryptionReq) { result in
                     queue.sync {
                         guard !isResolved else { return }
                         isResolved = true
-
+                        
                         switch result {
                         case .success(let encryptedData):
                             let base64String = encryptedData.base64EncodedString()
@@ -95,7 +95,7 @@ class MusapModule: NSObject {
             rejecter("ENCRYPTION_ERROR", "Error preparing encryption request: \(error.localizedDescription)", error)
         }
     }
-
+    
     @objc(decryptData:resolver:rejecter:)
     func decryptData(_ req: NSDictionary, resolver: @escaping RCTPromiseResolveBlock, rejecter: @escaping RCTPromiseRejectBlock) {
         do {
@@ -103,13 +103,13 @@ class MusapModule: NSObject {
             logger.debug("decryptData called")
             let queue = DispatchQueue(label: "com.sphereon.decrypt")
             var isResolved = false
-
+            
             Task {
                 await MusapClient.decryptData(req: decryptionReq) { result in
                     queue.sync {
                         guard !isResolved else { return }
                         isResolved = true
-
+                        
                         switch result {
                         case .success(let decryptedData):
                             let base64String = decryptedData.base64EncodedString()
@@ -125,29 +125,29 @@ class MusapModule: NSObject {
             rejecter("DECRYPTION_ERROR", "Error preparing decryption request: \(error.localizedDescription)", error)
         }
     }
-
+    
     @objc
     func getLink() -> String? {
         return MusapClient.getMusapLink()?.getMusapId()
     }
-
+    
     @objc(enableLink:fcmToken:resolver:rejecter:)
     func enableLink(_ url: String, fcmToken: String?, resolver: @escaping RCTPromiseResolveBlock, rejecter: @escaping RCTPromiseRejectBlock) {
         logger.debug("enableLink called")
         let queue = DispatchQueue(label: "com.sphereon.enableLink")
         var isResolved = false
-
+        
         if let existingLink = MusapClient.getMusapLink() {
             resolver(existingLink.getMusapId())
             return
         }
-
+        
         Task {
             await MusapClient.enableLink(url: url, fcmToken: fcmToken) { result in
                 queue.sync {
                     guard !isResolved else { return }
                     isResolved = true
-
+                    
                     switch result {
                     case .success(let musapLink):
                         resolver(musapLink.getMusapId())
@@ -158,25 +158,25 @@ class MusapModule: NSObject {
             }
         }
     }
-
+    
     @objc
     func disconnectLink() {
         MusapClient.disableLink()
     }
-
+    
     // Added relying party coupling functionality
     @objc(coupleWithRelyingParty:resolver:rejecter:)
     func coupleWithRelyingParty(_ couplingCode: String, resolver: @escaping RCTPromiseResolveBlock, rejecter: @escaping RCTPromiseRejectBlock) {
         logger.debug("coupleWithRelyingParty called")
         let queue = DispatchQueue(label: "com.sphereon.couple")
         var isResolved = false
-
+        
         Task {
             await MusapClient.coupleWithRelyingParty(couplingCode: couplingCode) { result in
                 queue.sync {
                     guard !isResolved else { return }
                     isResolved = true
-
+                    
                     switch result {
                     case .success(let relyingParty):
                         resolver(relyingParty.getLinkId())
@@ -187,9 +187,9 @@ class MusapModule: NSObject {
             }
         }
     }
-
-
-
+    
+    
+    
     @objc(generateKey:req:resolver:rejecter:)
     func generateKey(_ sscdId: String, req: NSDictionary, resolver: @escaping RCTPromiseResolveBlock, rejecter: @escaping RCTPromiseRejectBlock) {
         logger.debug("generateKey called")
@@ -197,19 +197,19 @@ class MusapModule: NSObject {
             rejecter("GENERATE_KEY_ERROR", "Error: SSCD not found", nil)
             return
         }
-
+        
         do {
             let reqObj = try req.toKeyGenReq()
             logger.debug("generateKey request \(stringify(reqObj))")
             let queue = DispatchQueue(label: "com.sphereon.generateKey")
             var isResolved = false
-
+            
             Task {
                 await MusapClient.generateKey(sscd: sscd, req: reqObj) { result in
                     queue.sync {
                         guard !isResolved else { return }
                         isResolved = true
-
+                        
                         switch result {
                         case .success(let musapKey):
                             if let keyUri = musapKey.getKeyUri()?.getUri() {
@@ -245,7 +245,7 @@ class MusapModule: NSObject {
             rejecter("GENERATE_KEY_ERROR", "Error creating request object: \(error.localizedDescription)", error)
         }
     }
-
+    
     @objc(sign:resolver:rejecter:)
     func sign(_ req: NSDictionary, resolver: @escaping RCTPromiseResolveBlock, rejecter: @escaping RCTPromiseRejectBlock) {
         do {
@@ -254,29 +254,29 @@ class MusapModule: NSObject {
             let queue = DispatchQueue(label: "com.sphereon.sign")
             var isResolved = false
             let convertToRS = true // FIXME move to SignatureReq
-
+            
             Task {
                 await MusapClient.sign(req: signatureRequest) { result in
                     queue.sync {
                         guard !isResolved else { return }
                         isResolved = true
-
+                        
                         switch result {
                         case .success(let musapSignature):
-                          let rawSignature = musapSignature.getRawSignature()
-                          var signatureToEncode = rawSignature
-
-                          if convertToRS {
-                              do {
-                                  signatureToEncode = try self.convertDERtoRS(derSignature: rawSignature)
-                              } catch {
-                                  rejecter("SIGNATURE_CONVERSION_ERROR", "Error converting DER to R|S: \(error.localizedDescription)", error)
-                                  return
-                              }
-                          }
-
-                          let b64Signature = signatureToEncode.base64URLEncodedStringNoPadding()
-                          resolver(b64Signature)
+                            let rawSignature = musapSignature.getRawSignature()
+                            var signatureToEncode = rawSignature
+                            
+                            if convertToRS {
+                                do {
+                                    signatureToEncode = try self.convertDERtoRS(derSignature: rawSignature)
+                                } catch {
+                                    rejecter("SIGNATURE_CONVERSION_ERROR", "Error converting DER to R|S: \(error.localizedDescription)", error)
+                                    return
+                                }
+                            }
+                            
+                            let b64Signature = signatureToEncode.base64URLEncodedStringNoPadding()
+                            resolver(b64Signature)
                         case .failure(let error):
                             rejecter("SIGN_ERROR", "Error signing the data: \(error.localizedDescription)", error)
                         }
@@ -292,164 +292,164 @@ class MusapModule: NSObject {
             rejecter("SIGN_ERROR", "Error preparing signature request: \(error.localizedDescription)", error)
         }
     }
-
- @objc(enableSscd:sscdId:settings:)
-func enableSscd(_ sscdType: String, sscdId: String?, settings: NSDictionary?) -> Any? {
-    logger.debug("enabledSscd called for type: \(sscdType), id: \(sscdId ?? "nil"), settings: \(settings?.description ?? "nil")")
     
-    let selectedSscdId = sscdId ?? sscdType
-    
-    do {
-        if sscdType == "EXTERNAL" {
-            // Remove existing SSCDs with the same ID
-            if let existingSscds = MusapClient.listEnabledSscds() {
-                existingSscds
-                    .filter { $0.getSscdId() == selectedSscdId }
-                    .forEach { MusapClient.removeSscd(sscdInfo: $0.getSscdInfo()!) }
-            }
-            
-            // Create new EXTERNAL SSCD with settings
-            if let externalSettings = settings?.toExternalSscdSettings() {
-                let sscd = ExternalSscd(settings: externalSettings)
-                MusapClient.enableSscd(sscd: sscd, sscdId: selectedSscdId)
-            } else {
-                throw NSError(domain: "SSCD_ERROR", code: 1, userInfo: [NSLocalizedDescriptionKey: "External SSCD requires settings"])
-            }
-        } else {
-            // For non-EXTERNAL types, check if SSCD already exists
-            if let existingSscds = MusapClient.listEnabledSscds(),
-               !existingSscds.contains(where: { $0.getSscdId() == selectedSscdId }) {
-                
-                // Create new SSCD instance
-      let sscd: any MusapSscdProtocol
-      switch sscdType {
-      case "TEE":
-          sscd = SecureEnclaveSscd()
-      case "YUBI_KEY":
-          sscd = YubikeySscd()
-      default:
-                    throw NSError(domain: "SSCD_ERROR", code: 2, 
-                                userInfo: [NSLocalizedDescriptionKey: "Unsupported SSCD type: \(sscdType)"])
+    @objc(enableSscd:sscdId:settings:)
+    func enableSscd(_ sscdType: String, sscdId: String?, settings: NSDictionary?) -> Any? {
+        logger.debug("enabledSscd called for type: \(sscdType), id: \(sscdId ?? "nil"), settings: \(settings?.description ?? "nil")")
+        
+        let selectedSscdId = sscdId ?? sscdType
+        
+        do {
+            if sscdType == "EXTERNAL" {
+                // Remove existing SSCDs with the same ID
+                if let existingSscds = MusapClient.listEnabledSscds() {
+                    existingSscds
+                        .filter { $0.getSscdId() == selectedSscdId }
+                        .forEach { MusapClient.removeSscd(sscdInfo: $0.getSscdInfo()!) }
                 }
                 
-                MusapClient.enableSscd(sscd: sscd, sscdId: selectedSscdId)
+                // Create new EXTERNAL SSCD with settings
+                if let externalSettings = settings?.toExternalSscdSettings() {
+                    let sscd = ExternalSscd(settings: externalSettings)
+                    MusapClient.enableSscd(sscd: sscd, sscdId: selectedSscdId)
+                } else {
+                    throw NSError(domain: "SSCD_ERROR", code: 1, userInfo: [NSLocalizedDescriptionKey: "External SSCD requires settings"])
+                }
+            } else {
+                // For non-EXTERNAL types, check if SSCD already exists
+                if let existingSscds = MusapClient.listEnabledSscds(),
+                   !existingSscds.contains(where: { $0.getSscdId() == selectedSscdId }) {
+                    
+                    // Create new SSCD instance
+                    let sscd: any MusapSscdProtocol
+                    switch sscdType {
+                    case "TEE":
+                        sscd = SecureEnclaveSscd()
+                    case "YUBI_KEY":
+                        sscd = YubikeySscd()
+                    default:
+                        throw NSError(domain: "SSCD_ERROR", code: 2,
+                                      userInfo: [NSLocalizedDescriptionKey: "Unsupported SSCD type: \(sscdType)"])
+                    }
+                    
+                    MusapClient.enableSscd(sscd: sscd, sscdId: selectedSscdId)
+                }
             }
+            return nil
+        } catch {
+            logger.error("enableSscd error: \(error.localizedDescription)")
+            NSException(name: NSExceptionName.invalidArgumentException,
+                        reason: error.localizedDescription,
+                        userInfo: nil).raise()
+            return nil
         }
-          return nil
-    } catch {
-        logger.error("enableSscd error: \(error.localizedDescription)")
-        NSException(name: NSExceptionName.invalidArgumentException, 
-                   reason: error.localizedDescription, 
-                   userInfo: nil).raise()
-    return nil
-  }
-  }
-
-  @objc
-  func listEnabledSscds() -> NSArray {
-    guard let sscds = MusapClient.listEnabledSscds() else {
-         return NSArray()
-     }
-    let sscdList = sscds.map{ $0.toNSDictionary() }
-    return sscdList as NSArray
-  }
-
-  @objc
-  func listActiveSscds() -> NSArray {
-    let sscds = MusapClient.listActiveSscds()
-    let sscdList = sscds.map { $0.toNSDictionary() }
-    return sscdList as NSArray
-  }
-
-
-  @objc
-  func getKeyByUri(_ keyUri: String) -> NSDictionary? {
-    let result = MusapClient.getKeyByUri(keyUri: keyUri)
-    return result?.toNSDictionary()
-  }
-
-  @objc
-  func getKeyById(_ keyId: String) -> NSDictionary? {
-    let result = MusapClient.getKeyByKeyId(keyId: keyId)
-    return result?.toNSDictionary()
-  }
-
-  @objc(removeKey:resolver:rejecter:)
-  func removeKey(_ keyIdOrUri: String, resolver: @escaping RCTPromiseResolveBlock, rejecter: @escaping RCTPromiseRejectBlock) {
-      do {
-          let musapKey: MusapKey?
-          if keyIdOrUri.starts(with: "keyuri:") {
-              musapKey = MusapClient.getKeyByUri(keyUri: keyIdOrUri)
-          } else {
-              musapKey = MusapClient.getKeyByKeyId(keyId: keyIdOrUri)
-          }
-          
-          guard let key = musapKey else {
-              throw NSError(domain: "REMOVE_KEY_ERROR", 
-                          code: 1, 
-                          userInfo: [NSLocalizedDescriptionKey: "No key found for \(keyIdOrUri)"])
-          }
-          
-          let result = MusapClient.removeKey(musapKey: key)
-          resolver(NSNumber(value: result))
-      } catch {
-          logger.error("removeKey error: \(error.localizedDescription)")
-          rejecter("REMOVE_KEY_ERROR", error.localizedDescription, error)
-      }
-  }
-
-  @objc
-  func listKeys() -> NSArray {
-    let keys = MusapClient.listKeys()
-    let keysList = keys.map { $0.toNSDictionary() }
-    return keysList as NSArray
-  }
-
-  @objc
-  func getSscdInfo(_ sscdId: String) -> NSDictionary? {
-    return MusapClient.listEnabledSscds()?.first { $0.getSscdId() == sscdId }?.getSscdInfo()?.toNSDictionary()
-  }
-
-  @objc
-  func getSettings(_ sscdId: String) -> NSDictionary? {
-    return MusapClient.listEnabledSscds()?.first { $0.getSscdId() == sscdId }?.getSettings() as? NSDictionary
-  }
-
-@objc(sendKeygenCallback:transId:resolver:rejecter:)
-func sendKeygenCallback(_ keyUri: String, transId: String, resolver: @escaping RCTPromiseResolveBlock, rejecter: @escaping RCTPromiseRejectBlock) {
-    logger.debug("sendKeygenCallback called")
-    
-    guard let musapKey = MusapClient.getKeyByUri(keyUri: keyUri) else {
-        rejecter("SEND_KEY_CALLBACK_ERROR", "Key not found for URI: \(keyUri)", nil)
-        return
     }
     
-    do {
-        let result = try MusapClient.sendKeygenCallback(musapKey: musapKey, transId: transId)
-        resolver(result)
-    } catch {
-        logger.error("sendKeygenCallback error: \(error.localizedDescription)")
-        rejecter("SEND_KEY_CALLBACK_ERROR", error.localizedDescription, error)
+    @objc
+    func listEnabledSscds() -> NSArray {
+        guard let sscds = MusapClient.listEnabledSscds() else {
+            return NSArray()
+        }
+        let sscdList = sscds.map{ $0.toNSDictionary() }
+        return sscdList as NSArray
     }
-}
-
+    
+    @objc
+    func listActiveSscds() -> NSArray {
+        let sscds = MusapClient.listActiveSscds()
+        let sscdList = sscds.map { $0.toNSDictionary() }
+        return sscdList as NSArray
+    }
+    
+    
+    @objc
+    func getKeyByUri(_ keyUri: String) -> NSDictionary? {
+        let result = MusapClient.getKeyByUri(keyUri: keyUri)
+        return result?.toNSDictionary()
+    }
+    
+    @objc
+    func getKeyById(_ keyId: String) -> NSDictionary? {
+        let result = MusapClient.getKeyByKeyId(keyId: keyId)
+        return result?.toNSDictionary()
+    }
+    
+    @objc(removeKey:resolver:rejecter:)
+    func removeKey(_ keyIdOrUri: String, resolver: @escaping RCTPromiseResolveBlock, rejecter: @escaping RCTPromiseRejectBlock) {
+        do {
+            let musapKey: MusapKey?
+            if keyIdOrUri.starts(with: "keyuri:") {
+                musapKey = MusapClient.getKeyByUri(keyUri: keyIdOrUri)
+            } else {
+                musapKey = MusapClient.getKeyByKeyId(keyId: keyIdOrUri)
+            }
+            
+            guard let key = musapKey else {
+                throw NSError(domain: "REMOVE_KEY_ERROR",
+                              code: 1,
+                              userInfo: [NSLocalizedDescriptionKey: "No key found for \(keyIdOrUri)"])
+            }
+            
+            let result = MusapClient.removeKey(musapKey: key)
+            resolver(NSNumber(value: result))
+        } catch {
+            logger.error("removeKey error: \(error.localizedDescription)")
+            rejecter("REMOVE_KEY_ERROR", error.localizedDescription, error)
+        }
+    }
+    
+    @objc
+    func listKeys() -> NSArray {
+        let keys = MusapClient.listKeys()
+        let keysList = keys.map { $0.toNSDictionary() }
+        return keysList as NSArray
+    }
+    
+    @objc
+    func getSscdInfo(_ sscdId: String) -> NSDictionary? {
+        return MusapClient.listEnabledSscds()?.first { $0.getSscdId() == sscdId }?.getSscdInfo()?.toNSDictionary()
+    }
+    
+    @objc
+    func getSettings(_ sscdId: String) -> NSDictionary? {
+        return MusapClient.listEnabledSscds()?.first { $0.getSscdId() == sscdId }?.getSettings() as? NSDictionary
+    }
+    
+    @objc(sendKeygenCallback:transId:resolver:rejecter:)
+    func sendKeygenCallback(_ keyUri: String, transId: String, resolver: @escaping RCTPromiseResolveBlock, rejecter: @escaping RCTPromiseRejectBlock) {
+        logger.debug("sendKeygenCallback called")
+        
+        guard let musapKey = MusapClient.getKeyByUri(keyUri: keyUri) else {
+            rejecter("SEND_KEY_CALLBACK_ERROR", "Key not found for URI: \(keyUri)", nil)
+            return
+        }
+        
+        do {
+            let result = try MusapClient.sendKeygenCallback(musapKey: musapKey, transId: transId)
+            resolver(result)
+        } catch {
+            logger.error("sendKeygenCallback error: \(error.localizedDescription)")
+            rejecter("SEND_KEY_CALLBACK_ERROR", error.localizedDescription, error)
+        }
+    }
+    
     @objc
     func convertDERtoRS(derSignature: Data) throws -> Data {
         logger.debug("Input DER signature: \(derSignature.map { String(format: "%02hhx", $0) }.joined())")
-
+        
         var derBytes = [UInt8](derSignature)
         guard derBytes.count > 8, derBytes[0] == 0x30 else {
             throw NSError(domain: "SignatureError", code: 0, userInfo: [NSLocalizedDescriptionKey: "Invalid DER signature"])
         }
-
+        
         // Skip header byte and signature length byte
         var index = 2
-
+        
         // Skip extra length bytes if present
         if derBytes[1] > 0x80 {
             index += Int(derBytes[1] - 0x80)
         }
-
+        
         func extractInteger() throws -> [UInt8] {
             guard index < derBytes.count, derBytes[index] == 0x02 else {
                 throw NSError(domain: "SignatureError", code: 1, userInfo: [NSLocalizedDescriptionKey: "Invalid integer marker"])
@@ -461,10 +461,10 @@ func sendKeygenCallback(_ keyUri: String, transId: String, resolver: @escaping R
             index += length
             return Array(derBytes[valueStartIndex..<index])
         }
-
+        
         let r = try extractInteger()
         let s = try extractInteger()
-
+        
         // Ensure R and S are 32 bytes each, left-pad with zeros if necessary
         func normalize(_ integer: [UInt8]) -> [UInt8] {
             let targetLength = 32
@@ -475,13 +475,13 @@ func sendKeygenCallback(_ keyUri: String, transId: String, resolver: @escaping R
             }
             return integer
         }
-
+        
         let normalizedR = normalize(r)
         let normalizedS = normalize(s)
-
+        
         let result = Data(normalizedR + normalizedS)
         logger.debug("Output R|S signature: \(result.map { String(format: "%02hhx", $0) }.joined())")
-
+        
         return result
     }
 }
