@@ -35,7 +35,7 @@ import java.util.*
 @OptIn(ExperimentalStdlibApi::class)
 class MusapBridgeAndroid(private val reactContext: ReactApplicationContext) : ReactContextBaseJavaModule(reactContext) {
 
-    override fun getName(): String = "MusapBridge"
+    override fun getName(): String = "MusapModule"
 
     init {
         initializeMusap(reactContext)

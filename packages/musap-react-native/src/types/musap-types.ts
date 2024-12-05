@@ -206,5 +206,5 @@ export interface IMusapClient {
 }
 
 
-export const MusapClient: IMusapClient = NativeModules.MusapBridge as IMusapClient
+export const MusapClient: IMusapClient = NativeModules.MusapModule as IMusapClient
 

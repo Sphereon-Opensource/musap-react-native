@@ -7,7 +7,7 @@
 
 #import <React/RCTBridgeModule.h>
 
-@interface RCT_EXTERN_MODULE(MusapBridge, NSObject)
+@interface RCT_EXTERN_MODULE(MusapModule, NSObject)
 
 RCT_EXTERN__BLOCKING_SYNCHRONOUS_METHOD(listActiveSscds)
 

@@ -6,7 +6,7 @@
 
 #import <React/RCTBridgeModule.h>
 
-@interface MusapBridge : NSObject <RCTBridgeModule>
+@interface MusapModule : NSObject <RCTBridgeModule>
 
 // Note: The RCT_EXTERN methods don't need to be redeclared here
 
