@@ -13,8 +13,8 @@ let logger = Logger(subsystem: "com.sphereon.musaprn", category: "debugging")
 // To log: xcrun simctl spawn booted log stream --level debug --style compact > /tmp/log.txt
 
 
-@objc(MusapModule)
-class MusapModule: NSObject {
+@objc(MusapBridge)
+class MusapBridge: NSObject {
     
     @objc
     static func requiresMainQueueSetup() -> Bool {
@@ -65,7 +65,7 @@ class MusapModule: NSObject {
             rejecter("BIND_KEY_ERROR", "Error creating bind request object: \(error.localizedDescription)", error)
         }
     }
-    
+    /*
     @objc(encryptData:resolver:rejecter:)
     func encryptData(_ req: NSDictionary, resolver: @escaping RCTPromiseResolveBlock, rejecter: @escaping RCTPromiseRejectBlock) {
         do {
@@ -125,6 +125,7 @@ class MusapModule: NSObject {
             rejecter("DECRYPTION_ERROR", "Error preparing decryption request: \(error.localizedDescription)", error)
         }
     }
+    */
     
     @objc
     func getLink() -> String? {
@@ -142,21 +143,21 @@ class MusapModule: NSObject {
             return
         }
         
-        Task {
-            await MusapClient.enableLink(url: url, fcmToken: fcmToken) { result in
-                queue.sync {
-                    guard !isResolved else { return }
-                    isResolved = true
-                    
-                    switch result {
-                    case .success(let musapLink):
-                        resolver(musapLink.getMusapId())
-                    case .failure(let error):
-                        rejecter("ENABLE_LINK_ERROR", "Error enabling link: \(error.localizedDescription)", error)
-                    }
-                }
-            }
-        }
+         Task {
+             if let musapLink = await MusapClient.enableLink(url: url, apnsToken: fcmToken) {
+                 queue.sync {
+                     guard !isResolved else { return }
+                     isResolved = true
+                     resolver(musapLink.getMusapId())
+                 }
+             } else {
+                 queue.sync {
+                     guard !isResolved else { return }
+                     isResolved = true
+                     rejecter("ENABLE_LINK_ERROR", "Error enabling link", nil)
+                 }
+             }
+         }
     }
     
     @objc
@@ -305,12 +306,16 @@ class MusapModule: NSObject {
                 if let existingSscds = MusapClient.listEnabledSscds() {
                     existingSscds
                         .filter { $0.getSscdId() == selectedSscdId }
-                        .forEach { MusapClient.removeSscd(sscdInfo: $0.getSscdInfo()!) }
+                        .forEach { MusapClient.removeSscd(musapSscd: $0.getSscdInfo()!) }
                 }
                 
                 // Create new EXTERNAL SSCD with settings
-                if let externalSettings = settings?.toExternalSscdSettings() {
-                    let sscd = ExternalSscd(settings: externalSettings)
+                if let externalSettings = try? settings?.toExternalSscdSettings() {
+                    let sscd = ExternalSscd(
+                        settings: externalSettings,
+                        clientid: externalSettings.getClientId()!, 
+                        musapLink: externalSettings.getMusapLink()!
+                    )
                     MusapClient.enableSscd(sscd: sscd, sscdId: selectedSscdId)
                 } else {
                     throw NSError(domain: "SSCD_ERROR", code: 1, userInfo: [NSLocalizedDescriptionKey: "External SSCD requires settings"])
@@ -425,7 +430,7 @@ class MusapModule: NSObject {
         }
         
         do {
-            let result = try MusapClient.sendKeygenCallback(musapKey: musapKey, transId: transId)
+            let result = try MusapClient.sendKeygenCallback(key: musapKey, txnId: transId)
             resolver(result)
         } catch {
             logger.error("sendKeygenCallback error: \(error.localizedDescription)")

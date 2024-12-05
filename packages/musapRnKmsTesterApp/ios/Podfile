@@ -16,7 +16,7 @@ if linkage != nil
   use_frameworks! :linkage => linkage.to_sym
 end
 
-target 'musap-react-native' do
+target 'musapRnKmsTesterApp' do
   config = use_native_modules!
 
   use_react_native!(
@@ -26,6 +26,7 @@ target 'musap-react-native' do
   )
 
   pod 'musap-ios', :path => '../node_modules/@sphereon/musap-native'
+  pod 'musap-react-native', :path => '../node_modules/@sphereon/musap-react-native'
   pod 'YubiKit', :modular_headers => true
 
 

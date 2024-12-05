@@ -7,7 +7,7 @@
 
 #import <React/RCTBridgeModule.h>
 
-@interface RCT_EXTERN_MODULE(MusapModule, NSObject)
+@interface RCT_EXTERN_MODULE(MusapBridge, NSObject)
 
 RCT_EXTERN__BLOCKING_SYNCHRONOUS_METHOD(listActiveSscds)
 
@@ -45,6 +45,7 @@ RCT_EXTERN_METHOD(sign:(NSDictionary *)req
                   resolver:(RCTPromiseResolveBlock)resolver
                   rejecter:(RCTPromiseRejectBlock)rejecter)
 
+/* 
 RCT_EXTERN_METHOD(encryptData:(NSDictionary *)req
                   resolver:(RCTPromiseResolveBlock)resolver
                   rejecter:(RCTPromiseRejectBlock)rejecter)
@@ -52,6 +53,7 @@ RCT_EXTERN_METHOD(encryptData:(NSDictionary *)req
 RCT_EXTERN_METHOD(decryptData:(NSDictionary *)req
                   resolver:(RCTPromiseResolveBlock)resolver
                   rejecter:(RCTPromiseRejectBlock)rejecter)
+ */
 
 RCT_EXTERN_METHOD(enableLink:(NSString *)url
                   fcmToken:(NSString *)fcmToken
