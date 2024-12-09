@@ -132,6 +132,18 @@ class MusapModule: NSObject {
         return MusapClient.getMusapLink()?.getMusapId()
     }
     
+     func removeKey(keyName: String) throws {
+            let deleteQuery: [String: Any] = [
+                kSecClass as String: kSecClassKey,
+                kSecAttrApplicationTag as String: keyName.data(using: .utf8)!
+            ]
+            
+            let status = SecItemDelete(deleteQuery as CFDictionary)
+            guard status == errSecSuccess || status == errSecItemNotFound else {
+                throw NSError(domain: NSOSStatusErrorDomain, code: Int(status), userInfo: nil)
+            }
+     }
+        
     @objc(enableLink:fcmToken:resolver:rejecter:)
     func enableLink(_ url: String, fcmToken: String?, resolver: @escaping RCTPromiseResolveBlock, rejecter: @escaping RCTPromiseRejectBlock) {
         logger.debug("enableLink called")
@@ -144,6 +156,13 @@ class MusapModule: NSObject {
         }
         
          Task {
+            do {
+              try self.removeKey(keyName: MusapKeyGenerator.MAC_KEY_ALIAS)
+              try self.removeKey(keyName: MusapKeyGenerator.TRANSPORT_KEY_ALIAS)
+            } catch {
+                logger.error("Could not remove MAC_KEY_ALIAS & TRANSPORT_KEY_ALIAS keys")
+            }   
+         
              if let musapLink = await MusapClient.enableLink(url: url, apnsToken: fcmToken) {
                  queue.sync {
                      guard !isResolved else { return }
