@@ -132,7 +132,7 @@ class MusapModule: NSObject {
         return MusapClient.getMusapLink()?.getMusapId()
     }
     
-     func removeKey(keyName: String) throws {
+     func removeIosKey(keyName: String) throws {
             let deleteQuery: [String: Any] = [
                 kSecClass as String: kSecClassKey,
                 kSecAttrApplicationTag as String: keyName.data(using: .utf8)!
@@ -157,11 +157,15 @@ class MusapModule: NSObject {
         
          Task {
             do {
-              try self.removeKey(keyName: MusapKeyGenerator.MAC_KEY_ALIAS)
-              try self.removeKey(keyName: MusapKeyGenerator.TRANSPORT_KEY_ALIAS)
+              try self.removeIosKey(keyName: MusapKeyGenerator.MAC_KEY_ALIAS)
+              try self.removeIosKey(keyName: MusapKeyGenerator.TRANSPORT_KEY_ALIAS)
             } catch {
                 logger.error("Could not remove MAC_KEY_ALIAS & TRANSPORT_KEY_ALIAS keys")
-            }   
+                queue.sync {
+                    guard !isResolved else { return }
+                    isResolved = true
+                    rejecter("ENABLE_LINK_ERROR", "Could not remove MAC_KEY_ALIAS & TRANSPORT_KEY_ALIAS keys", nil)
+                }            }
          
              if let musapLink = await MusapClient.enableLink(url: url, apnsToken: fcmToken) {
                  queue.sync {
@@ -173,7 +177,7 @@ class MusapModule: NSObject {
                  queue.sync {
                      guard !isResolved else { return }
                      isResolved = true
-                     rejecter("ENABLE_LINK_ERROR", "Error enabling link", nil)
+                     rejecter("ENABLE_LINK_ERROR", "Error enabling link; enabledLink returned null", nil)
                  }
              }
          }
