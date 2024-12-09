@@ -186,20 +186,21 @@ extension MusapKey {
 
 extension NSDictionary {
     func toKeyBindReq() throws -> KeyBindReq {
-        let keyAlias = self["keyAlias"] as? String ?? ""
-        let displayText = self["displayText"] as? String ?? ""
+        guard let keyAlias = self["keyAlias"] as? String else {
+            throw NSError(domain: "KeyBindReqError", code: 1, userInfo: [NSLocalizedDescriptionKey: "keyAlias is required"])
+        }
+        
         let did = self["did"] as? String ?? ""
         let role = self["role"] as? String ?? ""
         let stepUpPolicy = self["stepUpPolicy"] != nil ? StepUpPolicy() : StepUpPolicy()
+        let displayText = self["displayText"] as? String ?? ""
         
         var attributes: [KeyAttribute] = []
         if let attributesArray = self["attributes"] as? [[String: Any]] {
             attributes = attributesArray.compactMap { attributeMap in
                 if let name = attributeMap["name"] as? String,
-                   let certDataBase64 = attributeMap["value"] as? String,
-                   let certData = Data(base64Encoded: certDataBase64),
-                   let cert = SecCertificateCreateWithData(nil, certData as CFData) {
-                    return KeyAttribute(name: name, cert: cert)
+                   let value = attributeMap["value"] as? String {
+                    return KeyAttribute(name: name, value: value as! String?)
                 }
                 return nil
             }
@@ -215,6 +216,7 @@ extension NSDictionary {
             displayText: displayText
         )
     }
+    
     
     func toKeyGenReq() throws -> KeyGenReq {
         let keyAlias = self["keyAlias"] as? String ?? ""
@@ -266,32 +268,32 @@ extension NSDictionary {
         }
         
         guard let sscdType = key.getSscdType()?.lowercased() else {
-               throw SignatureReqError.invalidKey
-           }
-                
-                // Process data based on SSCD type
-                let processedData: Data
-                if let stringData = dataValue as? String {
-                    let rawData = stringData.data(using: .utf8) ?? Data()
-                    if sscdType == "external" || sscdType == "external signature" {
-                        // Use SHA256 for external SSCD type
-                        let sha256Data = SHA256.hash(data: rawData)
-                        processedData = Data(sha256Data)
-                    } else {
-                        processedData = rawData
-                    }
-                } else if let intArray = dataValue as? [Int] {
-                    let rawData = Data(intArray.map { UInt8($0) })
-                    if sscdType == "external" || sscdType == "external signature" {
-                        // Use SHA256 for external SSCD type
-                        let sha256Data = SHA256.hash(data: rawData)
-                        processedData = Data(sha256Data)
-                    } else {
-                        processedData = rawData
-                    }
-                } else {
-                    throw SignatureReqError.invalidDataFormat
-                }
+            throw SignatureReqError.invalidKey
+        }
+        
+        // Process data based on SSCD type
+        let processedData: Data
+        if let stringData = dataValue as? String {
+            let rawData = stringData.data(using: .utf8) ?? Data()
+            if sscdType == "external" || sscdType == "external signature" {
+                // Use SHA256 for external SSCD type
+                let sha256Data = SHA256.hash(data: rawData)
+                processedData = Data(sha256Data)
+            } else {
+                processedData = rawData
+            }
+        } else if let intArray = dataValue as? [Int] {
+            let rawData = Data(intArray.map { UInt8($0) })
+            if sscdType == "external" || sscdType == "external signature" {
+                // Use SHA256 for external SSCD type
+                let sha256Data = SHA256.hash(data: rawData)
+                processedData = Data(sha256Data)
+            } else {
+                processedData = rawData
+            }
+        } else {
+            throw SignatureReqError.invalidDataFormat
+        }
         
         let displayText = self["displayText"] as? String ?? self["display"] as? String
         
