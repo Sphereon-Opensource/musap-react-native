@@ -96,7 +96,7 @@ export const testRunEsim = async () => {
     const keys = MusapClient.listKeys();
     keys.forEach(value =>
       console.log(
-        `eSIM listKeys() result: keyUri=${value.keyUri}, keyAlias=${value.keyAlias}, keyId=${value.keyId}, attributes=${value.attributes}`,
+        `eSIM listKeys() result: keyUri=${value.keyUri}, keyAlias=${value.keyAlias}, keyId=${value.keyId}, attributes=${JSON.stringify(value.attributes)}\r\npublicKey=${JSON.stringify(value.publicKey)}`,
       ),
     );
 
