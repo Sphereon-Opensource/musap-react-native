@@ -5,3 +5,8 @@ buildscript {
         }
     }
 }
+
+
+android {
+    namespace "com.sphereon.musap"
+}
