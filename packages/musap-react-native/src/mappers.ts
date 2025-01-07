@@ -23,6 +23,8 @@ export const signatureAlgorithmFromKeyAlgorithm = (keyAlgorithm: KeyAlgorithm | 
             return 'SHA256withRSA'
         case 'EdDSA':
             return 'NONEwithEdDSA'
+        case 'ecc_ed25519':
+            return 'NONEwithEdDSA'
         default:
             throw new Error(`Unsupported key algorithm: ${keyAlgorithm}`)
     }
@@ -40,6 +42,8 @@ export const mapKeyAlgorithmToJWTAlgorithm = (keyAlgorithm: KeyAlgorithm): JWSAl
             return 'RS256'
         case 'rsa4k':
             return 'RS512'
+        case 'ecc_ed25519':
+            return 'EdDSA'
         default:
             throw new Error(`Unsupported key algorithm: ${keyAlgorithm}`)
     }
