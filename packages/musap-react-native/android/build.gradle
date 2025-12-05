@@ -5,6 +5,7 @@ buildscript {
     def kotlin_version = rootProject.ext.has("kotlinVersion") ? rootProject.ext.get("kotlinVersion") : project.properties["MusapRn_kotlinVersion"]
 
     repositories {
+        gradlePluginPortal()
         google()
         mavenCentral()
     }

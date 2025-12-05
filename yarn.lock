@@ -4188,7 +4188,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@sphereon/musap-native@workspace:*, @sphereon/musap-native@workspace:packages/musap-native":
+"@sphereon/musap-native@npm:^0.2.1-unstable.186+f5a7c6f, @sphereon/musap-native@workspace:packages/musap-native":
   version: 0.0.0-use.local
   resolution: "@sphereon/musap-native@workspace:packages/musap-native"
   dependencies:
@@ -4226,7 +4226,7 @@ __metadata:
   dependencies:
     "@react-native-community/cli": "npm:^15.1.3"
     "@react-native/typescript-config": "npm:^0.79.6"
-    "@sphereon/musap-native": "workspace:*"
+    "@sphereon/musap-native": "npm:^0.2.1-unstable.186+f5a7c6f"
     "@types/react": "npm:^19.0.0"
     react: "npm:^19.0.0"
     react-native: "npm:^0.79.6"
