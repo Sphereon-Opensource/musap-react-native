@@ -355,8 +355,7 @@ class MusapBridgeAndroid(private val reactContext: ReactApplicationContext) : Re
         }
     }
 
-    @ReactMethod
-    fun createSscdInstance(type: SscdType, settings: ExternalSscdSettings?): MusapSscdInterface<*> {
+    private fun createSscdInstance(type: SscdType, settings: ExternalSscdSettings?): MusapSscdInterface<*> {
         return when (type) {
             SscdType.TEE -> AndroidKeystoreSscd(reactContext)
             SscdType.YUBI_KEY -> YubiKeySscd(reactContext)
