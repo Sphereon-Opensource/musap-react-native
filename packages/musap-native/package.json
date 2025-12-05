@@ -1,7 +1,7 @@
 {
   "name": "@sphereon/musap-native",
   "title": "musap-ios",
-  "version": "1.1.10",
+  "version": "0.2.1-unstable.185+96c6758",
   "description": "An NPM package wrapper for React Native for the MUSAP iOS & Android libraries. Contains native modules only.",
   "homepage": "https://github.com/methics/musap-ios",
   "nativePackage": true,
@@ -37,5 +37,5 @@
   "publishConfig": {
     "access": "public"
   },
-  "gitHead": "7615c2bd75c6352d2405473c470248d230f5056e"
+  "gitHead": "96c6758ca527239c57109d7c7f68e90e39632d8f"
 }
