@@ -121,7 +121,7 @@ class MusapBridgeAndroid(private val reactContext: ReactApplicationContext) : Re
     @ReactMethod
     fun sign(req: ReadableMap, promise: Promise) {
         try {
-            var signatureReq = req.toSignatureReq(this.currentActivity)
+            var signatureReq = req.toSignatureReq(reactApplicationContext.currentActivity)
 
             val callback = object : MusapCallback<MusapSignature> {
                 override fun onSuccess(signature: MusapSignature?) {
