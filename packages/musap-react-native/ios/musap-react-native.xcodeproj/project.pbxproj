@@ -10,7 +10,7 @@
 		1F55CE142C495668004A00C0 /* musap_react_native.h in Headers */ = {isa = PBXBuildFile; fileRef = 1F55CE132C495668004A00C0 /* musap_react_native.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		1F55CE1C2C4DCA0B004A00C0 /* MapperFunctions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1F55CE1B2C4DCA0B004A00C0 /* MapperFunctions.swift */; };
 		1F55CE1F2C4DCAD8004A00C0 /* musap-ios in Frameworks */ = {isa = PBXBuildFile; productRef = 1F55CE1E2C4DCAD8004A00C0 /* musap-ios */; };
-		3D1851AC5B27A394158F1F09 /* libPods-musap-react-native.a in Frameworks */ = {isa = PBXBuildFile; fileRef = CD64D1F960F6C9364F0DE25A /* libPods-musap-react-native.a */; };
+		911156D3346A8ABD854AB620 /* libPods-musap-react-native.a in Frameworks */ = {isa = PBXBuildFile; fileRef = C2A6A204746D9D07B1510451 /* libPods-musap-react-native.a */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -23,7 +23,7 @@
 		1F55CE112C495668004A00C0 /* musap_react_native.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = musap_react_native.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		1F55CE132C495668004A00C0 /* musap_react_native.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = musap_react_native.h; sourceTree = "<group>"; };
 		1F55CE1B2C4DCA0B004A00C0 /* MapperFunctions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MapperFunctions.swift; sourceTree = "<group>"; };
-		CD64D1F960F6C9364F0DE25A /* libPods-musap-react-native.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-musap-react-native.a"; sourceTree = BUILT_PRODUCTS_DIR; };
+		C2A6A204746D9D07B1510451 /* libPods-musap-react-native.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-musap-react-native.a"; sourceTree = BUILT_PRODUCTS_DIR; };
 		DB5F6B1740CEFC7C3F0D5244 /* Pods-musap-react-native.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-musap-react-native.release.xcconfig"; path = "Target Support Files/Pods-musap-react-native/Pods-musap-react-native.release.xcconfig"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -32,8 +32,8 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				3D1851AC5B27A394158F1F09 /* libPods-musap-react-native.a in Frameworks */,
 				1F55CE1F2C4DCAD8004A00C0 /* musap-ios in Frameworks */,
+				911156D3346A8ABD854AB620 /* libPods-musap-react-native.a in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -43,7 +43,7 @@
 		048FD59479CB1EB3E17CB059 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
-				CD64D1F960F6C9364F0DE25A /* libPods-musap-react-native.a */,
+				C2A6A204746D9D07B1510451 /* libPods-musap-react-native.a */,
 			);
 			name = Frameworks;
 			sourceTree = "<group>";
@@ -296,7 +296,10 @@
 				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
 				MTL_FAST_MATH = YES;
 				ONLY_ACTIVE_ARCH = YES;
-				OTHER_LDFLAGS = "$(inherited)  ";
+				OTHER_LDFLAGS = (
+					"$(inherited)",
+					" ",
+				);
 				REACT_NATIVE_PATH = "${PODS_ROOT}/../../node_modules/react-native";
 				SDKROOT = iphoneos;
 				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "DEBUG $(inherited)";
@@ -362,7 +365,10 @@
 				LOCALIZATION_PREFERS_STRING_CATALOGS = YES;
 				MTL_ENABLE_DEBUG_INFO = NO;
 				MTL_FAST_MATH = YES;
-				OTHER_LDFLAGS = "$(inherited)  ";
+				OTHER_LDFLAGS = (
+					"$(inherited)",
+					" ",
+				);
 				REACT_NATIVE_PATH = "${PODS_ROOT}/../../node_modules/react-native";
 				SDKROOT = iphoneos;
 				SWIFT_COMPILATION_MODE = wholemodule;

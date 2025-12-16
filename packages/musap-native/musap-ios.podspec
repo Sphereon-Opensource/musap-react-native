@@ -14,5 +14,5 @@ Pod::Spec.new do |s|
   s.source_files = 'ios/Sources/**/*.{swift,h,m,mm}'
   s.module_name  = 'musap_ios'
 
-  s.dependency 'YubiKit'
+  s.dependency 'YubiKit', '~> 4.4.0'
 end

@@ -7,7 +7,7 @@
       "location" : "https://github.com/methics/musap-ios",
       "state" : {
         "branch" : "main",
-        "revision" : "d57395b1d4278b57e688cf9aaab976ae292e205d"
+        "revision" : "32aa44e9855a26910af694cc1187748e7b6b390b"
       }
     },
     {
@@ -15,8 +15,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/Yubico/yubikit-ios",
       "state" : {
-        "revision" : "1ea9c97010780499001ac8552d6440235d947686",
-        "version" : "4.6.0"
+        "revision" : "2c4206263763743a2f1ca3309b87432588be637f",
+        "version" : "4.7.0"
       }
     }
   ],

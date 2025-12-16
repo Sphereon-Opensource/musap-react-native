@@ -2,29 +2,33 @@ project 'musap-react-native.xcodeproj'
 workspace 'musap-react-native.xcworkspace'
 #source 'https://github.com/CocoaPods/Specs.git'
 
-ENV['REACT_NATIVE_PATH'] = '../node_modules/react-native'
+# Define path to RN
+react_native_path = '../node_modules/react-native'
 
+# Require the standard RN scripts (Only this one is needed in 0.79+)
 require File.join(File.dirname(`node --print "require.resolve('react-native/package.json')"`), "scripts/react_native_pods")
-require File.join(File.dirname(`node --print "require.resolve('@react-native-community/cli-platform-ios/package.json')"`), "native_modules")
-
 
 platform :ios, '16.0'
 prepare_react_native_project!
 
 target 'musap-react-native' do
-  config = use_native_modules!
+  # Removed use_native_modules! (Not needed/Available in CLI v15 for libraries)
+
   use_react_native!(
-    :path => config[:reactNativePath],
+    :path => react_native_path,
     :hermes_enabled => false,
     :fabric_enabled => false,
   )
 
-  #pod 'YubiKit', :modular_headers => true
-  #pod 'musap_ios', :path => './musap_ios'
+  # Swift pods with modular headers
+  pod 'YubiKit', '~> 4.4.0', :modular_headers => true
+  pod 'musap-ios', :path => '../../musap-native', :modular_headers => true
+
+  # Dependencies are managed by the Podspec, but we keep this post_install
+  # to force the correct compiler settings for the library build.
 
   post_install do |installer|
-
-    # Pass REACT_NATIVE_PATH to Pods project
+    # 1. Helper to find React Native path for dependencies
     installer.pods_project.targets.each do |target|
         target.build_configurations.each do |config|
           if config.build_settings['REACT_NATIVE_PATH'].nil? || config.build_settings['REACT_NATIVE_PATH'].empty?
@@ -33,19 +37,31 @@ target 'musap-react-native' do
         end
     end
 
+    # 2. Fix Build Settings for ALL targets (Force iOS 16.0 / C++20)
     installer.pods_project.targets.each do |target|
       target.build_configurations.each do |config|
-         # 1. Force iOS 16.0 for C++ Interop compatibility
+         # Force iOS 16.0 (Required for Nitro/C++ Interop)
          config.build_settings['IPHONEOS_DEPLOYMENT_TARGET'] = '16.0'
 
-         # 2. Allow non-modular includes (Fixes SwiftUI / Expo Dev Menu)
+         # Enforce C++20 (Required for React Native 0.79 / Yoga)
+         config.build_settings['CLANG_CXX_LANGUAGE_STANDARD'] = 'c++20'
+
+         # Allow non-modular includes (Fixes Yoga/React header visibility issues)
          config.build_settings['CLANG_ALLOW_NON_MODULAR_INCLUDES_IN_FRAMEWORK_MODULES'] = 'YES'
 
-         # 3. Enable C++ Interop for Swift
+         # Enable C++ Interop for Swift (Required for Nitro Modules)
          config.build_settings['SWIFT_OBJC_INTEROP_MODE'] = 'objcxx'
 
-         # 4. Disable strict module verification (Fixes "EmitSwiftModule" failures in musap-react-native)
+         # Disable strict module verification (Fixes "EmitSwiftModule" failures)
          config.build_settings['ENABLE_MODULE_VERIFIER'] = 'NO'
+
+         # Disable sandboxing (Fixes "tasks in Copy Headers are delayed" warning)
+         config.build_settings['ENABLE_USER_SCRIPT_SANDBOXING'] = 'NO'
+
+         # Disable library evolution for musap-ios to fix C++ type compatibility
+         if target.name == 'musap-ios' || target.name == 'YubiKit'
+           config.build_settings['BUILD_LIBRARY_FOR_DISTRIBUTION'] = 'NO'
+         end
       end
     end
   end

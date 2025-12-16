@@ -24,7 +24,7 @@
     "prepare": "yarn build",
     "build:android:windows": "cd android && gradlew.bat publishReleaseAar",
     "build:android:linux": "cd android && ./gradlew publishReleaseAar",
-    "build:ios": "cd ios && xcodebuild -scheme MusapRn -sdk iphonesimulator -destination 'platform=iOS Simulator,name=iPhone 12' build"
+    "build:ios": "cd ios && xcodebuild -workspace musap-react-native.xcworkspace -scheme musap-react-native -sdk iphonesimulator -destination 'platform=iOS Simulator,name=iPhone 16' build ENABLE_USER_SCRIPT_SANDBOXING=NO"
   },
   "installConfig": {
     "hoistingLimits": "workspaces"
