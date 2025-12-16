@@ -10,7 +10,7 @@ Pod::Spec.new do |s|
   s.author       = { 'Author Name' => 'support@methics.fi' }
   s.source       = { :git => 'https://github.com/methics/musap-ios.git', :tag => s.version.to_s }
 
-  s.platform     = :ios, '15.0'
+  s.platform     = :ios, '16.0'
   s.source_files = 'ios/Sources/**/*.{swift,h,m,mm}'
   s.module_name  = 'musap_ios'
 
