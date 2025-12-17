@@ -9,7 +9,6 @@
 /* Begin PBXBuildFile section */
 		1F55CE142C495668004A00C0 /* musap_react_native.h in Headers */ = {isa = PBXBuildFile; fileRef = 1F55CE132C495668004A00C0 /* musap_react_native.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		1F55CE1C2C4DCA0B004A00C0 /* MapperFunctions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1F55CE1B2C4DCA0B004A00C0 /* MapperFunctions.swift */; };
-		1F55CE1F2C4DCAD8004A00C0 /* musap-ios in Frameworks */ = {isa = PBXBuildFile; productRef = 1F55CE1E2C4DCAD8004A00C0 /* musap-ios */; };
 		911156D3346A8ABD854AB620 /* libPods-musap-react-native.a in Frameworks */ = {isa = PBXBuildFile; fileRef = C2A6A204746D9D07B1510451 /* libPods-musap-react-native.a */; };
 /* End PBXBuildFile section */
 
@@ -32,7 +31,6 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				1F55CE1F2C4DCAD8004A00C0 /* musap-ios in Frameworks */,
 				911156D3346A8ABD854AB620 /* libPods-musap-react-native.a in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -128,7 +126,6 @@
 			);
 			name = "musap-react-native";
 			packageProductDependencies = (
-				1F55CE1E2C4DCAD8004A00C0 /* musap-ios */,
 			);
 			productName = "musap-react-native";
 			productReference = 1F55CE112C495668004A00C0 /* musap_react_native.framework */;
@@ -159,7 +156,6 @@
 			);
 			mainGroup = 1F55CDF02C494957004A00C0;
 			packageReferences = (
-				1F55CE1D2C4DCAD8004A00C0 /* XCRemoteSwiftPackageReference "musap-ios" */,
 			);
 			productRefGroup = 1F55CDFB2C494957004A00C0 /* Products */;
 			projectDirPath = "";
@@ -383,7 +379,7 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 04249EAA2F28A13F9165368C /* Pods-musap-react-native.debug.xcconfig */;
 			buildSettings = {
-				BUILD_LIBRARY_FOR_DISTRIBUTION = YES;
+				BUILD_LIBRARY_FOR_DISTRIBUTION = NO;
 				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
 				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_STYLE = Automatic;
@@ -413,6 +409,7 @@
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_INSTALL_OBJC_HEADER = NO;
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+				
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
 			};
@@ -422,7 +419,7 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = DB5F6B1740CEFC7C3F0D5244 /* Pods-musap-react-native.release.xcconfig */;
 			buildSettings = {
-				BUILD_LIBRARY_FOR_DISTRIBUTION = YES;
+				BUILD_LIBRARY_FOR_DISTRIBUTION = NO;
 				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
 				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_STYLE = Automatic;
@@ -451,6 +448,7 @@
 				SKIP_INSTALL = YES;
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_INSTALL_OBJC_HEADER = NO;
+				
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
 			};
@@ -478,25 +476,6 @@
 			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
-
-/* Begin XCRemoteSwiftPackageReference section */
-		1F55CE1D2C4DCAD8004A00C0 /* XCRemoteSwiftPackageReference "musap-ios" */ = {
-			isa = XCRemoteSwiftPackageReference;
-			repositoryURL = "https://github.com/methics/musap-ios";
-			requirement = {
-				branch = main;
-				kind = branch;
-			};
-		};
-/* End XCRemoteSwiftPackageReference section */
-
-/* Begin XCSwiftPackageProductDependency section */
-		1F55CE1E2C4DCAD8004A00C0 /* musap-ios */ = {
-			isa = XCSwiftPackageProductDependency;
-			package = 1F55CE1D2C4DCAD8004A00C0 /* XCRemoteSwiftPackageReference "musap-ios" */;
-			productName = "musap-ios";
-		};
-/* End XCSwiftPackageProductDependency section */
 	};
 	rootObject = 1F55CDF12C494957004A00C0 /* Project object */;
 }
