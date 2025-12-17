@@ -204,6 +204,10 @@ repositories {
     mavenCentral()
     google()
     mavenLocal()
+    // Local maven repository for musap-android from musap-native package
+    maven {
+        url = uri("${rootProject.projectDir}/../../musap-native/android/maven")
+    }
     maven {
         url = uri("${rootProject.projectDir}/../../../node_modules/react-native/android")
     }
