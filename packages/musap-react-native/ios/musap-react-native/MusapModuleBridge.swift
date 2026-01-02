@@ -13,8 +13,8 @@ let logger = Logger(subsystem: "com.sphereon.musaprn", category: "debugging")
 // To log: xcrun simctl spawn booted log stream --level debug --style compact > /tmp/log.txt
 
 
-@objc(MusapModule)
-class MusapModule: NSObject {
+@objc(MusapReactModule)
+class MusapReactModule: NSObject {
     
     @objc
     static func requiresMainQueueSetup() -> Bool {
