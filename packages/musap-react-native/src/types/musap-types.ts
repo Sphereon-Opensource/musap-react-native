@@ -154,7 +154,11 @@ export interface SignatureAttribute {
 
 export interface SignatureReq {
     keyUri: string
-    data: string // TODO if we want to support binary data we need to send an array of numbers (or go base64)
+    // string = legacy ASCII (e.g. a JWT signing input, UTF-8-encoded natively); number[] = raw byte values (iOS [Int] path).
+    data: string | number[]
+    // base64-encoded raw bytes — REQUIRED for binary data on Android (e.g. the CBOR/COSE Sig_structure for mdoc):
+    // the Nitro bridge mangles number[] per-element and UTF-8-mangles a String. Takes priority over `data` when present.
+    dataBase64?: string
     displayText?: string
     algorithm?: SignatureAlgorithmType
     format: SignatureFormat

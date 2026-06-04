@@ -1,9 +1,11 @@
 package com.sphereon.musap.serializers
 
 import android.app.Activity
+import android.util.Base64
 import android.util.Log
 import com.facebook.react.bridge.ReadableArray
 import com.facebook.react.bridge.ReadableMap
+import com.facebook.react.bridge.ReadableType
 import com.sphereon.musap.models.SscdType
 import fi.methics.musap.sdk.api.MusapClient
 import fi.methics.musap.sdk.internal.datatype.MusapKey
@@ -28,14 +30,29 @@ fun ReadableMap.toSignatureReq(activity: Activity?): SignatureReq {
         }
     }
 
-    if (hasKey("data")) {
-        getString("data")?.let { dataString ->
+    if (hasKey("dataBase64") || hasKey("data")) {
+        // Binary signing input (e.g. the CBOR/COSE Sig_structure for mdoc) MUST arrive as a base64 String in
+        // `dataBase64`: a JS `number[]` is mangled per-element by the Nitro bridge marshaling (ReadableArray.getInt
+        // returns wrong values), and a UTF-8 String corrupts any non-ASCII byte. A base64 String marshals cleanly
+        // and round-trips arbitrary bytes. Priority: dataBase64 (binary) > data:Array (iOS path) > data:String (legacy ASCII).
+        val rawData: ByteArray? = when {
+            hasKey("dataBase64") -> getString("dataBase64")?.let { Base64.decode(it, Base64.NO_WRAP) }
+            getType("data") == ReadableType.Array -> getArray("data")?.toByteArray()
+            getType("data") == ReadableType.String -> getString("data")?.toByteArray()
+            else -> null
+        }
+        rawData?.let { dataBytes ->
+            run {
+                val sb = StringBuilder()
+                for (b in dataBytes) sb.append(String.format("%02x", b.toInt() and 0xff))
+                Log.d("MUSAP_BRIDGE", "signing ${dataBytes.size} bytes (hex) $sb")
+            }
             val keyByUri = key
             if (keyByUri != null && (keyByUri.sscdType == SscdType.EXTERNAL.value || keyByUri.sscdType == SscdType.EXTERNAL.name)) {
                 Log.d("MUSAP_BRIDGE", "The target sscd is of type: ${keyByUri.sscdType}, taking SHA256")
-                builder.setData(dataString.toByteArray().sha256())
+                builder.setData(dataBytes.sha256())
             } else {
-                builder.setData(dataString.toByteArray())
+                builder.setData(dataBytes)
             }
         }
     }
