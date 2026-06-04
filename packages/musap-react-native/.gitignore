@@ -41,3 +41,4 @@ buck-out/
 \.buckd/
 *.keystore
 /ios/Pods/
+/dist/
