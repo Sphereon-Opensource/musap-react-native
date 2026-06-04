@@ -386,6 +386,19 @@ class MusapBridgeAndroid(private val reactContext: ReactApplicationContext) : Re
                     if (!isInitialized) {
                         Log.d("MUSAP_BRIDGE", "Initializing MusapClient")
                         MusapClient.init(context)
+                        // WORKAROUND (BouncyCastle vs Conscrypt TLS): methics MusapClient.init() runs
+                        // Security.insertProviderAt(BouncyCastleProvider, 1), placing BouncyCastle ahead of
+                        // Android's Conscrypt TLS provider. That breaks every HTTPS request (java "network
+                        // request failed") whenever no AndroidKeystore key-gen/sign runs afterwards to remove
+                        // BC again — e.g. on an onboarded app relaunch. Re-add BouncyCastle at the LOWEST JCA
+                        // priority so it stays available for MUSAP crypto without overriding TLS.
+                        try {
+                            java.security.Security.removeProvider("BC")
+                            java.security.Security.addProvider(org.bouncycastle.jce.provider.BouncyCastleProvider())
+                            Log.d("MUSAP_BRIDGE", "Re-ordered BouncyCastle to lowest JCA priority (Conscrypt/TLS fix)")
+                        } catch (e: Throwable) {
+                            Log.e("MUSAP_BRIDGE", "Failed to re-order BouncyCastle provider", e)
+                        }
                         isInitialized = true
                         Log.d("MUSAP_BRIDGE", "MusapClient initialization complete")
                     }
